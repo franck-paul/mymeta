@@ -1,0 +1,360 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Dotclear 2 mymeta module\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-11-22 15:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../hg-plugins/mymeta/__html_tpl_dummy.php:6
+msgid "Entries by"
+msgstr ""
+
+#: ../hg-plugins/mymeta/__html_tpl_dummy.php:9
+msgid "Metadata"
+msgstr ""
+
+#: ../hg-plugins/mymeta/__html_tpl_dummy.php:10
+msgid "This metadata's comments RSS feed"
+msgstr ""
+
+#: ../hg-plugins/mymeta/__html_tpl_dummy.php:11
+msgid "This metadata's entries RSS feed"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_admin.php:18 ../hg-plugins/mymeta/index_edit.php:87
+#: ../hg-plugins/mymeta/index_edit_section.php:57
+#: ../hg-plugins/mymeta/index_home.php:111
+#: ../hg-plugins/mymeta/index_home.php:126
+#: ../hg-plugins/mymeta/index_view.php:96
+#: ../hg-plugins/mymeta/index_view_posts.php:137
+msgid "My Metadata"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_admin.php:71 ../hg-plugins/mymeta/_public.php:276
+msgid "MyMeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_admin.php:71
+msgid "Set MyMeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_admin.php:102
+msgid "Set Metadata"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_admin.php:105
+#: ../hg-plugins/mymeta/index_view_posts.php:182
+msgid "save"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:23
+msgid "All sections"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:24
+msgid "MyMeta List"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:26
+msgid "Value to display"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:27 ../hg-plugins/mymeta/index_home.php:139
+msgid "ID"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:27 ../hg-plugins/mymeta/index_edit.php:101
+#: ../hg-plugins/mymeta/index_home.php:141
+msgid "Prompt"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:28
+msgid "Section to display"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:32
+msgid "MyMeta Values list"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:34
+msgid "MyMeta ID"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:35
+msgid "Display mode"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:36
+msgid "Cloud"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:36
+msgid "List"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:40
+msgid "Meta name"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:45
+msgid "All values"
+msgstr ""
+
+#: ../hg-plugins/mymeta/_widgets.php:45
+msgid "Link to all values:"
+msgstr ""
+
+#: ../hg-plugins/mymeta/class.mymeta.php:318
+msgid "My Meta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/class.mymeta.php:367
+msgid "Mymeta errors :"
+msgstr ""
+
+#: ../hg-plugins/mymeta/class.mymetatypes.php:217
+msgid "String"
+msgstr ""
+
+#: ../hg-plugins/mymeta/class.mymetatypes.php:230
+msgid "Items List"
+msgstr ""
+
+#: ../hg-plugins/mymeta/class.mymetatypes.php:279
+msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
+msgstr ""
+
+#: ../hg-plugins/mymeta/class.mymetatypes.php:302
+msgid "Checkbox"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:42
+#, php-format
+msgid "MyMeta \"%s\" has been successfully updated"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:50
+msgid "Edit MyMeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:54
+#: ../hg-plugins/mymeta/index_edit.php:70
+msgid "Something went wrong while editing mymeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:62
+#: ../hg-plugins/mymeta/index_home.php:222
+msgid "New MyMeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:78
+#: ../hg-plugins/mymeta/index_edit_section.php:48
+#: ../hg-plugins/mymeta/index_view.php:87
+msgid "My metadata"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:94
+msgid "MyMeta definition"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:96
+msgid "Identifier (as stored in meta_type in database):"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:105
+#, php-format
+msgid "MyMeta type : %s"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:110
+msgid "MyMeta URLs"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:118
+msgid "Enable MyMeta values list public page"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:119
+msgid "List template file (leave empty for default mymetas.html)"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:124
+msgid "Enable single mymeta value public page"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:126
+msgid "Single template file (leave empty for default mymeta.html)"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:131
+msgid "MyMeta restrictions"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:135
+msgid "Display meta field for any post type"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit.php:137
+msgid "Restrict to the following post types :"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit_section.php:25
+msgid "Section has been successfully updated"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit_section.php:31
+msgid "Edit section"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit_section.php:35
+#: ../hg-plugins/mymeta/index_edit_section.php:40
+msgid "Something went wrong while editing section"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_edit_section.php:64
+msgid "MyMeta section definition"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:55
+msgid "Mymeta entries have been successfully enabled"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:56
+msgid "Mymeta entries have been successfully disabled"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:61
+msgid "Mymeta entries have been successfully deleted"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:74
+#, php-format
+msgid "Section \"%s\" has been successfully created"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:95
+msgid "Mymeta have been successfully reordered"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:103
+msgid "enable"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:104
+msgid "disable"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:130
+msgid "Add a metadata"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:132
+msgid "MyMeta list"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:143
+msgid "Count"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:164
+#: ../hg-plugins/mymeta/index_home.php:185
+msgid "edit MyMeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:166
+#, php-format
+msgid "Section: %s"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:178
+msgid "All"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:211
+msgid "Selected metas action:"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:221
+msgid "New metadata"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:224
+msgid "Create MyMeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:232
+msgid "New section"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_home.php:234
+msgid "Create section"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view.php:15
+#: ../hg-plugins/mymeta/index_view.php:23
+msgid "Something went wrong when editing mymeta"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view.php:33
+msgid "No entries found"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view.php:42
+msgid "Nb Posts"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view.php:81
+msgid "Value has been successfully changed"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view.php:110
+#, php-format
+msgid "Values of metadata \"%s\""
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:15
+#: ../hg-plugins/mymeta/index_view_posts.php:22
+msgid "Something went wrong while editing mymeta value"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:42
+#, php-format
+msgid "Mymeta value successfully updated from \"%s\" to \"%s\""
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:118
+msgid "Are you sure you want to remove this metadata?"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:139
+#, php-format
+msgid "Value \"%s\""
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:143
+msgid "MyMeta has been successfully renamed"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:148
+#, php-format
+msgid "Entries having meta id \"%s\" set to \"%s\""
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:179
+msgid "Change MyMeta value"
+msgstr ""
+
+#: ../hg-plugins/mymeta/index_view_posts.php:180
+msgid "This will change the meta value for all entries having this value"
+msgstr ""
