@@ -1,22 +1,31 @@
 <?php
-# ***** BEGIN LICENSE BLOCK *****
-# This file is part of DotClear Mymeta plugin.
-#
-# Copyright (c) 2010 Bruno Hondelatte, and contributors.
-# Many, many thanks to Olivier Meunier and the Dotclear Team.
-# Licensed under the GPL version 2.0 license.
-# See LICENSE file or
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# ***** END LICENSE BLOCK *****
-
-if (!defined('DC_RC_PATH')) { return; }
+/**
+ * @brief mymeta, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugins
+ *
+ * @author Bruno Hondelatte and contributors
+ *
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_RC_PATH')) {
+    return;
+}
 
 $this->registerModule(
-	/* Name */			"My Meta",
-	/* Description*/		"User-defined metadata management in posts",
-	/* Author */			"Bruno Hondelatte",
-	/* Version */			'0.5.3',
-	/* Permissions */		'usage,contentadmin',
-	/* Priority */			1001
+    'My Meta',                                      // Name
+    'User-defined metadata management in posts',    // Description
+    'Bruno Hondelatte and contributors',            // Author
+    '0.5.4',                                        // Version
+    [
+        //        'requires'    => [['core', '2.17']],
+        'priority'    => 1001,
+        'permissions' => 'usage,contentadmin',                      // Permissions
+        'type'        => 'plugin',                                  // Type
+        'support'     => 'https://github.com/franck-paul/mymeta',   // Support URL
+        'settings'    => [                                          // Settings
+            'self' => ''
+        ]
+    ]
 );
