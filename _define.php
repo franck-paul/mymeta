@@ -29,6 +29,6 @@ $this->registerModule(
 
         'details'    => 'https://open-time.net/?q=mymeta',       // Details URL
         'support'    => 'https://github.com/franck-paul/mymeta', // Support URL
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/main/dcstore.xml'
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/master/dcstore.xml'
     ]
 );
