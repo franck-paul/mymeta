@@ -1,8 +1,8 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="mymeta">
-    <name>My Meta</name>
+    <name>User-defined metadata management in posts</name>
     <version>0.5.4</version>
-    <author>Bruno Hondelatte and contributors</author>
+    <author>User-defined metadata management in posts</author>
     <desc>User-defined metadata management in posts</desc>
     <file>https://github.com/franck-paul/mymeta/releases/download/0.5.4/plugin-mymeta-0.5.4.zip</file>
     <da:dcmin>2.0</da:dcmin>
