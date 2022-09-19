@@ -13,46 +13,51 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-require dirname(__FILE__) . '/class.mymeta.php';
-require dirname(__FILE__) . '/_widgets.php';
+require __DIR__ . '/class.mymeta.php';
+require __DIR__ . '/_widgets.php';
 
-$_menu['Plugins']->addItem(__('My Metadata'),'plugin.php?p=mymeta','index.php?pf=mymeta/mymeta.png',
-        preg_match('/plugin.php\?p=mymeta(&.*)?$/', $_SERVER['REQUEST_URI']),
-        $core->auth->check('usage,contentadmin', $core->blog->id));
+dcCore::app()->menu['Plugins']->addItem(
+    __('My Metadata'),
+    'plugin.php?p=mymeta',
+    'index.php?pf=mymeta/mymeta.png',
+    preg_match('/plugin.php\?p=mymeta(&.*)?$/', $_SERVER['REQUEST_URI']),
+    dcCore::app()->auth->check('usage,contentadmin', dcCore::app()->blog->id)
+);
 
-$core->addBehavior('adminPostFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
-$core->addBehavior('adminPostForm', ['mymetaBehaviors','mymetaInForm']);
-$core->addBehavior('adminPostForm', ['mymetaBehaviors','mymetaPostHeader']);
+dcCore::app()->addBehavior('adminPostFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
+dcCore::app()->addBehavior('adminPostForm', ['mymetaBehaviors','mymetaInForm']);
+dcCore::app()->addBehavior('adminPostForm', ['mymetaBehaviors','mymetaPostHeader']);
 
-$core->addBehavior('adminAfterPostCreate', ['mymetaBehaviors','setMymeta']);
-$core->addBehavior('adminAfterPostUpdate', ['mymetaBehaviors','setMymeta']);
+dcCore::app()->addBehavior('adminAfterPostCreate', ['mymetaBehaviors','setMymeta']);
+dcCore::app()->addBehavior('adminAfterPostUpdate', ['mymetaBehaviors','setMymeta']);
 
-$core->addBehavior('adminPageFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
-$core->addBehavior('adminPageForm', ['mymetaBehaviors','mymetaInForm']);
+dcCore::app()->addBehavior('adminPageFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
+dcCore::app()->addBehavior('adminPageForm', ['mymetaBehaviors','mymetaInForm']);
 
-$core->addBehavior('adminPostsActionsCombo', ['mymetaBehaviors','adminPostsActionsCombo']);
-$core->addBehavior('adminPostsActions', ['mymetaBehaviors','adminPostsActions']);
-$core->addBehavior('adminPostsActionsContent', ['mymetaBehaviors','adminPostsActionsContent']);
-$core->addBehavior('adminPostsActionsHeaders', ['mymetaBehaviors','adminPostsActionsHeaders']);
+dcCore::app()->addBehavior('adminPostsActionsCombo', ['mymetaBehaviors','adminPostsActionsCombo']);
+dcCore::app()->addBehavior('adminPostsActions', ['mymetaBehaviors','adminPostsActions']);
+dcCore::app()->addBehavior('adminPostsActionsContent', ['mymetaBehaviors','adminPostsActionsContent']);
+dcCore::app()->addBehavior('adminPostsActionsHeaders', ['mymetaBehaviors','adminPostsActionsHeaders']);
 
-$core->addBehavior('adminAfterPageCreate', ['mymetaBehaviors','setMymeta']);
-$core->addBehavior('adminAfterPageUpdate', ['mymetaBehaviors','setMymeta']);
+dcCore::app()->addBehavior('adminAfterPageCreate', ['mymetaBehaviors','setMymeta']);
+dcCore::app()->addBehavior('adminAfterPageUpdate', ['mymetaBehaviors','setMymeta']);
+
 # BEHAVIORS
 class mymetaBehaviors
 {
     public static function mymetaPostHeader($post)
     {
-        $mymeta = new myMeta($GLOBALS['core']);
-
+        $mymeta = new myMeta(dcCore::app());
         echo $mymeta->postShowHeader($post);
     }
+
     public static function mymetaSidebar($post)
     {
     }
 
     public static function mymetaInForm($post)
     {
-        $mymeta = new myMeta($GLOBALS['core']);
+        $mymeta = new myMeta(dcCore::app());
         if ($mymeta->hasMeta()) {
             echo $mymeta->postShowForm($post);
         }
@@ -60,7 +65,7 @@ class mymetaBehaviors
 
     public static function setMymeta($cur, $post_id)
     {
-        $mymeta = new myMeta($GLOBALS['core']);
+        $mymeta = new myMeta(dcCore::app());
         $mymeta->setMeta($post_id, $_POST);
     }
 
@@ -71,7 +76,7 @@ class mymetaBehaviors
 
     public static function adminPostsActionsHeaders()
     {
-        $mymeta = new myMeta($GLOBALS['core']);
+        $mymeta = new myMeta(dcCore::app());
 
         return $mymeta->postShowHeader(null, true);
     }
@@ -79,7 +84,7 @@ class mymetaBehaviors
     public static function adminPostsActions($core, $posts, $action, $redir)
     {
         if ($action == 'mymeta_set' && !empty($_POST['mymeta_ok'])) {
-            $mymeta = new myMeta($GLOBALS['core']);
+            $mymeta = new myMeta(dcCore::app());
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
                     $mymeta->setMeta($posts->post_id, $_POST, false);
@@ -92,22 +97,17 @@ class mymetaBehaviors
     public static function adminPostsActionsContent($core, $action, $hidden_fields)
     {
         if ($action == 'mymeta_set') {
-            $mymeta = new myMeta($core);
+            $mymeta = new myMeta(dcCore::app());
             if ($mymeta->hasMeta()) {
                 echo '<h2>' . __('Set Metadata') . '</h2>' .
                     '<form action="posts_actions.php" method="post">' .
                     $mymeta->postShowForm(null) .
                     '<p><input type="submit" value="' . __('save') . '" />' .
                     $hidden_fields .
-                    $core->formNonce() .
+                    dcCore::app()->formNonce() .
                     form::hidden(['action'], 'mymeta_set') .
                     form::hidden(['mymeta_ok'], '1') . '</p></form>';
             }
         }
     }
-}
-
-# REST
-class mymetaRest
-{
 }

@@ -13,11 +13,9 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-function filterTplFile($file, $default)
+function filterTplFile($file)
 {
-    $f = trim($file);
-
-    return str_replace(['\\','/'], ['',''], $f);
+    return str_replace(['\\','/'], ['',''], trim((string) $file));
 }
 
 if (!empty($_POST['mymeta_id'])) {
@@ -28,14 +26,14 @@ if (!empty($_POST['mymeta_id'])) {
     if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes') {
         if (isset($_POST['mymeta_restricted_types'])) {
             $post_types = explode(',', $_POST['mymeta_restricted_types']);
-            array_walk($post_types, create_function('&$v', '$v=trim(html::escapeHTML($v));'));
+            array_walk($post_types, fn ($v) => trim(html::escapeHTML($v)));
             $mymetaEntry->post_types = $post_types;
         }
     }
     $mymetaEntry->url_list_enabled   = isset($_POST['enable_list']);
     $mymetaEntry->url_single_enabled = isset($_POST['enable_single']);
-    $mymetaEntry->tpl_single         = filterTplFile($_POST['single_tpl'], 'mymeta.html');
-    $mymetaEntry->tpl_list           = filterTplFile($_POST['list_tpl'], 'mymetas.html');
+    $mymetaEntry->tpl_single         = filterTplFile($_POST['single_tpl']) ?? 'mymeta.html';
+    $mymetaEntry->tpl_list           = filterTplFile($_POST['list_tpl'])   ?? 'mymetas.html';
 
     $mymetaEntry->adminUpdate($_POST);
     $mymeta->update($mymetaEntry);
@@ -78,18 +76,19 @@ if (!$type_label) {
 <head>
   <title><?php echo __('My metadata'); ?></title>
   <?php echo dcPage::jsPageTabs('mymeta');
-  ?>
+?>
 </head>
 <body>
 <?php
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML($core->blog->name) => '',
-        __('My Metadata')                   => $p_url,
-        $page_title                         => ''
-    ]) . dcPage::notices();
+        html::escapeHTML(dcCore::app()->blog->name) => '',
+        __('My Metadata')                           => $p_url,
+        $page_title                                 => '',
+    ]
+) . dcPage::notices();
 
-if (!$core->error->flag()):?>
+if (!dcCore::app()->error->flag()):?>
 	<form method="post" action="plugin.php">
 		<div class="fieldset">
 			<h3><?php echo __('MyMeta definition'); ?></h3>
@@ -110,47 +109,47 @@ if (!$core->error->flag()):?>
 		<div class="fieldset">
 			<h3><?php echo __('MyMeta URLs'); ?></h3>
 				<?php
-                $base_url   = $core->blog->url . $core->url->getBase('mymeta') . '/' . $mymetaentry->id;
-                $tpl_single = $mymetaentry->tpl_single;
-                $tpl_list   = $mymetaentry->tpl_list;
-                echo
-                    '<p><label class="classic" for="enable_list">' .
-                    form::checkbox(['enable_list'], 1, $mymetaentry->url_list_enabled) .
-                    __('Enable MyMeta values list public page') . '</label></p>' .
-                    '<p><label class="classic">' . __('List template file (leave empty for default mymetas.html)') . ' : </label>' .
-                    form::field(['list_tpl'], 40, 255, empty($tpl_list)?'mymetas.html':$tpl_list) .
-                    '</p>' .
-                    '<p><label class="classic" for="enable_single">' .
-                    form::checkbox(['enable_single'], 1, $mymetaentry->url_single_enabled) .
-                    __('Enable single mymeta value public page') .
-                    '</label></p>' .
-                    '<p><label class="classic">' . __('Single template file (leave empty for default mymeta.html)') . ' : </label>' .
-                    form::field(['single_tpl'], 40, 255, empty($tpl_single)?'mymeta.html':$tpl_single) .
-                    '</p>'; ?>
+                $base_url = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaentry->id;
+    $tpl_single           = $mymetaentry->tpl_single;
+    $tpl_list             = $mymetaentry->tpl_list;
+    echo
+        '<p><label class="classic" for="enable_list">' .
+        form::checkbox(['enable_list'], 1, $mymetaentry->url_list_enabled) .
+        __('Enable MyMeta values list public page') . '</label></p>' .
+        '<p><label class="classic">' . __('List template file (leave empty for default mymetas.html)') . ' : </label>' .
+        form::field(['list_tpl'], 40, 255, empty($tpl_list) ? 'mymetas.html' : $tpl_list) .
+        '</p>' .
+        '<p><label class="classic" for="enable_single">' .
+        form::checkbox(['enable_single'], 1, $mymetaentry->url_single_enabled) .
+        __('Enable single mymeta value public page') .
+        '</label></p>' .
+        '<p><label class="classic">' . __('Single template file (leave empty for default mymeta.html)') . ' : </label>' .
+        form::field(['single_tpl'], 40, 255, empty($tpl_single) ? 'mymeta.html' : $tpl_single) .
+        '</p>'; ?>
 		</div>
 		<div class="fieldset">
 			<h3><?php echo __('MyMeta restrictions'); ?></h3>
 			<p>
 				<?php
-                echo '<label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'none', $mymetaentry->isRestrictionEnabled()) .
-                __('Display meta field for any post type') . '</label></p>';
-                echo '<p><label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'yes', !$mymetaentry->isRestrictionEnabled()) .
-                __('Restrict to the following post types :');
-                $restrictions = $mymetaentry->getRestrictions();
-                echo form::field('mymeta_restricted_types', 40, 255, $restrictions?$restrictions:'') . '</label></p>'; ?>
+    echo '<label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'none', $mymetaentry->isRestrictionEnabled()) .
+    __('Display meta field for any post type') . '</label></p>';
+    echo '<p><label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'yes', !$mymetaentry->isRestrictionEnabled()) .
+    __('Restrict to the following post types :');
+    $restrictions = $mymetaentry->getRestrictions();
+    echo form::field('mymeta_restricted_types', 40, 255, $restrictions ? $restrictions : '') . '</label></p>'; ?>
 			</p>
 		</div>
 		<p>
 			<input type="hidden" name="p" value="mymeta" />
 			<input type="hidden" name="m" value="edit" />
 			<?php
-                if ($lock_id) {
-                    echo form::hidden(['mymeta_id'], $mymetaid);
-                }
-                echo form::hidden(['mymeta_enabled'], $mymetaentry->enabled);
-                echo form::hidden(['mymeta_type'], $mymeta_type);
-                echo $core->formNonce()
-            ?>
+    if ($lock_id) {
+        echo form::hidden(['mymeta_id'], $mymetaid);
+    }
+    echo form::hidden(['mymeta_enabled'], $mymetaentry->enabled);
+    echo form::hidden(['mymeta_type'], $mymeta_type);
+    echo dcCore::app()->formNonce()
+    ?>
 			<input type="submit" name="saveconfig" value="<?php echo __('Save'); ?>" />
 		</p>
 	</form>

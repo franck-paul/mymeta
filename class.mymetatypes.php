@@ -93,7 +93,7 @@ abstract class myMetaField extends myMetaEntry
             if (isset($_POST[$this_id])) {
                 $value = html::escapeHTML($_POST[$this_id]);
             } elseif ($post != null) {
-                $value = ($post) ? $dcmeta->getMetaStr($post->post_meta, $this->id): '';
+                $value = ($post) ? $dcmeta->getMetaStr($post->post_meta, $this->id) : '';
             }
             $res .= '<p><label for="' . $this_id . '"><strong>' . $this->prompt . '</strong></label>';
             $res .= $this->postShowField($this_id, $value);
@@ -194,7 +194,7 @@ abstract class myMetaField extends myMetaEntry
     public function adminUpdate($post)
     {
         $this->prompt  = html::escapeHTML($post['mymeta_prompt']);
-        $this->enabled = (boolean) $post['mymeta_enabled'];
+        $this->enabled = (bool) $post['mymeta_enabled'];
     }
 
     public function isEnabledFor($mode)
@@ -254,10 +254,10 @@ class mmList extends myMetaField
         foreach ($lines as $line) {
             $entries = explode(':', $line);
             if (sizeof($entries) == 1) {
-                $key = $desc = trim($entries[0]);
+                $key = $desc = trim((string) $entries[0]);
             } else {
-                $key  = trim($entries[0]);
-                $desc = trim($entries[1]);
+                $key  = trim((string) $entries[0]);
+                $desc = trim((string) $entries[1]);
             }
             if ($key != '') {
                 $arr[$desc] = $key;
@@ -374,7 +374,7 @@ class mmDate extends myMetaField
 
     protected function postShowField($id, $value)
     {
-        return form::field($id, 20, 20, $value);
+        return form::datetime($id, ['default' => html::escapeHTML(dt::str('%Y-%m-%dT%H:%M', $value))]);
     }
 
     public function getMetaTypeId()

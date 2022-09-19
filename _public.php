@@ -13,27 +13,27 @@ if (!defined('DC_RC_PATH')) {
     return;
 }
 
-require dirname(__FILE__) . '/_widgets.php';
+require __DIR__ . '/_widgets.php';
 
-$core->tpl->addValue('MetaType', ['tplMyMeta','MetaType']);
-$core->tpl->addValue('MyMetaTypePrompt', ['tplMyMeta','MyMetaTypePrompt']);
-$core->tpl->addValue('EntryMyMetaValue', ['tplMyMeta','EntryMyMetaValue']);
-$core->tpl->addValue('MyMetaValue', ['tplMyMeta','MyMetaValue']);
-$core->tpl->addValue('MyMetaURL', ['tplMyMeta','MyMetaURL']);
-$core->tpl->addBlock('EntryMyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
-$core->tpl->addBlock('MyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
-$core->tpl->addBlock('MyMetaData', ['tplMyMeta','MyMetaData']);
+dcCore::app()->tpl->addValue('MetaType', ['tplMyMeta','MetaType']);
+dcCore::app()->tpl->addValue('MyMetaTypePrompt', ['tplMyMeta','MyMetaTypePrompt']);
+dcCore::app()->tpl->addValue('EntryMyMetaValue', ['tplMyMeta','EntryMyMetaValue']);
+dcCore::app()->tpl->addValue('MyMetaValue', ['tplMyMeta','MyMetaValue']);
+dcCore::app()->tpl->addValue('MyMetaURL', ['tplMyMeta','MyMetaURL']);
+dcCore::app()->tpl->addBlock('EntryMyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
+dcCore::app()->tpl->addBlock('MyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
+dcCore::app()->tpl->addBlock('MyMetaData', ['tplMyMeta','MyMetaData']);
 
-$core->addBehavior('templateBeforeBlock', ['behaviorsMymeta','templateBeforeBlock']);
-$core->addBehavior('publicBeforeDocument', ['behaviorsMymeta','addTplPath']);
+dcCore::app()->addBehavior('templateBeforeBlock', ['behaviorsMymeta','templateBeforeBlock']);
+dcCore::app()->addBehavior('publicBeforeDocument', ['behaviorsMymeta','addTplPath']);
 
-$core->mymeta = new myMeta($core);
+dcCore::app()->mymeta = new myMeta(dcCore::app());
 
 class behaviorsMymeta
 {
-    public static function addTplPath($core)
+    public static function addTplPath($core = null)
     {
-        $core->tpl->setPath($core->tpl->getPath(), dirname(__FILE__) . '/default-templates');
+        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), __DIR__ . '/default-templates');
     }
 
     public static function templateBeforeBlock($core, $b, $attr)
@@ -54,20 +54,20 @@ class behaviorsMymeta
         if (!isset($attr['mymetaid'])) {
             if (empty($attr['no_context'])) {
                 return
-                    '<?php if ($_ctx->exists("mymeta")) { ' .
-                        "if (!isset(\$params)) { \$params = array(); }\n" .
-                        "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
-                        "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
-                        "\$params['from'] .= ', '.\$core->prefix.'meta META ';\n" .
-                        "\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
-                        "\$params['sql'] .= \"AND META.meta_type = '\".\$core->con->escape(\$_ctx->mymeta->id).\"' \";\n" .
-                        "\$params['sql'] .= \"AND META.meta_id = '\".\$core->con->escape(\$_ctx->meta->meta_id).\"' \";\n" .
-                    "} ?>\n";
+                '<?php if (dcCore::app()->ctx->exists("mymeta")) { ' .
+                    "if (!isset(\$params)) { \$params = array(); }\n" .
+                    "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
+                    "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
+                    "\$params['from'] .= ', '.dcCore::app()->prefix.'meta META ';\n" .
+                    "\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
+                    "\$params['sql'] .= \"AND META.meta_type = '\".dcCore::app()->con->escape(dcCore::app()->ctx->mymeta->id).\"' \";\n" .
+                    "\$params['sql'] .= \"AND META.meta_id = '\".dcCore::app()->con->escape(dcCore::app()->ctx->meta->meta_id).\"' \";\n" .
+                "} ?>\n";
             }
 
             return;
         }
-        $metaid = $core->con->escape($attr['mymetaid']);
+        $metaid = dcCore::app()->con->escape($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
             $values  = $attr['mymetavalue'];
             $in_expr = ' in ';
@@ -77,19 +77,19 @@ class behaviorsMymeta
             }
             $cond = [];
             foreach (explode(',', $values) as $expr) {
-                $cond[] = "'" . $core->con->escape($expr) . "'";
+                $cond[] = "'" . dcCore::app()->con->escape($expr) . "'";
             }
 
             return
-                "<?php\n" .
-                "if (!isset(\$params)) { \$params = array(); }\n" .
-                "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
-                "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
-                "@\$params['from'] .= ', '.\$core->prefix.'meta META ';\n" .
-                "@\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
-                "\$params['sql'] .= \"AND META.meta_type = '" . $metaid . "' \";\n" .
-                "\$params['sql'] .= \"AND META.meta_id " . $in_expr . ' (' . join(',', $cond) . ") \";\n" .
-                "?>\n";
+            "<?php\n" .
+            "if (!isset(\$params)) { \$params = array(); }\n" .
+            "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
+            "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
+            "@\$params['from'] .= ', '.dcCore::app()->prefix.'meta META ';\n" .
+            "@\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
+            "\$params['sql'] .= \"AND META.meta_type = '" . $metaid . "' \";\n" .
+            "\$params['sql'] .= \"AND META.meta_id " . $in_expr . ' (' . join(',', $cond) . ") \";\n" .
+            "?>\n";
         }
         $in_expr = ' in ';
         if (substr($metaid, 0, 1) == '!') {
@@ -98,10 +98,10 @@ class behaviorsMymeta
         }
 
         return
-                "<?php\n" .
-                "@\$params['sql'] .= \"AND P.post_id " . $in_expr .
-                    "(SELECT META.post_id from \".\$core->prefix.\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
-                "?>\n";
+        "<?php\n" .
+        "@\$params['sql'] .= \"AND P.post_id " . $in_expr .
+            "(SELECT META.post_id from \".dcCore::app()->prefix.\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
+        "?>\n";
     }
 }
 
@@ -114,9 +114,9 @@ class tplMyMeta
         }
         if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', $attr['id'])) {
             return '<?php' . "\n" .
-                '$_ctx->mymeta = $core->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
-                '%s' . "\n" .
-                '<?php $_ctx->mymeta = null;' . "\n" . '?>';
+            'dcCore::app()->ctx->mymeta = dcCore::app()->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
+            '%s' . "\n" .
+            '<?php dcCore::app()->ctx->mymeta = null;' . "\n" . '?>';
         }
 
         return '%s';
@@ -149,23 +149,23 @@ class tplMyMeta
 
     public static function MyMetaURL($attr)
     {
-        $f = $GLOBALS['core']->tpl->getFilters($attr);
+        $f = dcCore::app()->tpl->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, '$core->blog->url.$core->url->getBase("mymeta").' .
-        '"/".$_ctx->mymeta->id."/".rawurlencode($_ctx->meta->meta_id)') . '; ?>';
+        return '<?php echo ' . sprintf($f, 'dcCore::app()->blog->url.dcCore::app()->url->getBase("mymeta").' .
+        '"/".dcCore::app()->ctx->mymeta->id."/".rawurlencode(dcCore::app()->ctx->meta->meta_id)') . '; ?>';
     }
 
     public static function MetaType($attr)
     {
-        $f = $GLOBALS['core']->tpl->getFilters($attr);
+        $f = dcCore::app()->tpl->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, '$_ctx->meta->meta_type') . '; ?>';
+        return '<?php echo ' . sprintf($f, 'dcCore::app()->ctx->meta->meta_type') . '; ?>';
     }
 
     public static function MyMetaTypePrompt($attr)
     {
         $f   = tplMyMeta::getCommonMyMeta($attr);
-        $res = '<?php if ($_ctx->mymeta != null && $_ctx->mymeta->enabled) echo $_ctx->mymeta->prompt; ?>' . "\n";
+        $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) echo dcCore::app()->ctx->mymeta->prompt; ?>' . "\n";
 
         return sprintf($f, $res);
     }
@@ -174,8 +174,8 @@ class tplMyMeta
     {
         $f = tplMyMeta::getCommonMyMeta($attr);
 
-        $res = '<?php if ($_ctx->mymeta != null && $_ctx->mymeta->enabled)' . "\n" .
-        'echo $_ctx->mymeta->getValue($core->mymeta->dcmeta->getMetaStr($_ctx->posts->post_meta,$_ctx->mymeta->id),' .
+        $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled)' . "\n" .
+        'echo dcCore::app()->ctx->mymeta->getValue(dcCore::app()->mymeta->dcmeta->getMetaStr(dcCore::app()->ctx->posts->post_meta,dcCore::app()->ctx->mymeta->id),' .
         tplMyMeta::attr2str($attr) . '); ?>';
 
         return sprintf($f, $res);
@@ -185,8 +185,8 @@ class tplMyMeta
     {
         $f = tplMyMeta::getCommonMyMeta($attr);
 
-        $res = '<?php if ($_ctx->mymeta != null && $_ctx->mymeta->enabled) {' . "\n" .
-        'echo $_ctx->mymeta->getValue($_ctx->meta->meta_id,' . tplMyMeta::attr2str($attr) . '); ' . "\n" .
+        $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) {' . "\n" .
+        'echo dcCore::app()->ctx->mymeta->getValue(dcCore::app()->ctx->meta->meta_id,' . tplMyMeta::attr2str($attr) . '); ' . "\n" .
         '} ?>';
 
         return sprintf($f, $res);
@@ -210,8 +210,8 @@ class tplMyMeta
             }
         }
         $res = '<?php' . "\n" .
-        'if ($_ctx->mymeta != null && $_ctx->mymeta->enabled) :' . "\n" .
-        '  $value=$core->mymeta->dcmeta->getMetaStr($_ctx->posts->post_meta,$_ctx->mymeta->id); ' . "\n" .
+        'if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) :' . "\n" .
+        '  $value=dcCore::app()->mymeta->dcmeta->getMetaStr(dcCore::app()->ctx->posts->post_meta,dcCore::app()->ctx->mymeta->id); ' . "\n" .
         '  if(' . implode(' ' . $operator . ' ', $if) . ') : ?>' .
         $content .
         '  <?php endif; ' . "\n" .
@@ -223,7 +223,7 @@ class tplMyMeta
     public static function MyMetaData($attr, $content)
     {
         $f     = tplMyMeta::getCommonMyMeta($attr);
-        $limit = isset($attr['limit']) ? (integer) $attr['limit'] : 'null';
+        $limit = isset($attr['limit']) ? (int) $attr['limit'] : 'null';
 
         $sortby = 'meta_id_lower';
         if (isset($attr['sortby']) && $attr['sortby'] == 'count') {
@@ -236,18 +236,18 @@ class tplMyMeta
         }
 
         $res = "<?php\n" .
-        '$_ctx->meta = $core->meta->computeMetaStats($core->mymeta->dcmeta->getMetadata([' .
-            "'meta_id' => \$_ctx->mymeta->id, " .
+        'dcCore::app()->ctx->meta = dcCore::app()->meta->computeMetaStats(dcCore::app()->mymeta->dcmeta->getMetadata([' .
+            "'meta_id' => dcCore::app()->ctx->mymeta->id, " .
             "'limit' => " . $limit .
         '])); ' .
-//        '$_ctx->meta = $core->mymeta->dcmeta->getMeta($_ctx->mymeta->id,' . $limit . '); ' .
-        "\$_ctx->meta->sort('" . $sortby . "','" . $order . "'); " .
+//        'dcCore::app()->ctx->meta = dcCore::app()->mymeta->dcmeta->getMeta(dcCore::app()->ctx->mymeta->id,' . $limit . '); ' .
+        "dcCore::app()->ctx->meta->sort('" . $sortby . "','" . $order . "'); " .
         '?>';
 
-        $res .= '<?php while ($_ctx->meta->fetch()) : ' . "\n" .
-        '$_ctx->mymeta = $core->mymeta->getByID($_ctx->meta->meta_type); ?>' . "\n" .
-        $content . '<?php $_ctx->mymeta = null; endwhile; ' .
-        '$_ctx->meta = null; ?>';
+        $res .= '<?php while (dcCore::app()->ctx->meta->fetch()) : ' . "\n" .
+        'dcCore::app()->ctx->mymeta = dcCore::app()->mymeta->getByID(dcCore::app()->ctx->meta->meta_type); ?>' . "\n" .
+        $content . '<?php dcCore::app()->ctx->mymeta = null; endwhile; ' .
+        'dcCore::app()->ctx->meta = null; ?>';
 
         return sprintf($f, $res);
     }
@@ -257,14 +257,13 @@ class widgetsMyMeta
 {
     public static function mymetaList($w)
     {
-        global $core;
-        if ($w->homeonly && $core->url->type != 'default') {
+        if ($w->homeonly && dcCore::app()->url->type != 'default') {
             return;
         }
-        $allmeta  = $core->mymeta->getAll();
+        $allmeta  = dcCore::app()->mymeta->getAll();
         $prompt   = ($w->prompt == 'prompt');
         $items    = [];
-        $base_url = $core->blog->url . $core->url->getBase('mymeta') . '/';
+        $base_url = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/';
         $section  = '';
         if ($w->section != '') {
             $section      = $w->section;
@@ -282,7 +281,7 @@ class widgetsMyMeta
             } elseif ($display_meta && $meta->enabled
                 && $meta->url_list_enabled) {
                 $items[] = '<li><a href="' . $base_url . rawurlencode($meta->id) . '">' .
-                    html::escapeHTML($prompt?$meta->prompt:$meta->id) . '</a></li>';
+                    html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
             }
         }
         if (count($items) == 0) {
@@ -298,20 +297,18 @@ class widgetsMyMeta
 
     public static function mymetaValues($w)
     {
-        global $core;
-
-        if ($w->homeonly && $core->url->type != 'default') {
+        if ($w->homeonly && dcCore::app()->url->type != 'default') {
             return;
         }
 
-        $limit       = abs((integer) $w->limit);
+        $limit       = abs((int) $w->limit);
         $is_cloud    = ($w->displaymode == 'cloud');
-        $mymetaEntry = $core->mymeta->getByID($w->mymetaid);
+        $mymetaEntry = dcCore::app()->mymeta->getByID($w->mymetaid);
 
         if ($mymetaEntry == null || !$mymetaEntry->enabled) {
             return '<p>not enabled</p>';
         }
-        $rs = $core->mymeta->dcmeta->getMeta($mymetaEntry->id, $limit);
+        $rs = dcCore::app()->mymeta->dcmeta->getMeta($mymetaEntry->id, $limit);
 
         if ($rs->isEmpty()) {
             return '<p>empty</p>';
@@ -329,10 +326,10 @@ class widgetsMyMeta
 
         $rs->sort($sort, $order);
         $title = $w->title ? html::escapeHTML($w->title) : $mymetaEntry->prompt;
-        $res   = '<div class="mymetavalues' . ($is_cloud?' tags':'') . '">' .
+        $res   = '<div class="mymetavalues' . ($is_cloud ? ' tags' : '') . '">' .
         '<h2>' . $title . '</h2>' .
         '<ul>';
-        $base_url = $core->blog->url . $core->url->getBase('mymeta') . '/' . $mymetaEntry->id;
+        $base_url = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaEntry->id;
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {
@@ -365,32 +362,30 @@ class urlMymeta extends dcUrlHandlers
         if ($args == '' && !$n) {
             self::p404();
         } else {
-            $core = & $GLOBALS['core'];
-            $_ctx = & $GLOBALS['_ctx'];
             if ($n) {
-                $GLOBALS['_page_number'] = $n;
+                dcCore::app()->public->setPageNumber($n);
             }
             $values = explode('/', $args);
-            $mymeta = $core->mymeta->getByID($values[0]);
+            $mymeta = dcCore::app()->mymeta->getByID($values[0]);
             if ($mymeta == null || !$mymeta->enabled) {
                 self::p404();
 
                 return;
             }
-            $_ctx->mymeta = $mymeta;
+            dcCore::app()->ctx->mymeta = $mymeta;
 
             if (sizeof($values) == 1) {
-                $tpl = ($mymeta->tpl_list == '')?'mymetas.html':$mymeta->tpl_list;
-                if ($mymeta->url_list_enabled && $core->tpl->getFilePath($tpl)) {
+                $tpl = ($mymeta->tpl_list == '') ? 'mymetas.html' : $mymeta->tpl_list;
+                if ($mymeta->url_list_enabled && dcCore::app()->tpl->getFilePath($tpl)) {
                     self::serveDocument($tpl);
                 } else {
                     self::p404();
                 }
             } else {
-                $mymeta_value = $values[1];
-                $_ctx->meta   = $core->mymeta->dcmeta->getMeta($mymeta->id, null, $mymeta_value);
-                $tpl          = ($mymeta->tpl_single == '')?'mymeta.html':$mymeta->tpl_single;
-                if (!$_ctx->meta->isEmpty() && $mymeta->url_single_enabled && $core->tpl->getFilePath($tpl)) {
+                $mymeta_value            = $values[1];
+                dcCore::app()->ctx->meta = dcCore::app()->mymeta->dcmeta->getMeta($mymeta->id, null, $mymeta_value);
+                $tpl                     = ($mymeta->tpl_single == '') ? 'mymeta.html' : $mymeta->tpl_single;
+                if (!dcCore::app()->ctx->meta->isEmpty() && $mymeta->url_single_enabled && dcCore::app()->tpl->getFilePath($tpl)) {
                     self::serveDocument($tpl);
                 } else {
                     self::p404();

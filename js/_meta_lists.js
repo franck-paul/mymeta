@@ -1,10 +1,10 @@
 /*global $, dotclear */
 'use strict';
 
-$(function () {
+$(() => {
     $('#mymeta-list').sortable({
         cursor: 'move',
-        stop: function (event, ui) {
+        stop(event, ui) {
             $('#mymeta-list tr td input.position').each(function (i) {
                 $(this).val(i + 1);
             });

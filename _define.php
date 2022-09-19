@@ -17,18 +17,18 @@ $this->registerModule(
     'My Meta',                                      // Name
     'User-defined metadata management in posts',    // Description
     'Bruno Hondelatte and contributors',            // Author
-    '0.5.4',                                        // Version
+    '0.6',
     [
-        //        'requires'    => [['core', '2.17']],
+        'requires'    => [['core', '2.24']],
         'priority'    => 1001,
         'permissions' => 'usage,contentadmin',                      // Permissions
         'type'        => 'plugin',                                  // Type
         'settings'    => [                                          // Settings
-            'self' => ''
+            'self' => '',
         ],
 
         'details'    => 'https://open-time.net/?q=mymeta',       // Details URL
         'support'    => 'https://github.com/franck-paul/mymeta', // Support URL
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/master/dcstore.xml'
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/master/dcstore.xml',
     ]
 );

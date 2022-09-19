@@ -13,27 +13,27 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$mymeta = new myMeta($core);
+$mymeta = new myMeta(dcCore::app());
 
 if (!empty($_REQUEST['m'])) {
     switch ($_REQUEST['m']) {
         case 'edit':
-            require dirname(__FILE__) . '/index_edit.php';
+            require __DIR__ . '/index_edit.php';
 
             break;
         case 'view':
-            require dirname(__FILE__) . '/index_view.php';
+            require __DIR__ . '/index_view.php';
 
             break;
         case 'viewposts':
-            require dirname(__FILE__) . '/index_view_posts.php';
+            require __DIR__ . '/index_view_posts.php';
 
             break;
         case 'editsection':
-            require dirname(__FILE__) . '/index_edit_section.php';
+            require __DIR__ . '/index_edit_section.php';
 
             break;
     }
 } else {
-    require dirname(__FILE__) . '/index_home.php';
+    require __DIR__ . '/index_home.php';
 }

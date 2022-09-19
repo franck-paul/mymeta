@@ -13,6 +13,6 @@ if (!defined('DC_RC_PATH')) {
     return;
 }
 
-$GLOBALS['__autoload']['myMeta'] = dirname(__FILE__) . '/class.mymeta.php';
+$__autoload['myMeta'] = __DIR__ . '/class.mymeta.php';
 
-$GLOBALS['core']->url->register('mymeta', 'meta', '^meta/(.+)$', ['urlMymeta','tag']);
+dcCore::app()->url->register('mymeta', 'meta', '^meta/(.+)$', ['urlMymeta','tag']);

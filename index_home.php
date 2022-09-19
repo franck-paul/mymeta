@@ -13,7 +13,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$mymeta = new mymeta($core, true);
+$mymeta = new mymeta(dcCore::app(), true);
 if ($mymeta->settings->mymeta_fields != null) {
     $backup = $mymeta->settings->mymeta_fields;
     $fields = unserialize(base64_decode($mymeta->settings->mymeta_fields));
@@ -36,23 +36,25 @@ if ($mymeta->settings->mymeta_fields != null) {
         $mymeta->store();
 
         if ($mymeta->settings->mymeta_fields_backup == null) {
-            $mymeta->settings->put('mymeta_fields_backup',
-                    $backup,
-                    'string',
-                    'MyMeta fields backup (0.3.x version)');
+            $mymeta->settings->put(
+                'mymeta_fields_backup',
+                $backup,
+                'string',
+                'MyMeta fields backup (0.3.x version)'
+            );
         }
         http::redirect($p_url);
         exit;
     }
 }
-$mymeta = new mymeta($core);
-$dcmeta = new dcMeta($core);
+$mymeta = new mymeta(dcCore::app());
+$dcmeta = new dcMeta();
 if (!empty($_POST['action']) && !empty($_POST['entries'])) {
     $entries = $_POST['entries'];
     $action  = $_POST['action'];
     if (preg_match('/^(enable|disable)$/', $action)) {
         $mymeta->setEnabled($entries, ($action === 'enable'));
-        $msg = ($action === 'enable')?
+        $msg = ($action                        === 'enable') ?
             __('Mymeta entries have been successfully enabled')
             : __('Mymeta entries have been successfully disabled');
     } elseif (preg_match('/^(delete)$/', $action)) {
@@ -71,7 +73,8 @@ if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
     $mymeta->store();
     dcPage::addSuccessNotice(sprintf(
         __('Section "%s" has been successfully created'),
-        html::escapeHTML($_POST['mymeta_section'])));
+        html::escapeHTML($_POST['mymeta_section'])
+    ));
     http::redirect($p_url);
     exit;
 }
@@ -105,22 +108,22 @@ $combo_action[__('delete')]  = 'delete';
 <html>
 <head>
   <title><?php echo __('My Metadata'); ?></title>
-  <?php // echo dcPage::jsToolMan();?>
   <?php echo
     dcPage::jsLoad('js/jquery/jquery-ui.custom.js') .
     dcPage::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
     dcPage::jsLoad('index.php?pf=mymeta/js/_meta_lists.js');
 
-  ?>
+?>
 </head>
 <body>
 <?php
 
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML($core->blog->name) => '',
-        __('My Metadata')                   => ''
-    ]) . dcPage::notices();
+        html::escapeHTML(dcCore::app()->blog->name) => '',
+        __('My Metadata')                           => '',
+    ]
+) . dcPage::notices();
 
 echo
 '<p class="top-add"><a class="button add" href="#new-meta">' . __('Add a metadata') . '</a></p>';
@@ -143,71 +146,71 @@ echo '<h3>' . __('MyMeta list') . '</h3>';
 		<tbody id="mymeta-list">
 			<?php
                 $metaStat = $mymeta->getMyMetaStats();
-                $stats    = [];
-                while ($metaStat->fetch()) {
-                    $stats[$metaStat->meta_type] = $metaStat->count;
-                }
+$stats                    = [];
+while ($metaStat->fetch()) {
+    $stats[$metaStat->meta_type] = $metaStat->count;
+}
 
-                $allMeta = $mymeta->getAll();
-                foreach ($allMeta as $meta) {
-                    if ($meta instanceof myMetaSection) {
-                        echo
-                        '<tr class="line" id="l_' . $meta->id . '">' .
-                         '<td class="handle minimal">' .
-                        form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
-                        '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                        '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=editsection&amp;id=' . $meta->id . '">' .
-                        '<img src="images/menu/edit.png" alt="' . __('edit MyMeta') . '" /></a></td>' .
-                        '<td class="nowrap maximal" colspan="6">' .
-                        '<strong>' . sprintf(__('Section: %s'), html::escapeHTML($meta->prompt)) . '</strong></td>' .
-                        '</tr>';
-                    } else {
-                        $img = '<img alt="%1$s" title="%1$s" src="images/%2$s" />';
-                        if ($meta->enabled) {
-                            $img_status = sprintf($img, __('published'), 'check-on.png');
-                        } else {
-                            $img_status = sprintf($img, __('unpublished'), 'check-off.png');
-                        }
-                        $st           = (isset($stats[$meta->id]))?$stats[$meta->id]:0;
-                        $restrictions = $meta->getRestrictions();
-                        if (!$restrictions) {
-                            $restrictions = __('All');
-                        }
-                        echo
-                        '<tr class="line' . ($meta->enabled ? '' : ' offline') . '" id="l_' . $meta->id . '">' .
-                         '<td class="handle minimal">' .
-                        form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
-                        '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                        '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=edit&amp;id=' . $meta->id . '">' .
-                        '<img src="images/menu/edit.png" alt="' . __('edit MyMeta') . '" /></a></td>' .
-                        '<td class="nowrap"><a href="plugin.php?p=mymeta&amp;m=view&amp;id=' . $meta->id . '">' .
-                        html::escapeHTML($meta->id) . '</a></td>' .
-                        '<td class="nowrap">' . $meta->getMetaTypeDesc() . '</td>' .
-                        '<td class="nowrap maximal">' . $meta->prompt . '</td>' .
-                        '<td>' . $restrictions . '</td><td class="nowrap">' .
-                        $st . ' ' . (($st <= 1)?__('entry'):__('entries')) . '</td>' .
-                        '<td class="nowrap minimal">' . $img_status . '</td>' .
-                        '</tr>';
-                    }
-                }
-            ?>
+$allMeta = $mymeta->getAll();
+foreach ($allMeta as $meta) {
+    if ($meta instanceof myMetaSection) {
+        echo
+        '<tr class="line" id="l_' . $meta->id . '">' .
+         '<td class="handle minimal">' .
+        form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
+        '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
+        '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=editsection&amp;id=' . $meta->id . '">' .
+        '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
+        '<td class="nowrap maximal" colspan="6">' .
+        '<strong>' . sprintf(__('Section: %s'), html::escapeHTML($meta->prompt)) . '</strong></td>' .
+        '</tr>';
+    } else {
+        $img = '<img alt="%1$s" title="%1$s" src="images/%2$s" />';
+        if ($meta->enabled) {
+            $img_status = sprintf($img, __('published'), 'check-on.png');
+        } else {
+            $img_status = sprintf($img, __('unpublished'), 'check-off.png');
+        }
+        $st           = (isset($stats[$meta->id])) ? $stats[$meta->id] : 0;
+        $restrictions = $meta->getRestrictions();
+        if (!$restrictions) {
+            $restrictions = __('All');
+        }
+        echo
+        '<tr class="line' . ($meta->enabled ? '' : ' offline') . '" id="l_' . $meta->id . '">' .
+         '<td class="handle minimal">' .
+        form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
+        '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
+        '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=edit&amp;id=' . $meta->id . '">' .
+        '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
+        '<td class="nowrap"><a href="plugin.php?p=mymeta&amp;m=view&amp;id=' . $meta->id . '">' .
+        html::escapeHTML($meta->id) . '</a></td>' .
+        '<td class="nowrap">' . $meta->getMetaTypeDesc() . '</td>' .
+        '<td class="nowrap maximal">' . $meta->prompt . '</td>' .
+        '<td>' . $restrictions . '</td><td class="nowrap">' .
+        $st . ' ' . (($st <= 1) ? __('entry') : __('entries')) . '</td>' .
+        '<td class="nowrap minimal">' . $img_status . '</td>' .
+        '</tr>';
+    }
+}
+?>
 		</tbody>
 	</table>
 	<div class="two-cols">
 		<p class="col">
 			<?php
-                echo form::hidden('mymeta_order', '');
-                echo form::hidden(['p'], 'mymeta');
-                echo $core->formNonce();
-            ?>
+    echo form::hidden('mymeta_order', '');
+echo form::hidden(['p'], 'mymeta');
+echo dcCore::app()->formNonce();
+?>
 			<input type="submit" name="saveorder" value="<?php echo __('Save order'); ?>" />
 		</p>
 		<p class="col right">
 			<?php
-                echo
-                    __('Selected metas action:') .
-                    form::combo('action', $combo_action);
-            ?>
+    echo
+        __('Selected metas action:') .
+        form::combo('action', $combo_action);
+?>
 			<input type="submit" value="<?php echo __('ok'); ?>" />
 		</p>
 	</div>
@@ -215,24 +218,24 @@ echo '<h3>' . __('MyMeta list') . '</h3>';
 <div class="fieldset clear">
 	<form method="post" action="plugin.php">
 		<?php
-            echo '<h3 id="new-meta">' . __('New metadata') . '</h3>' .
-                '<p>' . __('New MyMeta') . ' : ' .
-                form::combo('mymeta_type', $types, '') .
-                '&nbsp;<input type="submit" name="new" value="' . __('Create MyMeta') . '" />' .
-                form::hidden(['p'], 'mymeta') .
-                form::hidden(['m'], 'edit') . $core->formNonce() .
-                '</p>';
-        ?>
+echo '<h3 id="new-meta">' . __('New metadata') . '</h3>' .
+    '<p>' . __('New MyMeta') . ' : ' .
+    form::combo('mymeta_type', $types, '') .
+    '&nbsp;<input type="submit" name="new" value="' . __('Create MyMeta') . '" />' .
+    form::hidden(['p'], 'mymeta') .
+    form::hidden(['m'], 'edit') . dcCore::app()->formNonce() .
+    '</p>';
+?>
 	</form>
 	<form method="post" action="plugin.php">
 		<?php
-            echo '<p>' . __('New section') . ' : ' .
-                form::field('mymeta_section', 20, 255) .
-                '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '" />' .
-                form::hidden(['p'], 'mymeta') .
-                $core->formNonce() .
-                '</p>';
-        ?>
+    echo '<p>' . __('New section') . ' : ' .
+        form::field('mymeta_section', 20, 255) .
+        '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '" />' .
+        form::hidden(['p'], 'mymeta') .
+        dcCore::app()->formNonce() .
+        '</p>';
+?>
 	</form>
 </div>
 </body>

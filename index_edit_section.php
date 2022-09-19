@@ -48,18 +48,19 @@ if (array_key_exists('id', $_REQUEST)) {
 <head>
   <title><?php echo __('My metadata'); ?></title>
   <?php echo dcPage::jsPageTabs('mymeta');
-  ?>
+?>
 </head>
 <body>
 <?php
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML($core->blog->name) => '',
-        __('My Metadata')                   => $p_url,
-        $page_title                         => ''
-    ]) . dcPage::notices();
-if (!$core->error->flag()):
-?>
+        html::escapeHTML(dcCore::app()->blog->name) => '',
+        __('My Metadata')                           => $p_url,
+        $page_title                                 => '',
+    ]
+) . dcPage::notices();
+if (!dcCore::app()->error->flag()):
+    ?>
 	<form method="post" action="plugin.php">
 		<div class="fieldset">
 			<h3><?php echo __('MyMeta section definition'); ?></h3>
@@ -73,9 +74,9 @@ if (!$core->error->flag()):
 			<input type="hidden" name="p" value="mymeta" />
 			<input type="hidden" name="m" value="editsection" />
 			<?php
-                echo form::hidden('mymeta_id', $mymetaid) .
-                    $core->formNonce()
-            ?>
+                    echo form::hidden('mymeta_id', $mymetaid) .
+                        dcCore::app()->formNonce()
+    ?>
 			<input type="submit" name="saveconfig" value="<?php echo __('Save'); ?>" />
 		</p>
 	</form>

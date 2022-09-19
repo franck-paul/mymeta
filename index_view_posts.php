@@ -40,24 +40,24 @@ if (!empty($_POST['rename'])) {
     try {
         if ($mymeta->dcmeta->updateMeta($value, $new_value, $mymetaEntry->id)) {
             dcPage::addSuccessNotice(sprintf(
-        __('Mymeta value successfully updated from "%s" to "%s"'),
-        html::escapeHTML($value),
-        html::escapeHTML($new_value)
-      ));
+                __('Mymeta value successfully updated from "%s" to "%s"'),
+                html::escapeHTML($value),
+                html::escapeHTML($new_value)
+            ));
             http::redirect($p_url . '&m=view&id=' . $mymetaEntry->id . '&status=valchg');
         }
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
 }
 
 # Delete a tag
-if (!empty($_POST['delete']) && $core->auth->check('publish,contentadmin', $core->blog->id)) {
+if (!empty($_POST['delete']) && dcCore::app()->auth->check('publish,contentadmin', dcCore::app()->blog->id)) {
     try {
         /*$mymeta->dcmeta->delMeta($tag,'tag');
         http::redirect($p_url.'&m=tags&del=1');*/
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
 }
 
@@ -66,43 +66,46 @@ $params['limit']      = [(($page - 1) * $nb_per_page),$nb_per_page];
 $params['no_content'] = true;
 
 $params['meta_id']   = $value;
-$params['meta_type'] = $mymetaEntry->id;;
+$params['meta_type'] = $mymetaEntry->id;
+
 $params['post_type'] = '';
 
 # Get posts
 try {
     $posts     = $mymeta->dcmeta->getPostsByMeta($params);
     $counter   = $mymeta->dcmeta->getPostsByMeta($params, true);
-    $post_list = new adminPostList($core, $posts, $counter->f(0));
+    $post_list = new adminPostList(dcCore::app(), $posts, $counter->f(0));
 } catch (Exception $e) {
-    $core->error->add($e->getMessage());
+    dcCore::app()->error->add($e->getMessage());
 }
 
 # Actions combo box
 $combo_action = [];
-if ($core->auth->check('publish,contentadmin', $core->blog->id)) {
+if (dcCore::app()->auth->check('publish,contentadmin', dcCore::app()->blog->id)) {
     $combo_action[__('Status')] = [
         __('Publish')         => 'publish',
         __('Unpublish')       => 'unpublish',
         __('Schedule')        => 'schedule',
-        __('Mark as pending') => 'pending'
+        __('Mark as pending') => 'pending',
     ];
 }
 $combo_action[__('Mark')] = [
     __('Mark as selected')   => 'selected',
-    __('Mark as unselected') => 'unselected'
+    __('Mark as unselected') => 'unselected',
 ];
 $combo_action[__('Change')] = [__('Change category') => 'category'];
-if ($core->auth->check('admin', $core->blog->id)) {
-    $combo_action[__('Change')] = array_merge($combo_action[__('Change')],
-    [__('Change author') => 'author']);
+if (dcCore::app()->auth->check('admin', dcCore::app()->blog->id)) {
+    $combo_action[__('Change')] = array_merge(
+        $combo_action[__('Change')],
+        [__('Change author') => 'author']
+    );
 }
-if ($core->auth->check('delete,contentadmin', $core->blog->id)) {
+if (dcCore::app()->auth->check('delete,contentadmin', dcCore::app()->blog->id)) {
     $combo_action[__('Delete')] = [__('Delete') => 'delete'];
 }
 
 # --BEHAVIOR-- adminPostsActionsCombo
-$core->callBehavior('adminPostsActionsCombo', [&$combo_action]);
+dcCore::app()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
 ?>
 <html>
@@ -122,29 +125,32 @@ $core->callBehavior('adminPostsActionsCombo', [&$combo_action]);
   </script>
   <?php
   echo dcPage::jsPageTabs('mymeta');
-  echo $mymetaEntry->postHeader(null, true);
+echo $mymetaEntry->postHeader(null, true);
 
-  ?>
+?>
   </head>
 <body>
 <?php
 echo dcPage::breadcrumb(
-  [
-      html::escapeHTML($core->blog->name) => '',
-      __('My Metadata')                   => $p_url,
-      html::escapeHTML($mymetaEntry->id)  => $p_url . '&m=view&id=' . $mymetaEntry->id,
-      sprintf(__('Value "%s"'), html::escapeHTML($value)) => ''
-  ]) . dcPage::notices();
+    [
+        html::escapeHTML(dcCore::app()->blog->name) => '',
+        __('My Metadata')                           => $p_url,
+        html::escapeHTML($mymetaEntry->id)          => $p_url . '&m=view&id=' . $mymetaEntry->id,
+        sprintf(__('Value "%s"'), html::escapeHTML($value)) => '',
+    ]
+) . dcPage::notices();
 
-  if (!empty($_GET['renamed'])) {
-      echo '<p class="message">' . __('MyMeta has been successfully renamed') . '</p>';
-  }
+if (!empty($_GET['renamed'])) {
+    echo '<p class="message">' . __('MyMeta has been successfully renamed') . '</p>';
+}
 
-if (!$core->error->flag()) {
+if (!dcCore::app()->error->flag()) {
     echo '<h3>' . sprintf(__('Entries having meta id "%s" set to "%s"'), html::escapeHTML($mymetaEntry->id), html::escapeHTML($value)) . '</h3>';
     # Show posts
-    $post_list->display($page,$nb_per_page,
-  '<form action="posts_actions.php" method="post" id="form-entries">' .
+    $post_list->display(
+        $page,
+        $nb_per_page,
+        '<form action="posts_actions.php" method="post" id="form-entries">' .
 
   '%s' .
 
@@ -157,26 +163,27 @@ if (!$core->error->flag()) {
   form::hidden('post_type', '') .
   form::hidden('redir', $p_url . '&amp;m=view&amp;id=' .
     $mymetaEntry->id . '&amp;page=' . $page) .
-  $core->formNonce() .
+  dcCore::app()->formNonce() .
   '</div>' .
-  '</form>');
+  '</form>'
+    );
 
     # Remove tag
-    if (!$posts->isEmpty() && $core->auth->check('contentadmin', $core->blog->id)) {
+    if (!$posts->isEmpty() && dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
         echo
     '<form id="tag_delete" action="' . $this_url . '" method="post">' .
     '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '" />' .
-    $core->formNonce() . '</p>' .
+    dcCore::app()->formNonce() . '</p>' .
     '</form>';
     }
     if (!$posts->isEmpty()) {
         echo
     '<div class="fieldset"><h3>' . __('Change MyMeta value') . '</h3><form action="' . $this_url . '" method="post">' .
-    dcPage::message(__('This will change the meta value for all entries having this value'), false, false, false, 'info') .
+    dcPage::message(__('This will change the meta value for all entries having this value'), false, false, false) .
     $mymetaEntry->postShowForm($mymeta, null, html::escapeHTML($value), true) .
     '<p><input type="submit" name="rename" value="' . __('save') . '" />' .
     form::hidden(['value'], html::escapeHTML($value)) .
-    $core->formNonce() .
+    dcCore::app()->formNonce() .
     '</p></form></div>';
     }
 }

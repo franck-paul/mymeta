@@ -13,22 +13,16 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$version = $core->plugins->moduleInfo('mymeta', 'version');
+$version = dcCore::app()->plugins->moduleInfo('mymeta', 'version');
 
-if (version_compare($core->getVersion('mymeta'), $version, '>=')) {
+if (version_compare(dcCore::app()->getVersion('mymeta'), $version, '>=')) {
     return;
 }
 
-$core->setVersion('mymeta', $version);
+dcCore::app()->setVersion('mymeta', $version);
 
-# Settings compatibility test
-if (version_compare(DC_VERSION, '2.2-alpha', '>=')) {
-    $core->blog->settings->addNamespace('mymeta');
-    $mymeta_settings = & $core->blog->settings->mymeta;
-} else {
-    $core->blog->settings->setNamespace('mymeta');
-    $mymeta_settings = & $core->blog->settings;
-}
+dcCore::app()->blog->settings->addNamespace('mymeta');
+$mymeta_settings = dcCore::app()->blog->settings->mymeta;
 
 if ($mymeta_settings->mymeta_fields == null) {
     return true;
@@ -42,7 +36,7 @@ if (get_class(current($fields)) != 'stdClass') {
     return true;
 }
 
-$mymeta = new mymeta($core, true);
+$mymeta = new mymeta(dcCore::app(), true);
 foreach ($fields as $k => $v) {
     $newfield          = $mymeta->newMyMeta($v->type);
     $newfield->id      = $k;
@@ -60,10 +54,12 @@ $mymeta->reorder();
 $mymeta->store();
 
 if ($mymeta_settings->mymeta_fields_backup == null) {
-    $mymeta_settings->put('mymeta_fields_backup',
-            $backup,
-            'string',
-            'MyMeta fields backup (0.3.x version)');
+    $mymeta_settings->put(
+        'mymeta_fields_backup',
+        $backup,
+        'string',
+        'MyMeta fields backup (0.3.x version)'
+    );
 }
 
 return true;

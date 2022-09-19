@@ -19,7 +19,6 @@
  */
 class myMeta
 {
-    private $core;
     private $con;
     public $dcmeta;
     public $settings;
@@ -46,8 +45,7 @@ class myMeta
      * Registers a new meta type. Must extend myMetaEntry class
      *
      * @param myMetaEntry $class class to register
-     * @static
-     * @access public
+     *
      * @return void
      */
     public static function registerType($class)
@@ -58,7 +56,7 @@ class myMeta
         myMeta::$typesCombo[$desc] = $type;
         myMeta::$types[$type]      = [
             'desc'   => $desc,
-            'object' => $class];
+            'object' => $class, ];
     }
 
     /**
@@ -67,27 +65,21 @@ class myMeta
      * Mymeta settings are retrieved from dc settings
      *
      * @param mixed $core core to reference
-     * @access public
+     *
      * @return void
      */
     public function __construct($core, $bypass_settings = false)
     {
-        $this->core = & $core;
-        if (isset($core->meta)) {
-            $this->dcmeta = & $core->meta;
+        if (isset(dcCore::app()->meta)) {
+            $this->dcmeta = dcCore::app()->meta;
         } else {
-            $this->dcmeta = new dcMeta($core);
+            $this->dcmeta = new dcMeta();
         }
 
-        if (version_compare(DC_VERSION, '2.2-alpha', '>=')) {
-            $core->blog->settings->addNamespace('mymeta');
-            $this->settings = & $core->blog->settings->mymeta;
-        } else {
-            $core->blog->settings->setNamespace('mymeta');
-            $this->settings = & $core->blog->settings;
-        }
+        dcCore::app()->blog->settings->addNamespace('mymeta');
+        $this->settings = & dcCore::app()->blog->settings->mymeta;
 
-        $this->con = & $this->core->con;
+        $this->con = & dcCore::app()->con;
         if (!$bypass_settings && $this->settings->mymeta_fields) {
             $this->mymeta = @unserialize(base64_decode($this->settings->mymeta_fields));
             if (!is_array($this->mymeta)) {
@@ -124,7 +116,6 @@ class myMeta
      *
      * Retrieves form-friendly registered mymeta types
      *
-     * @access public
      * @return void
      */
     public function getTypesAsCombo()
@@ -139,7 +130,6 @@ class myMeta
      *
      * Stores mymeta settings
      *
-     * @access public
      * @return void
      */
     public function store()
@@ -148,7 +138,8 @@ class myMeta
             'mymeta_fields',
             base64_encode(serialize($this->mymeta)),
             'string',
-            'MyMeta fields');
+            'MyMeta fields'
+        );
     }
 
     /**
@@ -156,8 +147,7 @@ class myMeta
      *
      * Retrieves all mymeta, indexed by position
      *
-     * @access public
-     * @return void
+     * @return array
      */
     public function getAll()
     {
@@ -170,7 +160,7 @@ class myMeta
      * Retrieves a mymeta, given its position
      *
      * @param int $pos  the position
-     * @access public
+     *
      * @return mymetaEntry the mymeta
      */
     public function getByPos($pos)
@@ -184,7 +174,7 @@ class myMeta
      * Retrieves a mymeta, given its ID
      *
      * @param String $id  the ID
-     * @access public
+     *
      * @return mymetaEntry the mymeta
      */
     public function getByID($id)
@@ -200,7 +190,7 @@ class myMeta
      * updates mymeta table with a given meta
      *
      * @param mixed $meta the meta to store
-     * @access public
+     *
      * @return void
      */
     public function update($meta)
@@ -325,8 +315,6 @@ class myMeta
     public function postShowForm($post)
     {
         $res             = '';
-        $inSection       = false;
-        $active          = false;
         $active_sections = ['' => true];
         $cur_section     = '';
         foreach ($this->mymeta as $id => $meta) {
@@ -334,7 +322,6 @@ class myMeta
                 $cur_section = $meta->id;
             } elseif ($meta->enabled) {
                 $active_sections[$cur_section] = true;
-                $active                        = true;
             }
         }
         if (!count($active_sections)) {
@@ -399,23 +386,23 @@ class myMeta
     // DB requests
     public function getMyMetaStats()
     {
-        $table = $this->core->prefix . 'meta';
+        $table = dcCore::app()->prefix . 'meta';
 
         $strReq = 'SELECT meta_type, COUNT(M.post_id) as count ' .
-        'FROM ' . $table . ' M LEFT JOIN ' . $this->core->prefix . 'post P ' .
+        'FROM ' . $table . ' M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
         'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escape($this->core->blog->id) . "' ";
+        "WHERE P.blog_id = '" . $this->con->escape(dcCore::app()->blog->id) . "' ";
 
-        if (!$this->core->auth->check('contentadmin', $this->core->blog->id)) {
+        if (!dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
             $strReq .= 'AND ((post_status = 1 ';
 
-            if ($this->core->blog->without_password) {
+            if (dcCore::app()->blog->without_password) {
                 $strReq .= 'AND post_password IS NULL ';
             }
             $strReq .= ') ';
 
-            if ($this->core->auth->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escape($this->core->auth->userID()) . "')";
+            if (dcCore::app()->auth->userID()) {
+                $strReq .= "OR P.user_id = '" . $this->con->escape(dcCore::app()->auth->userID()) . "')";
             } else {
                 $strReq .= ') ';
             }
@@ -439,9 +426,9 @@ class myMeta
             $strReq = 'SELECT M.meta_id, M.meta_type, COUNT(M.post_id) as count ';
         }
 
-        $strReq .= 'FROM ' . $this->core->prefix . 'meta M LEFT JOIN ' . $this->core->prefix . 'post P ' .
+        $strReq .= 'FROM ' . dcCore::app()->prefix . 'meta M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
         'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escape($this->core->blog->id) . "' ";
+        "WHERE P.blog_id = '" . $this->con->escape(dcCore::app()->blog->id) . "' ";
 
         if (isset($params['meta_type'])) {
             $strReq .= " AND meta_type = '" . $this->con->escape($params['meta_type']) . "' ";
@@ -455,16 +442,16 @@ class myMeta
             $strReq .= ' AND P.post_id ' . $this->con->in($params['post_id']) . ' ';
         }
 
-        if (!$this->core->auth->check('contentadmin', $this->core->blog->id)) {
+        if (!dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
             $strReq .= 'AND ((post_status = 1 ';
 
-            if ($this->core->blog->without_password) {
+            if (dcCore::app()->blog->without_password) {
                 $strReq .= 'AND post_password IS NULL ';
             }
             $strReq .= ') ';
 
-            if ($this->core->auth->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escape($this->core->auth->userID()) . "')";
+            if (dcCore::app()->auth->userID()) {
+                $strReq .= "OR P.user_id = '" . $this->con->escape(dcCore::app()->auth->userID()) . "')";
             } else {
                 $strReq .= ') ';
             }
@@ -511,4 +498,4 @@ class myMeta
     }
 }
 
-require_once dirname(__FILE__) . '/class.mymetatypes.php';
+require_once __DIR__ . '/class.mymetatypes.php';
