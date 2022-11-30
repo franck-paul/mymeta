@@ -15,7 +15,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 if (empty($_GET['id'])) {
     dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 $nb_per_page = 20;
@@ -23,14 +23,14 @@ $page        = !empty($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
 $mymetaEntry = $mymeta->getByID($_GET['id']);
 if ($mymetaEntry == null) {
     dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
-class adminMyMetaList extends adminGenericList
+class adminMyMetaList extends adminGenericListV2
 {
     public function display($page, $nb_per_page, $enclose_block = '')
     {
-        global $p_url,$mymetaEntry;
+        global $mymetaEntry;
 
         if ($this->rs->isEmpty()) {
             echo '<p><strong>' . __('No entries found') . '</strong></p>';
@@ -53,7 +53,7 @@ class adminMyMetaList extends adminGenericList
             echo $blocks[0];
 
             while ($this->rs->fetch()) {
-                echo $this->postLine($p_url, $mymetaEntry);
+                echo $this->postLine($mymetaEntry);
             }
 
             echo $blocks[1];
@@ -62,11 +62,11 @@ class adminMyMetaList extends adminGenericList
         }
     }
 
-    private function postLine($p_url, $mymetaEntry)
+    private function postLine($mme)
     {
         $res = '<tr class="line">';
 
-        $res .= '<td class="nowrap"><a href="' . $p_url . '&amp;m=viewposts&amp;id=' . $mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' .
+        $res .= '<td class="nowrap"><a href="' . dcCore::app()->admin->getPageURL() . '&amp;m=viewposts&amp;id=' . $mme->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' .
         $this->rs->meta_id . '</a></td>' .
         '<td class="nowrap">' . $this->rs->count . ' ' . (($this->rs->count <= 1) ? __('entry') : __('entries')) . '</td>' .
         '</tr>';
@@ -90,7 +90,7 @@ $statuses = [
 echo dcPage::breadcrumb(
     [
         html::escapeHTML(dcCore::app()->blog->name) => '',
-        __('My Metadata')                           => $p_url,
+        __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
         html::escapeHTML($mymetaEntry->id)          => '',
     ]
 ) . dcPage::notices();

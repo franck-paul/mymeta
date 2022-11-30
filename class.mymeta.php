@@ -386,15 +386,17 @@ class myMeta
     // DB requests
     public function getMyMetaStats()
     {
-        $table = dcCore::app()->prefix . 'meta';
+        $table = dcCore::app()->prefix . dcMeta::META_TABLE_NAME;
 
         $strReq = 'SELECT meta_type, COUNT(M.post_id) as count ' .
         'FROM ' . $table . ' M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
         'ON M.post_id = P.post_id ' .
         "WHERE P.blog_id = '" . $this->con->escape(dcCore::app()->blog->id) . "' ";
 
-        if (!dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
-            $strReq .= 'AND ((post_status = 1 ';
+        if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
+            $strReq .= 'AND ((post_status = ' . dcBlog::POST_PUBLISHED . ' ';
 
             if (dcCore::app()->blog->without_password) {
                 $strReq .= 'AND post_password IS NULL ';
@@ -411,7 +413,7 @@ class myMeta
         $strReq .= 'GROUP BY meta_type,P.blog_id ' .
         'ORDER BY count DESC';
 
-        $rs = $this->con->select($strReq);
+        $rs = new dcRecord($this->con->select($strReq));
         $rs = $rs->toStatic();
 
         return $rs;
@@ -426,7 +428,7 @@ class myMeta
             $strReq = 'SELECT M.meta_id, M.meta_type, COUNT(M.post_id) as count ';
         }
 
-        $strReq .= 'FROM ' . dcCore::app()->prefix . 'meta M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
+        $strReq .= 'FROM ' . dcCore::app()->prefix . dcMeta::META_TABLE_NAME . ' M LEFT JOIN ' . dcCore::app()->prefix . dcBlog::POST_TABLE_NAME . ' P ' .
         'ON M.post_id = P.post_id ' .
         "WHERE P.blog_id = '" . $this->con->escape(dcCore::app()->blog->id) . "' ";
 
@@ -442,8 +444,10 @@ class myMeta
             $strReq .= ' AND P.post_id ' . $this->con->in($params['post_id']) . ' ';
         }
 
-        if (!dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
-            $strReq .= 'AND ((post_status = 1 ';
+        if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
+            $strReq .= 'AND ((post_status = ' . dcBlog::POST_PUBLISHED . ' ';
 
             if (dcCore::app()->blog->without_password) {
                 $strReq .= 'AND post_password IS NULL ';
@@ -468,7 +472,7 @@ class myMeta
         if (isset($params['limit']) && !$count_only) {
             $strReq .= $this->con->limit($params['limit']);
         }
-        $rs = $this->con->select($strReq);
+        $rs = new dcRecord($this->con->select($strReq));
 
         return $rs;
     }

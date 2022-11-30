@@ -15,7 +15,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 $version = dcCore::app()->plugins->moduleInfo('mymeta', 'version');
 
-if (version_compare(dcCore::app()->getVersion('mymeta'), $version, '>=')) {
+if (version_compare((string) dcCore::app()->getVersion('mymeta'), $version, '>=')) {
     return;
 }
 

@@ -13,15 +13,18 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-require __DIR__ . '/class.mymeta.php';
-require __DIR__ . '/_widgets.php';
+require_once __DIR__ . '/class.mymeta.php';
+require_once __DIR__ . '/_widgets.php';
 
-dcCore::app()->menu['Plugins']->addItem(
+dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     __('My Metadata'),
     'plugin.php?p=mymeta',
     'index.php?pf=mymeta/mymeta.png',
     preg_match('/plugin.php\?p=mymeta(&.*)?$/', $_SERVER['REQUEST_URI']),
-    dcCore::app()->auth->check('usage,contentadmin', dcCore::app()->blog->id)
+    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+        dcAuth::PERMISSION_USAGE,
+        dcAuth::PERMISSION_CONTENT_ADMIN,
+    ]), dcCore::app()->blog->id)
 );
 
 dcCore::app()->addBehavior('adminPostFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
@@ -35,7 +38,7 @@ dcCore::app()->addBehavior('adminPageFormSidebar', ['mymetaBehaviors','mymetaSid
 dcCore::app()->addBehavior('adminPageForm', ['mymetaBehaviors','mymetaInForm']);
 
 dcCore::app()->addBehavior('adminPostsActionsCombo', ['mymetaBehaviors','adminPostsActionsCombo']);
-dcCore::app()->addBehavior('adminPostsActions', ['mymetaBehaviors','adminPostsActions']);
+dcCore::app()->addBehavior('adminPostsActionsV2', ['mymetaBehaviors','adminPostsActions']);
 dcCore::app()->addBehavior('adminPostsActionsContent', ['mymetaBehaviors','adminPostsActionsContent']);
 dcCore::app()->addBehavior('adminPostsActionsHeaders', ['mymetaBehaviors','adminPostsActionsHeaders']);
 
@@ -81,7 +84,7 @@ class mymetaBehaviors
         return $mymeta->postShowHeader(null, true);
     }
 
-    public static function adminPostsActions($core, $posts, $action, $redir)
+    public static function adminPostsActions($posts, $action, $redir)
     {
         if ($action == 'mymeta_set' && !empty($_POST['mymeta_ok'])) {
             $mymeta = new myMeta(dcCore::app());

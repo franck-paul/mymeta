@@ -13,7 +13,7 @@ if (!defined('DC_RC_PATH')) {
     return;
 }
 
-require __DIR__ . '/_widgets.php';
+require_once __DIR__ . '/_widgets.php';
 
 dcCore::app()->tpl->addValue('MetaType', ['tplMyMeta','MetaType']);
 dcCore::app()->tpl->addValue('MyMetaTypePrompt', ['tplMyMeta','MyMetaTypePrompt']);
@@ -24,19 +24,19 @@ dcCore::app()->tpl->addBlock('EntryMyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
 dcCore::app()->tpl->addBlock('MyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
 dcCore::app()->tpl->addBlock('MyMetaData', ['tplMyMeta','MyMetaData']);
 
-dcCore::app()->addBehavior('templateBeforeBlock', ['behaviorsMymeta','templateBeforeBlock']);
-dcCore::app()->addBehavior('publicBeforeDocument', ['behaviorsMymeta','addTplPath']);
+dcCore::app()->addBehavior('templateBeforeBlockV2', ['behaviorsMymeta','templateBeforeBlock']);
+dcCore::app()->addBehavior('publicBeforeDocumentV2', ['behaviorsMymeta','addTplPath']);
 
 dcCore::app()->mymeta = new myMeta(dcCore::app());
 
 class behaviorsMymeta
 {
-    public static function addTplPath($core = null)
+    public static function addTplPath()
     {
-        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), __DIR__ . '/default-templates');
+        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), __DIR__ . '/' . dcPublic::TPL_ROOT);
     }
 
-    public static function templateBeforeBlock($core, $b, $attr)
+    public static function templateBeforeBlock($b, $attr)
     {
         /* tpl:Entries extra attributes :
             <tpl:Entries mymetaid="<id>" mymetavalue="value1,value2,value3">
@@ -279,7 +279,7 @@ class widgetsMyMeta
                     $display_meta = false;
                 }
             } elseif ($display_meta && $meta->enabled
-                && $meta->url_list_enabled) {
+                                    && $meta->url_list_enabled) {
                 $items[] = '<li><a href="' . $base_url . rawurlencode($meta->id) . '">' .
                     html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
             }
@@ -343,7 +343,7 @@ class widgetsMyMeta
         $res .= '</ul>';
 
         if ($mymetaEntry->url_list_enabled && !is_null($w->allvalueslinktitle)
-            && $w->allvalueslinktitle !== '') {
+                                           && $w->allvalueslinktitle !== '') {
             $res .= '<p><strong><a href="' . $base_url . '">' .
             html::escapeHTML($w->allvalueslinktitle) . '</a></strong></p>';
         }

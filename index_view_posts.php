@@ -52,7 +52,10 @@ if (!empty($_POST['rename'])) {
 }
 
 # Delete a tag
-if (!empty($_POST['delete']) && dcCore::app()->auth->check('publish,contentadmin', dcCore::app()->blog->id)) {
+if (!empty($_POST['delete']) && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+    dcAuth::PERMISSION_PUBLISH,
+    dcAuth::PERMISSION_CONTENT_ADMIN,
+]), dcCore::app()->blog->id)) {
     try {
         /*$mymeta->dcmeta->delMeta($tag,'tag');
         http::redirect($p_url.'&m=tags&del=1');*/
@@ -74,14 +77,17 @@ $params['post_type'] = '';
 try {
     $posts     = $mymeta->dcmeta->getPostsByMeta($params);
     $counter   = $mymeta->dcmeta->getPostsByMeta($params, true);
-    $post_list = new adminPostList(dcCore::app(), $posts, $counter->f(0));
+    $post_list = new adminPostList($posts, $counter->f(0));
 } catch (Exception $e) {
     dcCore::app()->error->add($e->getMessage());
 }
 
 # Actions combo box
 $combo_action = [];
-if (dcCore::app()->auth->check('publish,contentadmin', dcCore::app()->blog->id)) {
+if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+    dcAuth::PERMISSION_PUBLISH,
+    dcAuth::PERMISSION_CONTENT_ADMIN,
+]), dcCore::app()->blog->id)) {
     $combo_action[__('Status')] = [
         __('Publish')         => 'publish',
         __('Unpublish')       => 'unpublish',
@@ -94,13 +100,18 @@ $combo_action[__('Mark')] = [
     __('Mark as unselected') => 'unselected',
 ];
 $combo_action[__('Change')] = [__('Change category') => 'category'];
-if (dcCore::app()->auth->check('admin', dcCore::app()->blog->id)) {
+if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+    dcAuth::PERMISSION_ADMIN,
+]), dcCore::app()->blog->id)) {
     $combo_action[__('Change')] = array_merge(
         $combo_action[__('Change')],
         [__('Change author') => 'author']
     );
 }
-if (dcCore::app()->auth->check('delete,contentadmin', dcCore::app()->blog->id)) {
+if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+    dcAuth::PERMISSION_DELETE,
+    dcAuth::PERMISSION_CONTENT_ADMIN,
+]), dcCore::app()->blog->id)) {
     $combo_action[__('Delete')] = [__('Delete') => 'delete'];
 }
 
@@ -133,9 +144,9 @@ echo $mymetaEntry->postHeader(null, true);
 <?php
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML(dcCore::app()->blog->name) => '',
-        __('My Metadata')                           => $p_url,
-        html::escapeHTML($mymetaEntry->id)          => $p_url . '&m=view&id=' . $mymetaEntry->id,
+        html::escapeHTML(dcCore::app()->blog->name)         => '',
+        __('My Metadata')                                   => $p_url,
+        html::escapeHTML($mymetaEntry->id)                  => $p_url . '&m=view&id=' . $mymetaEntry->id,
         sprintf(__('Value "%s"'), html::escapeHTML($value)) => '',
     ]
 ) . dcPage::notices();
@@ -169,7 +180,9 @@ if (!dcCore::app()->error->flag()) {
     );
 
     # Remove tag
-    if (!$posts->isEmpty() && dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
+    if (!$posts->isEmpty() && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+        dcAuth::PERMISSION_CONTENT_ADMIN,
+    ]), dcCore::app()->blog->id)) {
         echo
     '<form id="tag_delete" action="' . $this_url . '" method="post">' .
     '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '" />' .

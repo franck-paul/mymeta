@@ -13,6 +13,6 @@ if (!defined('DC_RC_PATH')) {
     return;
 }
 
-$__autoload['myMeta'] = __DIR__ . '/class.mymeta.php';
+Clearbricks::lib()->autoload(['myMeta' => __DIR__ . '/class.mymeta.php']);
 
 dcCore::app()->url->register('mymeta', 'meta', '^meta/(.+)$', ['urlMymeta','tag']);
