@@ -24,7 +24,7 @@ if (!empty($_POST['saveconfig'])) {
         $mymeta->store();
     }
     dcPage::addSuccessNotice(__('Section has been successfully updated'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -34,12 +34,12 @@ if (array_key_exists('id', $_REQUEST)) {
     $mymetasection = $mymeta->getByID($_REQUEST['id']);
     if (!($mymetasection instanceof myMetaSection)) {
         dcPage::addErrorNotice(__('Something went wrong while editing section'));
-        http::redirect($p_url);
+        http::redirect(dcCore::app()->admin->getPageURL());
         exit;
     }
 } else {
     dcPage::addErrorNotice(__('Something went wrong while editing section'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 ?>
@@ -55,7 +55,7 @@ if (array_key_exists('id', $_REQUEST)) {
 echo dcPage::breadcrumb(
     [
         html::escapeHTML(dcCore::app()->blog->name) => '',
-        __('My Metadata')                           => $p_url,
+        __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
         $page_title                                 => '',
     ]
 ) . dcPage::notices();

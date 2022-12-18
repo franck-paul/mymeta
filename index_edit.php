@@ -42,7 +42,7 @@ if (!empty($_POST['mymeta_id'])) {
         __('MyMeta "%s" has been successfully updated'),
         html::escapeHTML($mymetaid)
     ));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -52,7 +52,7 @@ if (array_key_exists('id', $_REQUEST)) {
     $mymetaentry = $mymeta->getByID($_REQUEST['id']);
     if ($mymetaentry == null) {
         dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
-        http::redirect($p_url);
+        http::redirect(dcCore::app()->admin->getPageURL());
         exit;
     }
     $mymeta_type = $mymetaentry->getMetaTypeId();
@@ -68,7 +68,7 @@ $types      = $mymeta->getTypesAsCombo();
 $type_label = array_search($mymeta_type, $types);
 if (!$type_label) {
     dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
 }
 
 ?>
@@ -83,7 +83,7 @@ if (!$type_label) {
 echo dcPage::breadcrumb(
     [
         html::escapeHTML(dcCore::app()->blog->name) => '',
-        __('My Metadata')                           => $p_url,
+        __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
         $page_title                                 => '',
     ]
 ) . dcPage::notices();

@@ -13,13 +13,9 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$version = dcCore::app()->plugins->moduleInfo('mymeta', 'version');
-
-if (version_compare((string) dcCore::app()->getVersion('mymeta'), $version, '>=')) {
+if (!dcCore::app()->newVersion(basename(__DIR__), dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version'))) {
     return;
 }
-
-dcCore::app()->setVersion('mymeta', $version);
 
 dcCore::app()->blog->settings->addNamespace('mymeta');
 $mymeta_settings = dcCore::app()->blog->settings->mymeta;

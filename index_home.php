@@ -18,7 +18,7 @@ if ($mymeta->settings->mymeta_fields != null) {
     $backup = $mymeta->settings->mymeta_fields;
     $fields = unserialize(base64_decode($mymeta->settings->mymeta_fields));
     if (is_array($fields) && count($fields) > 0
-        && get_class(current($fields)) == 'stdClass') {
+                          && get_class(current($fields)) == 'stdClass') {
         foreach ($fields as $k => $v) {
             $newfield          = $mymeta->newMyMeta($v->type);
             $newfield->id      = $k;
@@ -43,7 +43,7 @@ if ($mymeta->settings->mymeta_fields != null) {
                 'MyMeta fields backup (0.3.x version)'
             );
         }
-        http::redirect($p_url);
+        http::redirect(dcCore::app()->admin->getPageURL());
         exit;
     }
 }
@@ -54,7 +54,7 @@ if (!empty($_POST['action']) && !empty($_POST['entries'])) {
     $action  = $_POST['action'];
     if (preg_match('/^(enable|disable)$/', $action)) {
         $mymeta->setEnabled($entries, ($action === 'enable'));
-        $msg = ($action                        === 'enable') ?
+        $msg = ($action === 'enable') ?
             __('Mymeta entries have been successfully enabled')
             : __('Mymeta entries have been successfully disabled');
     } elseif (preg_match('/^(delete)$/', $action)) {
@@ -63,7 +63,7 @@ if (!empty($_POST['action']) && !empty($_POST['entries'])) {
     }
     $mymeta->store();
     dcPage::addSuccessNotice($msg);
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
@@ -75,7 +75,7 @@ if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
         __('Section "%s" has been successfully created'),
         html::escapeHTML($_POST['mymeta_section'])
     ));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -94,7 +94,7 @@ if (!empty($_POST['saveorder']) && !empty($order)) {
     $mymeta->store();
 
     dcPage::addSuccessNotice(__('Mymeta have been successfully reordered'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 $types = $mymeta->getTypesAsCombo();

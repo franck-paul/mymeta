@@ -15,20 +15,20 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 if (empty($_GET['id']) || empty($_GET['value'])) {
     dcPage::addErrorNotice(__('Something went wrong while editing mymeta value'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
 $mymetaEntry = $mymeta->getByID($_GET['id']);
 if ($mymetaEntry == null) {
     dcPage::addErrorNotice(__('Something went wrong while editing mymeta value'));
-    http::redirect($p_url);
+    http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
 $value = rawurldecode($_GET['value']);
 
-$this_url = $p_url . '&amp;m=viewposts&amp;id=' . $mymetaEntry->id . '&amp;value=' . rawurlencode($value);
+$this_url = dcCore::app()->admin->getPageURL() . '&amp;m=viewposts&amp;id=' . $mymetaEntry->id . '&amp;value=' . rawurlencode($value);
 
 $page        = !empty($_GET['page']) ? $_GET['page'] : 1;
 $nb_per_page = 30;
@@ -44,7 +44,7 @@ if (!empty($_POST['rename'])) {
                 html::escapeHTML($value),
                 html::escapeHTML($new_value)
             ));
-            http::redirect($p_url . '&m=view&id=' . $mymetaEntry->id . '&status=valchg');
+            http::redirect(dcCore::app()->admin->getPageURL() . '&m=view&id=' . $mymetaEntry->id . '&status=valchg');
         }
     } catch (Exception $e) {
         dcCore::app()->error->add($e->getMessage());
@@ -58,7 +58,7 @@ if (!empty($_POST['delete']) && dcCore::app()->auth->check(dcCore::app()->auth->
 ]), dcCore::app()->blog->id)) {
     try {
         /*$mymeta->dcmeta->delMeta($tag,'tag');
-        http::redirect($p_url.'&m=tags&del=1');*/
+        http::redirect(dcCore::app()->admin->getPageURL().'&m=tags&del=1');*/
     } catch (Exception $e) {
         dcCore::app()->error->add($e->getMessage());
     }
@@ -145,8 +145,8 @@ echo $mymetaEntry->postHeader(null, true);
 echo dcPage::breadcrumb(
     [
         html::escapeHTML(dcCore::app()->blog->name)         => '',
-        __('My Metadata')                                   => $p_url,
-        html::escapeHTML($mymetaEntry->id)                  => $p_url . '&m=view&id=' . $mymetaEntry->id,
+        __('My Metadata')                                   => dcCore::app()->admin->getPageURL(),
+        html::escapeHTML($mymetaEntry->id)                  => dcCore::app()->admin->getPageURL() . '&m=view&id=' . $mymetaEntry->id,
         sprintf(__('Value "%s"'), html::escapeHTML($value)) => '',
     ]
 ) . dcPage::notices();
@@ -172,7 +172,7 @@ if (!dcCore::app()->error->flag()) {
   form::combo('action', $combo_action) .
   '<input type="submit" value="' . __('ok') . '" /></p>' .
   form::hidden('post_type', '') .
-  form::hidden('redir', $p_url . '&amp;m=view&amp;id=' .
+  form::hidden('redir', dcCore::app()->admin->getPageURL() . '&amp;m=view&amp;id=' .
     $mymetaEntry->id . '&amp;page=' . $page) .
   dcCore::app()->formNonce() .
   '</div>' .
