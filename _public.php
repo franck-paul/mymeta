@@ -24,8 +24,10 @@ dcCore::app()->tpl->addBlock('EntryMyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
 dcCore::app()->tpl->addBlock('MyMetaIf', ['tplMyMeta','EntryMyMetaIf']);
 dcCore::app()->tpl->addBlock('MyMetaData', ['tplMyMeta','MyMetaData']);
 
-dcCore::app()->addBehavior('templateBeforeBlockV2', ['behaviorsMymeta','templateBeforeBlock']);
-dcCore::app()->addBehavior('publicBeforeDocumentV2', ['behaviorsMymeta','addTplPath']);
+dcCore::app()->addBehaviors([
+    'templateBeforeBlockV2'  => ['behaviorsMymeta','templateBeforeBlock'],
+    'publicBeforeDocumentV2' => ['behaviorsMymeta','addTplPath'],
+]);
 
 dcCore::app()->mymeta = new myMeta(dcCore::app());
 
