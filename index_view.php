@@ -20,18 +20,18 @@ if (empty($_GET['id'])) {
 }
 $nb_per_page = 20;
 $page        = !empty($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-$mymetaEntry = $mymeta->getByID($_GET['id']);
-if ($mymetaEntry == null) {
+
+dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
+if (dcCore::app()->admin->mymetaEntry == null) {
     dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
     http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
+
 class adminMyMetaList extends adminGenericListV2
 {
     public function display($page, $nb_per_page, $enclose_block = '')
     {
-        global $mymetaEntry;
-
         if ($this->rs->isEmpty()) {
             echo '<p><strong>' . __('No entries found') . '</strong></p>';
         } else {
@@ -51,9 +51,8 @@ class adminMyMetaList extends adminGenericListV2
             $blocks = explode('%s', $html_block);
 
             echo $blocks[0];
-
             while ($this->rs->fetch()) {
-                echo $this->postLine($mymetaEntry);
+                echo $this->postLine();
             }
 
             echo $blocks[1];
@@ -62,16 +61,13 @@ class adminMyMetaList extends adminGenericListV2
         }
     }
 
-    private function postLine($mme)
+    private function postLine()
     {
-        $res = '<tr class="line">';
-
-        $res .= '<td class="nowrap"><a href="' . dcCore::app()->admin->getPageURL() . '&amp;m=viewposts&amp;id=' . $mme->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' .
-        $this->rs->meta_id . '</a></td>' .
+        return
+        '<tr class="line">' .
+        '<td class="nowrap"><a href="' . dcCore::app()->admin->getPageURL() . '&amp;m=viewposts&amp;id=' . dcCore::app()->admin->mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' . dcCore::app()->admin->mymetaEntry->displayValue($this->rs->meta_id) . '</a></td>' .
         '<td class="nowrap">' . $this->rs->count . ' ' . (($this->rs->count <= 1) ? __('entry') : __('entries')) . '</td>' .
         '</tr>';
-
-        return $res;
     }
 }
 $statuses = [
@@ -81,7 +77,7 @@ $statuses = [
 ?>
 <html>
 <head>
-  <title><?php echo __('My metadata') . '&gt;' . $mymetaEntry->id; ?></title>
+  <title><?php echo __('My metadata') . '&gt;' . dcCore::app()->admin->mymetaEntry->id; ?></title>
   <?php echo dcPage::jsPageTabs('mymeta');?>
 </head>
 <body>
@@ -89,22 +85,22 @@ $statuses = [
 
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML(dcCore::app()->blog->name) => '',
-        __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
-        html::escapeHTML($mymetaEntry->id)          => '',
+        html::escapeHTML(dcCore::app()->blog->name)             => '',
+        __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
+        html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => '',
     ]
 ) . dcPage::notices();
 
 $params = [
-    'meta_type' => $mymetaEntry->id,
+    'meta_type' => dcCore::app()->admin->mymetaEntry->id,
     'order'     => 'count DESC',
     'limit'     => [(($page - 1) * $nb_per_page),$nb_per_page],
 ];
 
-$rs    = $mymeta->getMetadata($params, false);
-$count = $mymeta->getMetadata($params, true);
-echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), html::escapeHTML($mymetaEntry->id)) . '</h3>';
-$list = new adminMyMetaList(dcCore::app(), $rs, $count->f(0));
+$rs    = dcCore::app()->admin->mymeta->getMetadata($params, false);
+$count = dcCore::app()->admin->mymeta->getMetadata($params, true);
+echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), html::escapeHTML(dcCore::app()->admin->mymetaEntry->id)) . '</h3>';
+$list = new adminMyMetaList($rs, $count->f(0));
 echo $list->display($page, $nb_per_page, '%s');
 echo '</div>';
 ?>

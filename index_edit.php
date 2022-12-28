@@ -20,7 +20,7 @@ function filterTplFile($file)
 
 if (!empty($_POST['mymeta_id'])) {
     $mymetaid                = preg_replace('#[^a-zA-Z0-9_-]#', '', $_POST['mymeta_id']);
-    $mymetaEntry             = $mymeta->newMyMeta($_POST['mymeta_type'], $mymetaid);
+    $mymetaEntry             = dcCore::app()->admin->mymeta->newMyMeta($_POST['mymeta_type'], $mymetaid);
     $mymetaEntry->id         = $mymetaid;
     $mymetaEntry->post_types = false;
     if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes') {
@@ -36,8 +36,8 @@ if (!empty($_POST['mymeta_id'])) {
     $mymetaEntry->tpl_list           = filterTplFile($_POST['list_tpl'])   ?? 'mymetas.html';
 
     $mymetaEntry->adminUpdate($_POST);
-    $mymeta->update($mymetaEntry);
-    $mymeta->store();
+    dcCore::app()->admin->mymeta->update($mymetaEntry);
+    dcCore::app()->admin->mymeta->store();
     dcPage::addsuccessNotice(sprintf(
         __('MyMeta "%s" has been successfully updated'),
         html::escapeHTML($mymetaid)
@@ -46,10 +46,16 @@ if (!empty($_POST['mymeta_id'])) {
     exit;
 }
 
+$mymeta_type = '';
+$page_title  = '';
+$mymetaid    = '';
+$lock_id     = false;
+$mymetaentry = null;
+
 if (array_key_exists('id', $_REQUEST)) {
     $page_title  = __('Edit MyMeta');
     $mymetaid    = $_REQUEST['id'];
-    $mymetaentry = $mymeta->getByID($_REQUEST['id']);
+    $mymetaentry = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
     if ($mymetaentry == null) {
         dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
         http::redirect(dcCore::app()->admin->getPageURL());
@@ -60,11 +66,11 @@ if (array_key_exists('id', $_REQUEST)) {
 } elseif (!empty($_REQUEST['mymeta_type'])) {
     $mymeta_type = html::escapeHTML($_REQUEST['mymeta_type']);
     $page_title  = __('New MyMeta');
-    $mymetaentry = $mymeta->newMyMeta($mymeta_type);
+    $mymetaentry = dcCore::app()->admin->mymeta->newMyMeta($mymeta_type);
     $mymetaid    = '';
     $lock_id     = false;
 }
-$types      = $mymeta->getTypesAsCombo();
+$types      = dcCore::app()->admin->mymeta->getTypesAsCombo();
 $type_label = array_search($mymeta_type, $types);
 if (!$type_label) {
     dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));

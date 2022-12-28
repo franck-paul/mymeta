@@ -12,8 +12,7 @@
 if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
-
-$mymeta = new myMeta(dcCore::app());
+dcCore::app()->admin->mymeta = new myMeta();
 
 if (!empty($_REQUEST['m'])) {
     switch ($_REQUEST['m']) {

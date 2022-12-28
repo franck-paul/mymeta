@@ -17,7 +17,6 @@ if (!dcCore::app()->newVersion(basename(__DIR__), dcCore::app()->plugins->module
     return;
 }
 
-dcCore::app()->blog->settings->addNamespace('mymeta');
 $mymeta_settings = dcCore::app()->blog->settings->mymeta;
 
 if ($mymeta_settings->mymeta_fields == null) {
@@ -32,7 +31,7 @@ if (get_class(current($fields)) != 'stdClass') {
     return true;
 }
 
-$mymeta = new mymeta(dcCore::app(), true);
+$mymeta = new myMeta(true);
 foreach ($fields as $k => $v) {
     $newfield          = $mymeta->newMyMeta($v->type);
     $newfield->id      = $k;

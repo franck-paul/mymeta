@@ -17,11 +17,11 @@ if (!empty($_POST['saveconfig'])) {
     $mymetaid     = html::escapeHTML($_POST['mymeta_id']);
     $mymetaprompt = html::escapeHTML($_POST['mymeta_prompt']);
 
-    $mymetaSection = $mymeta->getByID($mymetaid);
-    if ($mymetaSection instanceof mymetaSection) {
+    $mymetaSection = dcCore::app()->admin->mymeta->getByID($mymetaid);
+    if ($mymetaSection instanceof myMetaSection) {
         $mymetaSection->prompt = $mymetaprompt;
-        $mymeta->update($mymetaSection);
-        $mymeta->store();
+        dcCore::app()->admin->mymeta->update($mymetaSection);
+        dcCore::app()->admin->mymeta->store();
     }
     dcPage::addSuccessNotice(__('Section has been successfully updated'));
     http::redirect(dcCore::app()->admin->getPageURL());
@@ -31,7 +31,7 @@ if (!empty($_POST['saveconfig'])) {
 if (array_key_exists('id', $_REQUEST)) {
     $page_title    = __('Edit section');
     $mymetaid      = $_REQUEST['id'];
-    $mymetasection = $mymeta->getByID($_REQUEST['id']);
+    $mymetasection = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
     if (!($mymetasection instanceof myMetaSection)) {
         dcPage::addErrorNotice(__('Something went wrong while editing section'));
         http::redirect(dcCore::app()->admin->getPageURL());

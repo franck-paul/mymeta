@@ -20,6 +20,7 @@
 class myMeta
 {
     private $con;
+
     public $dcmeta;
     public $settings;
 
@@ -37,6 +38,7 @@ class myMeta
     protected $html_list = "<ul>\n%s</ul>\n";       ///< <b>string</b>      HTML errors list pattern
     protected $html_item = "<li>%s</li>\n"; ///< <b>string</b>      HTML error item pattern
 
+    protected $sep_max;
     protected $sep_prefix = '__sep__';
 
     /**
@@ -44,7 +46,7 @@ class myMeta
      *
      * Registers a new meta type. Must extend myMetaEntry class
      *
-     * @param myMetaEntry $class class to register
+     * @param string $class class to register
      *
      * @return void
      */
@@ -56,7 +58,8 @@ class myMeta
         myMeta::$typesCombo[$desc] = $type;
         myMeta::$types[$type]      = [
             'desc'   => $desc,
-            'object' => $class, ];
+            'object' => $class,
+        ];
     }
 
     /**
@@ -64,20 +67,14 @@ class myMeta
      *
      * Mymeta settings are retrieved from dc settings
      *
-     * @param mixed $core core to reference
+     * @param bool $bypass_settings  Get or not settings
      *
      * @return void
      */
-    public function __construct($core, $bypass_settings = false)
+    public function __construct(bool $bypass_settings = false)
     {
-        if (isset(dcCore::app()->meta)) {
-            $this->dcmeta = dcCore::app()->meta;
-        } else {
-            $this->dcmeta = new dcMeta();
-        }
-
-        dcCore::app()->blog->settings->addNamespace('mymeta');
-        $this->settings = & dcCore::app()->blog->settings->mymeta;
+        $this->dcmeta   = dcCore::app()->meta;
+        $this->settings = dcCore::app()->blog->settings->mymeta;
 
         $this->con = & dcCore::app()->con;
         if (!$bypass_settings && $this->settings->mymeta_fields) {
@@ -89,23 +86,21 @@ class myMeta
             $this->mymeta = [];
         }
 
-        // Redirect to admin home to perform upgrade, old settings detected
         if (count($this->mymeta) > 0 && get_class(current($this->mymeta)) == 'stdClass') {
+            // Redirect to admin home to perform upgrade, old settings detected
             $this->mymeta = [];
-
-            return $this;
-        }
-
-        $this->mymetaIDs = [];
-        $this->sep_max   = 0;
-        foreach ($this->mymeta as $k => $v) {
-            $this->mymetaIDs[$v->id] = $k;
-            if ($v instanceof myMetaSection) {
-                // Compute max section id, to anticipate
-                // future section ids
-                $sep_id = substr($v->id, strlen($this->sep_prefix));
-                if ($this->sep_max < $sep_id) {
-                    $this->sep_max = $sep_id;
+        } else {
+            $this->mymetaIDs = [];
+            $this->sep_max   = 0;
+            foreach ($this->mymeta as $k => $v) {
+                $this->mymetaIDs[$v->id] = $k;
+                if ($v instanceof myMetaSection) {
+                    // Compute max section id, to anticipate
+                    // future section ids
+                    $sep_id = substr($v->id, strlen($this->sep_prefix));
+                    if ($this->sep_max < $sep_id) {
+                        $this->sep_max = $sep_id;
+                    }
                 }
             }
         }
@@ -116,13 +111,11 @@ class myMeta
      *
      * Retrieves form-friendly registered mymeta types
      *
-     * @return void
+     * @return array
      */
     public function getTypesAsCombo()
     {
-        $combo = myMeta::$typesCombo;
-
-        return $combo;
+        return myMeta::$typesCombo;
     }
 
     /**
@@ -161,7 +154,7 @@ class myMeta
      *
      * @param int $pos  the position
      *
-     * @return mymetaEntry the mymeta
+     * @return myMetaEntry the mymeta
      */
     public function getByPos($pos)
     {
@@ -175,7 +168,7 @@ class myMeta
      *
      * @param String $id  the ID
      *
-     * @return mymetaEntry the mymeta
+     * @return myMetaEntry|null the mymeta
      */
     public function getByID($id)
     {
@@ -324,9 +317,11 @@ class myMeta
                 $active_sections[$cur_section] = true;
             }
         }
+        /* WTF ???
         if (!count($active_sections)) {
             return;
         }
+        */
         $res .= '<div class="fieldset"><h3>' . __('My Meta') . '</h3>';
         foreach ($this->mymeta as $id => $meta) {
             if ($meta instanceof myMetaSection) {

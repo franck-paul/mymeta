@@ -29,7 +29,7 @@ dcCore::app()->addBehaviors([
     'publicBeforeDocumentV2' => ['behaviorsMymeta','addTplPath'],
 ]);
 
-dcCore::app()->mymeta = new myMeta(dcCore::app());
+dcCore::app()->mymeta = new myMeta();
 
 class behaviorsMymeta
 {
@@ -242,7 +242,6 @@ class tplMyMeta
             "'meta_id' => dcCore::app()->ctx->mymeta->id, " .
             "'limit' => " . $limit .
         '])); ' .
-//        'dcCore::app()->ctx->meta = dcCore::app()->mymeta->dcmeta->getMeta(dcCore::app()->ctx->mymeta->id,' . $limit . '); ' .
         "dcCore::app()->ctx->meta->sort('" . $sortby . "','" . $order . "'); " .
         '?>';
 
@@ -384,9 +383,14 @@ class urlMymeta extends dcUrlHandlers
                     self::p404();
                 }
             } else {
-                $mymeta_value            = $values[1];
-                dcCore::app()->ctx->meta = dcCore::app()->mymeta->dcmeta->getMeta($mymeta->id, null, $mymeta_value);
-                $tpl                     = ($mymeta->tpl_single == '') ? 'mymeta.html' : $mymeta->tpl_single;
+                $mymeta_value = $values[1];
+
+                dcCore::app()->ctx->meta = dcCore::app()->meta->computeMetaStats(dcCore::app()->mymeta->dcmeta->getMetadata([
+                    'meta_id'   => $mymeta->id,
+                    'meta_type' => $mymeta_value,
+                ]));
+
+                $tpl = ($mymeta->tpl_single == '') ? 'mymeta.html' : $mymeta->tpl_single;
                 if (!dcCore::app()->ctx->meta->isEmpty() && $mymeta->url_single_enabled && dcCore::app()->tpl->getFilePath($tpl)) {
                     self::serveDocument($tpl);
                 } else {

@@ -17,7 +17,7 @@ $this->registerModule(
     'My Meta',
     'User-defined metadata management in posts',
     'Bruno Hondelatte and contributors',
-    '1.1',
+    '1.2',
     [
         'requires'    => [['core', '2.24']],
         'priority'    => 1001,
@@ -25,13 +25,13 @@ $this->registerModule(
             dcAuth::PERMISSION_USAGE,
             dcAuth::PERMISSION_CONTENT_ADMIN,
         ]),
-        'type'     => 'plugin',
-        'settings' => [
+        'type'        => 'plugin',
+        'settings'    => [
             'self' => '',
         ],
 
-        'details'    => 'https://open-time.net/?q=mymeta',
-        'support'    => 'https://github.com/franck-paul/mymeta',
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/master/dcstore.xml',
+        'details'     => 'https://open-time.net/?q=mymeta',
+        'support'     => 'https://github.com/franck-paul/mymeta',
+        'repository'  => 'https://raw.githubusercontent.com/franck-paul/mymeta/master/dcstore.xml',
     ]
 );

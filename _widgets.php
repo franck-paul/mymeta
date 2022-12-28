@@ -19,7 +19,7 @@ class MyMetaWidgets
 {
     public static function initWidgets($w)
     {
-        $mymeta                             = new myMeta(dcCore::app());
+        $mymeta                             = new myMeta();
         $mymetalist                         = $mymeta->getIDsAsWidgetList();
         $mymetasections                     = $mymeta->getSectionsAsWidgetList();
         $mymetasections[__('All sections')] = '';

@@ -19,13 +19,29 @@ abstract class myMetaEntry
     public $id;
     public $prompt;
     public $pos;
+
+    /**
+     * getMetaTypeId
+     *
+     * retrieves meta type ID (should be unique)
+     *
+     * @return string the meta type
+     */
+    abstract public function getMetaTypeId();
+
+    /**
+     * getMetaTypeDesc
+     *
+     * Returns meta type description (shown in combo list)
+     *
+     * @return string the description
+     */
+    abstract public function getMetaTypeDesc();
 }
 
 abstract class myMetaField extends myMetaEntry
 {
     public $enabled;
-    public $id;
-    public $prompt;
     public $default;
     public $contexts;
     public $post_types;
@@ -55,45 +71,26 @@ abstract class myMetaField extends myMetaEntry
     }
 
     /**
-     * getMetaTypeId
-     *
-     * retrieves meta type ID (should be unique)
-     *
-     * @access public
-     * @return string the meta type
-     */
-    abstract public function getMetaTypeId();
-
-    /**
-     * getMetaTypeDesc
-     *
-     * Returns meta type description (shown in combo list)
-     *
-     * @access public
-     * @return string the description
-     */
-    abstract public function getMetaTypeDesc();
-
-    /**
      * postShowForm
      *
      * Displays form input field (when editting a post) including prompt
      * Notice : submitted field name must be prefixed with "mymeta_"
      *
-     * @param myMeta $dcmeta MyMeta instance to use
-     * @param recordset $post the post resultset
-     * @access public
-     * @return void
+     * @param dcMeta        $dcmeta     dcMeta instance to use
+     * @param dcRecord|null $post       the post resultset
+     *
+     * @return mixed
      */
     public function postShowForm($dcmeta, $post, $value = '', $bypass_disabled = false)
     {
         if ($this->enabled || $bypass_disabled) {
             $res     = '';
             $this_id = 'mymeta_' . $this->id;
+            $value   = '';
             if (isset($_POST[$this_id])) {
                 $value = html::escapeHTML($_POST[$this_id]);
-            } elseif ($post != null) {
-                $value = ($post) ? $dcmeta->getMetaStr($post->post_meta, $this->id) : '';
+            } elseif ($post) {
+                $value = $dcmeta->getMetaStr($post->post_meta, $this->id);
             }
             $res .= '<p><label for="' . $this_id . '"><strong>' . $this->prompt . '</strong></label>';
             $res .= $this->postShowField($this_id, $value);
@@ -108,9 +105,9 @@ abstract class myMetaField extends myMetaEntry
      *
      * Displays extra data in post edit page header
      *
-     * @param recordset $post the post resultset
-     * @access public
-     * @return void
+     * @param dcRecord $post the post resultset
+     *
+     * @return mixed
      */
     public function postHeader($post = null, $standalone = false)
     {
@@ -124,8 +121,8 @@ abstract class myMetaField extends myMetaEntry
      *
      * @param string $id mymeta id
      * @param string $value current mymeta value
-     * @access protected
-     * @return void
+     *
+     * @return string
      */
     protected function postShowField($id, $value)
     {
@@ -140,8 +137,6 @@ abstract class myMetaField extends myMetaEntry
      * @param dcMeta $dcmeta current dcMeta instance
      * @param integer $post_id post_id to update
      * @param array $post HTTP POST parameters
-     * @access public
-     * @return void
      */
     public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
     {
@@ -154,13 +149,25 @@ abstract class myMetaField extends myMetaEntry
     }
 
     /**
+     * Display current value
+     *
+     * @param      string  $value  The value
+     *
+     * @return     string
+     */
+    public function displayValue(string $value)
+    {
+        return $value;
+    }
+
+    /**
      * getValue
      *
      * Returns public value for a given mymeta value
      * usually returns the value itself
      *
      * @param string $value the value to retrieve
-     * @access public
+     *
      * @return string the converted public value
      */
     public function getValue($value, $attr)
@@ -173,7 +180,6 @@ abstract class myMetaField extends myMetaEntry
      *
      * returns extra fields in mymeta type admin form
      *
-     * @access public
      * @return string the html code to output
      */
     public function adminForm()
@@ -187,9 +193,7 @@ abstract class myMetaField extends myMetaEntry
      * This function is triggered on mymeta update
      * to set mymeta fields defined in adminForm
      *
-     * @param recordset $post the post resultset
-     * @access public
-     * @return void
+     * @param dcRecord $post the post resultset
      */
     public function adminUpdate($post)
     {
@@ -228,6 +232,7 @@ class mmString extends myMetaField
     {
         return 'string';
     }
+
     public function getMetaTypeDesc()
     {
         return __('String');
@@ -243,10 +248,12 @@ class mmList extends myMetaField
     {
         return 'list';
     }
+
     public function getMetaTypeDesc()
     {
         return __('Items List');
     }
+
     private function valuesToArray($values)
     {
         $arr   = [];
@@ -267,7 +274,7 @@ class mmList extends myMetaField
         return $arr;
     }
 
-    public function arrayToValues($array)
+    private function arrayToValues($array)
     {
         $res = '';
         if (is_array($array)) {
@@ -327,6 +334,7 @@ class mmCheck extends myMetaField
     {
         return 'boolean';
     }
+
     public function getMetaTypeDesc()
     {
         return __('Checkbox');
@@ -343,51 +351,62 @@ class mmCheck extends myMetaField
             $dcmeta->delPostMeta($post_id, $this->id);
         }
         if (!empty($post['mymeta_' . $this->id])) {
-            $dcmeta->setPostMeta($post_id, $this->id, 1);
+            $dcmeta->setPostMeta($post_id, $this->id, '1');
         }
+    }
+
+    public function displayValue(string $value)
+    {
+        return (bool) $value ? '[x]' : '[ ]';
     }
 }
 
 // Datepicker  meta type
 class mmDate extends myMetaField
 {
-    private static $jsSingleton = false;
-
-    public function postHeader($post = null, $standalone = false)
-    {
-        $var = 'mymeta_' . $this->id . '_dtPick';
-        $ret = '';
-        if ($standalone && !mmDate::$jsSingleton) {
-            mmDate::$jsSingleton = true;
-            $ret .= dcPage::jsDatePicker();
-        }
-        $ret .= '<script type="text/javascript">' . "\n" .
-            "\$(function() {\n" .
-            'var ' . $var . " = new datePicker(\$('#mymeta_" . $this->id . "').get(0));\n" .
-            $var . ".img_top = '1.5em';\n" .
-            $var . ".draw();\n" .
-            "});\n" .
-            '</script>';
-
-        return $ret;
-    }
-
     protected function postShowField($id, $value)
     {
-        return form::datetime($id, ['default' => html::escapeHTML(dt::str('%Y-%m-%dT%H:%M', $value))]);
+        $timestamp = $value ? strtotime($value) : time();
+
+        return form::datetime($id, ['default' => html::escapeHTML(dt::str('%Y-%m-%dT%H:%M', $timestamp))]);
     }
 
     public function getMetaTypeId()
     {
         return 'date';
     }
+
     public function getMetaTypeDesc()
     {
         return __('Date');
     }
+
+    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    {
+        $timestamp = !empty($post['mymeta_' . $this->id]) ? strtotime($post['mymeta_' . $this->id]) : 0;
+        $dcmeta->delPostMeta($post_id, $this->id);
+        if ($timestamp) {
+            $value = date('Y-m-d H:i:00', $timestamp);
+            $dcmeta->setPostMeta($post_id, $this->id, $value);
+        }
+    }
+
+    public function displayValue(string $value)
+    {
+        return date('Y-m-d H:i', strtotime($value)) . ' UTC';
+    }
 }
 
 // Section mymeta type
-class myMetaSection extends mymetaEntry
+class myMetaSection extends myMetaEntry
 {
+    public function getMetaTypeId()
+    {
+        return 'section';
+    }
+
+    public function getMetaTypeDesc()
+    {
+        return __('Section');
+    }
 }

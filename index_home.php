@@ -13,14 +13,14 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$mymeta = new mymeta(dcCore::app(), true);
-if ($mymeta->settings->mymeta_fields != null) {
-    $backup = $mymeta->settings->mymeta_fields;
-    $fields = unserialize(base64_decode($mymeta->settings->mymeta_fields));
+dcCore::app()->admin->mymeta = new myMeta(true);
+if (dcCore::app()->admin->mymeta->settings->mymeta_fields != null) {
+    $backup = dcCore::app()->admin->mymeta->settings->mymeta_fields;
+    $fields = unserialize(base64_decode(dcCore::app()->admin->mymeta->settings->mymeta_fields));
     if (is_array($fields) && count($fields) > 0
                           && get_class(current($fields)) == 'stdClass') {
         foreach ($fields as $k => $v) {
-            $newfield          = $mymeta->newMyMeta($v->type);
+            $newfield          = dcCore::app()->admin->mymeta->newMyMeta($v->type);
             $newfield->id      = $k;
             $newfield->enabled = $v->enabled;
             $newfield->prompt  = $v->prompt;
@@ -30,13 +30,13 @@ if ($mymeta->settings->mymeta_fields != null) {
 
                     break;
             }
-            $mymeta->update($newfield);
+            dcCore::app()->admin->mymeta->update($newfield);
         }
-        $mymeta->reorder();
-        $mymeta->store();
+        dcCore::app()->admin->mymeta->reorder();
+        dcCore::app()->admin->mymeta->store();
 
-        if ($mymeta->settings->mymeta_fields_backup == null) {
-            $mymeta->settings->put(
+        if (dcCore::app()->admin->mymeta->settings->mymeta_fields_backup == null) {
+            dcCore::app()->admin->mymeta->settings->put(
                 'mymeta_fields_backup',
                 $backup,
                 'string',
@@ -47,30 +47,31 @@ if ($mymeta->settings->mymeta_fields != null) {
         exit;
     }
 }
-$mymeta = new mymeta(dcCore::app());
-$dcmeta = new dcMeta();
+dcCore::app()->admin->mymeta = new myMeta();
+$dcmeta                      = new dcMeta();
 if (!empty($_POST['action']) && !empty($_POST['entries'])) {
     $entries = $_POST['entries'];
     $action  = $_POST['action'];
+    $msg     = '';
     if (preg_match('/^(enable|disable)$/', $action)) {
-        $mymeta->setEnabled($entries, ($action === 'enable'));
+        dcCore::app()->admin->mymeta->setEnabled($entries, ($action === 'enable'));
         $msg = ($action === 'enable') ?
             __('Mymeta entries have been successfully enabled')
             : __('Mymeta entries have been successfully disabled');
     } elseif (preg_match('/^(delete)$/', $action)) {
-        $mymeta->delete($entries);
+        dcCore::app()->admin->mymeta->delete($entries);
         $msg = __('Mymeta entries have been successfully deleted');
     }
-    $mymeta->store();
+    dcCore::app()->admin->mymeta->store();
     dcPage::addSuccessNotice($msg);
     http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
-    $section         = $mymeta->newSection();
+    $section         = dcCore::app()->admin->mymeta->newSection();
     $section->prompt = html::escapeHTML($_POST['mymeta_section']);
-    $mymeta->update($section);
-    $mymeta->store();
+    dcCore::app()->admin->mymeta->update($section);
+    dcCore::app()->admin->mymeta->store();
     dcPage::addSuccessNotice(sprintf(
         __('Section "%s" has been successfully created'),
         html::escapeHTML($_POST['mymeta_section'])
@@ -90,14 +91,14 @@ if (empty($_POST['mymeta_order']) && !empty($_POST['order'])) {
 }
 
 if (!empty($_POST['saveorder']) && !empty($order)) {
-    $mymeta->reorder($order);
-    $mymeta->store();
+    dcCore::app()->admin->mymeta->reorder($order);
+    dcCore::app()->admin->mymeta->store();
 
     dcPage::addSuccessNotice(__('Mymeta have been successfully reordered'));
     http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
-$types = $mymeta->getTypesAsCombo();
+$types = dcCore::app()->admin->mymeta->getTypesAsCombo();
 
 $combo_action                = [];
 $combo_action[__('enable')]  = 'enable';
@@ -145,13 +146,13 @@ echo '<h3>' . __('MyMeta list') . '</h3>';
 		</thead>
 		<tbody id="mymeta-list">
 			<?php
-                $metaStat = $mymeta->getMyMetaStats();
+                $metaStat = dcCore::app()->admin->mymeta->getMyMetaStats();
 $stats                    = [];
 while ($metaStat->fetch()) {
     $stats[$metaStat->meta_type] = $metaStat->count;
 }
 
-$allMeta = $mymeta->getAll();
+$allMeta = dcCore::app()->admin->mymeta->getAll();
 foreach ($allMeta as $meta) {
     if ($meta instanceof myMetaSection) {
         echo

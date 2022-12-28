@@ -27,30 +27,34 @@ dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     ]), dcCore::app()->blog->id)
 );
 
-dcCore::app()->addBehavior('adminPostFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
-dcCore::app()->addBehavior('adminPostForm', ['mymetaBehaviors','mymetaInForm']);
-dcCore::app()->addBehavior('adminPostForm', ['mymetaBehaviors','mymetaPostHeader']);
+dcCore::app()->addBehaviors([
+    'adminPostFormSidebar'     => ['mymetaBehaviors','mymetaSidebar'],
+    'adminPostForm'            => ['mymetaBehaviors','mymetaInForm'],
 
-dcCore::app()->addBehavior('adminAfterPostCreate', ['mymetaBehaviors','setMymeta']);
-dcCore::app()->addBehavior('adminAfterPostUpdate', ['mymetaBehaviors','setMymeta']);
+    'adminAfterPostCreate'     => ['mymetaBehaviors','setMymeta'],
+    'adminAfterPostUpdate'     => ['mymetaBehaviors','setMymeta'],
 
-dcCore::app()->addBehavior('adminPageFormSidebar', ['mymetaBehaviors','mymetaSidebar']);
-dcCore::app()->addBehavior('adminPageForm', ['mymetaBehaviors','mymetaInForm']);
+    'adminPageFormSidebar'     => ['mymetaBehaviors','mymetaSidebar'],
+    'adminPageForm'            => ['mymetaBehaviors','mymetaInForm'],
 
-dcCore::app()->addBehavior('adminPostsActionsCombo', ['mymetaBehaviors','adminPostsActionsCombo']);
-dcCore::app()->addBehavior('adminPostsActionsV2', ['mymetaBehaviors','adminPostsActions']);
-dcCore::app()->addBehavior('adminPostsActionsContent', ['mymetaBehaviors','adminPostsActionsContent']);
-dcCore::app()->addBehavior('adminPostsActionsHeaders', ['mymetaBehaviors','adminPostsActionsHeaders']);
+    'adminPostsActionsCombo'   => ['mymetaBehaviors','adminPostsActionsCombo'],
+    'adminPostsActionsV2'      => ['mymetaBehaviors','adminPostsActions'],
+    'adminPostsActionsContent' => ['mymetaBehaviors','adminPostsActionsContent'],
+    'adminPostsActionsHeaders' => ['mymetaBehaviors','adminPostsActionsHeaders'],
 
-dcCore::app()->addBehavior('adminAfterPageCreate', ['mymetaBehaviors','setMymeta']);
-dcCore::app()->addBehavior('adminAfterPageUpdate', ['mymetaBehaviors','setMymeta']);
+    'adminAfterPageCreate'     => ['mymetaBehaviors','setMymeta'],
+    'adminAfterPageUpdate'     => ['mymetaBehaviors','setMymeta'],
+]);
+dcCore::app()->addBehaviors([
+    'adminPostForm' => ['mymetaBehaviors','mymetaPostHeader'],
+]);
 
 # BEHAVIORS
 class mymetaBehaviors
 {
     public static function mymetaPostHeader($post)
     {
-        $mymeta = new myMeta(dcCore::app());
+        $mymeta = new myMeta();
         echo $mymeta->postShowHeader($post);
     }
 
@@ -60,7 +64,7 @@ class mymetaBehaviors
 
     public static function mymetaInForm($post)
     {
-        $mymeta = new myMeta(dcCore::app());
+        $mymeta = new myMeta();
         if ($mymeta->hasMeta()) {
             echo $mymeta->postShowForm($post);
         }
@@ -68,7 +72,7 @@ class mymetaBehaviors
 
     public static function setMymeta($cur, $post_id)
     {
-        $mymeta = new myMeta(dcCore::app());
+        $mymeta = new myMeta();
         $mymeta->setMeta($post_id, $_POST);
     }
 
@@ -79,7 +83,7 @@ class mymetaBehaviors
 
     public static function adminPostsActionsHeaders()
     {
-        $mymeta = new myMeta(dcCore::app());
+        $mymeta = new myMeta();
 
         return $mymeta->postShowHeader(null, true);
     }
@@ -87,7 +91,7 @@ class mymetaBehaviors
     public static function adminPostsActions($posts, $action, $redir)
     {
         if ($action == 'mymeta_set' && !empty($_POST['mymeta_ok'])) {
-            $mymeta = new myMeta(dcCore::app());
+            $mymeta = new myMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
                     $mymeta->setMeta($posts->post_id, $_POST, false);
@@ -100,7 +104,7 @@ class mymetaBehaviors
     public static function adminPostsActionsContent($core, $action, $hidden_fields)
     {
         if ($action == 'mymeta_set') {
-            $mymeta = new myMeta(dcCore::app());
+            $mymeta = new myMeta();
             if ($mymeta->hasMeta()) {
                 echo '<h2>' . __('Set Metadata') . '</h2>' .
                     '<form action="posts_actions.php" method="post">' .
