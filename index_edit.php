@@ -19,7 +19,7 @@ function filterTplFile($file)
 }
 
 if (!empty($_POST['mymeta_id'])) {
-    $mymetaid                = preg_replace('#[^a-zA-Z0-9_-]#', '', $_POST['mymeta_id']);
+    $mymetaid                = preg_replace('#[^a-zA-Z0-9_-]#', '', (string) $_POST['mymeta_id']);
     $mymetaEntry             = dcCore::app()->admin->mymeta->newMyMeta($_POST['mymeta_type'], $mymetaid);
     $mymetaEntry->id         = $mymetaid;
     $mymetaEntry->post_types = false;
@@ -142,7 +142,7 @@ if (!dcCore::app()->error->flag()):?>
     echo '<p><label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'yes', !$mymetaentry->isRestrictionEnabled()) .
     __('Restrict to the following post types :');
     $restrictions = $mymetaentry->getRestrictions();
-    echo form::field('mymeta_restricted_types', 40, 255, $restrictions ? $restrictions : '') . '</label></p>'; ?>
+    echo form::field('mymeta_restricted_types', 40, 255, $restrictions ?: '') . '</label></p>'; ?>
 			</p>
 		</div>
 		<p>

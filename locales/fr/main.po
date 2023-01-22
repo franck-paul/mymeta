@@ -83,7 +83,7 @@ msgid "Link to all values:"
 msgstr "Lien vers toutes les valeurs :"
 
 msgid "My Meta"
-msgstr "Valeurs des métadonnées"
+msgstr "Métadonnées personnalisées"
 
 msgid "Mymeta errors :"
 msgstr "Erreurs Mymeta :"

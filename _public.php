@@ -114,7 +114,7 @@ class tplMyMeta
         if (isset($attr['type'])) {
             $attr['id'] = $attr['type'];
         }
-        if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', $attr['id'])) {
+        if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', (string) $attr['id'])) {
             return '<?php' . "\n" .
             'dcCore::app()->ctx->mymeta = dcCore::app()->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
             '%s' . "\n" .
@@ -258,9 +258,14 @@ class widgetsMyMeta
 {
     public static function mymetaList($w)
     {
-        if ($w->homeonly && dcCore::app()->url->type != 'default') {
+        if ($w->offline) {
             return;
         }
+
+        if (($w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)) || ($w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type))) {
+            return;
+        }
+
         $allmeta  = dcCore::app()->mymeta->getAll();
         $prompt   = ($w->prompt == 'prompt');
         $items    = [];
@@ -288,31 +293,36 @@ class widgetsMyMeta
         if (count($items) == 0) {
             return;
         }
-        $title = $w->title ? html::escapeHTML($w->title) : __('MyMeta');
-        $res   = '<div class="mymetalist">' .
-        '<h2>' . $title . '</h2>' .
-        '<ul>' . join('', $items) . '</ul></div>';
 
-        return $res;
+        $res = ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . '<ul>' . join('', $items) . '</ul>';
+
+        return $w->renderDiv($w->content_only, 'mymetalist ' . $w->class, '', $res);
     }
 
     public static function mymetaValues($w)
     {
-        if ($w->homeonly && dcCore::app()->url->type != 'default') {
+        if ($w->offline) {
             return;
         }
+
+        if (($w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)) || ($w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type))) {
+            return;
+        }
+
+        $res = ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . '<ul>';
 
         $limit       = abs((int) $w->limit);
         $is_cloud    = ($w->displaymode == 'cloud');
         $mymetaEntry = dcCore::app()->mymeta->getByID($w->mymetaid);
 
         if ($mymetaEntry == null || !$mymetaEntry->enabled) {
-            return '<p>not enabled</p>';
+            return '<li>not enabled</li>';
         }
-        $rs = dcCore::app()->mymeta->dcmeta->getMeta($mymetaEntry->id, $limit);
+
+        $rs = dcCore::app()->mymeta->getMeta($mymetaEntry->id, $limit);
 
         if ($rs->isEmpty()) {
-            return '<p>empty</p>';
+            return '<li>empty</li>';
         }
 
         $sort = $w->sortby;
@@ -326,32 +336,25 @@ class widgetsMyMeta
         }
 
         $rs->sort($sort, $order);
-        $title = $w->title ? html::escapeHTML($w->title) : $mymetaEntry->prompt;
-        $res   = '<div class="mymetavalues' . ($is_cloud ? ' tags' : '') . '">' .
-        '<h2>' . $title . '</h2>' .
-        '<ul>';
+
         $base_url = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaEntry->id;
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {
                 $class = 'class="tag' . $rs->roundpercent . '" ';
             }
-            $res .= '<li><a href="' . $base_url . '/' . rawurlencode($rs->meta_id) . '" ' .
-            $class . 'rel="tag">' .
-            $rs->meta_id . '</a> </li>';
+            $res .= '<li><a href="' . $base_url . '/' . rawurlencode($rs->meta_id) . '" ' . $class . 'rel="tag">' .
+                $rs->meta_id . '</a></li>';
         }
 
         $res .= '</ul>';
 
-        if ($mymetaEntry->url_list_enabled && !is_null($w->allvalueslinktitle)
-                                           && $w->allvalueslinktitle !== '') {
+        if ($mymetaEntry->url_list_enabled && !is_null($w->allvalueslinktitle) && $w->allvalueslinktitle !== '') {
             $res .= '<p><strong><a href="' . $base_url . '">' .
             html::escapeHTML($w->allvalueslinktitle) . '</a></strong></p>';
         }
 
-        $res .= '</div>';
-
-        return $res;
+        return $w->renderDiv($w->content_only, 'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class, '', $res);
     }
 }
 
@@ -370,8 +373,6 @@ class urlMymeta extends dcUrlHandlers
             $mymeta = dcCore::app()->mymeta->getByID($values[0]);
             if ($mymeta == null || !$mymeta->enabled) {
                 self::p404();
-
-                return;
             }
             dcCore::app()->ctx->mymeta = $mymeta;
 
@@ -395,8 +396,6 @@ class urlMymeta extends dcUrlHandlers
                     self::serveDocument($tpl);
                 } else {
                     self::p404();
-
-                    return;
                 }
             }
         }

@@ -51,7 +51,7 @@ dcCore::app()->admin->mymeta = new myMeta();
 $dcmeta                      = new dcMeta();
 if (!empty($_POST['action']) && !empty($_POST['entries'])) {
     $entries = $_POST['entries'];
-    $action  = $_POST['action'];
+    $action  = (string) $_POST['action'];
     $msg     = '';
     if (preg_match('/^(enable|disable)$/', $action)) {
         dcCore::app()->admin->mymeta->setEnabled($entries, ($action === 'enable'));
@@ -172,7 +172,7 @@ foreach ($allMeta as $meta) {
         } else {
             $img_status = sprintf($img, __('unpublished'), 'check-off.png');
         }
-        $st           = (isset($stats[$meta->id])) ? $stats[$meta->id] : 0;
+        $st           = $stats[$meta->id] ?? 0;
         $restrictions = $meta->getRestrictions();
         if (!$restrictions) {
             $restrictions = __('All');

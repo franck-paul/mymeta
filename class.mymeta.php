@@ -24,11 +24,9 @@ class myMeta
     public $dcmeta;
     public $settings;
 
-    /** @var array types registered mymeta types */
-    private static $types;
+    private static ?array $types = null;
 
-    /** @var array typesCombo registered mymeta types, as combo for form display */
-    private static $typesCombo;
+    private static ?array $typesCombo = null;
 
     /** @var array mymeta list of mymeta entries, indexed by meta position*/
     protected $mymeta;
@@ -86,7 +84,7 @@ class myMeta
             $this->mymeta = [];
         }
 
-        if (count($this->mymeta) > 0 && get_class(current($this->mymeta)) == 'stdClass') {
+        if (count((array) $this->mymeta) > 0 && get_class(current($this->mymeta)) == 'stdClass') {
             // Redirect to admin home to perform upgrade, old settings detected
             $this->mymeta = [];
         } else {
@@ -470,6 +468,27 @@ class myMeta
         $rs = new dcRecord($this->con->select($strReq));
 
         return $rs;
+    }
+
+    public function getMeta($type = null, $limit = null, $meta_id = null, $post_id = null)
+    {
+        $params = [];
+
+        if ($type != null) {
+            $params['meta_type'] = $type;
+        }
+        if ($limit != null) {
+            $params['limit'] = $limit;
+        }
+        if ($meta_id != null) {
+            $params['meta_id'] = $meta_id;
+        }
+        if ($meta_id != null) {
+            $params['post_id'] = $post_id;
+        }
+        $rs = $this->dcmeta->getMetadata($params, false);
+
+        return $this->dcmeta->computeMetaStats($rs);
     }
 
     public function getIDsAsWidgetList()

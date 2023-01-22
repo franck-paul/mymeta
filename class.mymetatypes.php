@@ -52,11 +52,7 @@ abstract class myMetaField extends myMetaEntry
 
     public static function cmp_pos($a, $b)
     {
-        if ($a->pos == $b->pos) {
-            return 0;
-        }
-
-        return ($a->pos < $b->pos) ? -1 : 1;
+        return $a->pos <=> $b->pos;
     }
 
     public function __construct($id = '')
@@ -398,6 +394,7 @@ class mmDate extends myMetaField
 }
 
 // Section mymeta type
+#[\AllowDynamicProperties]
 class myMetaSection extends myMetaEntry
 {
     public function getMetaTypeId()

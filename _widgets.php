@@ -24,51 +24,79 @@ class MyMetaWidgets
         $mymetasections                     = $mymeta->getSectionsAsWidgetList();
         $mymetasections[__('All sections')] = '';
 
-        $w->create('mymetalist', __('MyMeta List'), ['widgetsMyMeta','mymetaList']);
+        // Widget for list of metadata
+        $w
+            ->create('mymetalist', __('MyMeta List'), ['widgetsMyMeta', 'mymetaList'])
+            ->addTitle(__('Title'))
+            ->setting(
+                'prompt',
+                __('Value to display'),
+                'prompt',
+                'combo',
+                [
+                    __('ID')     => 'id',
+                    __('Prompt') => 'prompt',
+                ]
+            )
+            ->setting(
+                'section',
+                __('Section to display'),
+                '',
+                'combo',
+                $mymetasections,
+            )
+            ->addHomeOnly()
+            ->addContentOnly()
+            ->addClass()
+            ->addOffline();
 
-        $w->mymetalist->setting('title', __('Title'), '', 'text');
-        $w->mymetalist->setting(
-            'prompt',
-            __('Value to display'),
-            'prompt',
-            'combo',
-            [__('ID') => 'id', __('Prompt') => 'prompt']
-        );
-        $w->mymetalist->setting(
-            'section',
-            __('Section to display'),
-            '',
-            'combo',
-            $mymetasections
-        );
-        $w->mymetalist->setting('homeonly', __('Home page only'), 0, 'check');
+        // Widget for currently displayed post
 
-        $w->create('mymetavalues', __('MyMeta Values list'), ['widgetsMyMeta','mymetaValues']);
-        $w->mymetavalues->setting('title', __('Title'), '', 'text');
-        $w->mymetavalues->setting('mymetaid', __('MyMeta ID'), current($mymetalist), 'combo', $mymetalist);
-        $w->mymetavalues->setting(
-            'displaymode',
-            __('Display mode'),
-            'list',
-            'combo',
-            [__('Cloud') => 'cloud', __('List') => 'list']
-        );
-        $w->mymetavalues->setting('limit', __('Limit (empty means no limit):'), '20');
-        $w->mymetavalues->setting(
-            'sortby',
-            __('Order by:'),
-            'meta_id_lower',
-            'combo',
-            [__('Meta name') => 'meta_id_lower', __('Entries count') => 'count']
-        );
-        $w->mymetavalues->setting(
-            'orderby',
-            __('Sort:'),
-            'asc',
-            'combo',
-            [__('Ascending') => 'asc', __('Descending') => 'desc']
-        );
-        $w->mymetavalues->setting('allvalueslinktitle', __('Link to all values:'), __('All values'));
-        $w->mymetavalues->setting('homeonly', __('Home page only'), 0, 'check');
+        $w
+            ->create('mymetavalues', __('MyMeta Values list'), ['widgetsMyMeta', 'mymetaValues'])
+            ->addTitle(__('Title'))
+            ->setting(
+                'mymetaid',
+                __('MyMeta ID'),
+                current($mymetalist),
+                'combo',
+                $mymetalist,
+            )
+            ->setting(
+                'displaymode',
+                __('Display mode'),
+                'list',
+                'combo',
+                [
+                    __('Cloud') => 'cloud',
+                    __('List')  => 'list',
+                ]
+            )
+            ->setting('limit', __('Limit (empty means no limit):'), '20')
+            ->setting(
+                'sortby',
+                __('Order by:'),
+                'meta_id_lower',
+                'combo',
+                [
+                    __('Meta name')     => 'meta_id_lower',
+                    __('Entries count') => 'count',
+                ]
+            )
+            ->setting(
+                'orderby',
+                __('Sort:'),
+                'asc',
+                'combo',
+                [
+                    __('Ascending')  => 'asc',
+                    __('Descending') => 'desc',
+                ]
+            )
+            ->setting('allvalueslinktitle', __('Link to all values:'), __('All values'))
+            ->addHomeOnly()
+            ->addContentOnly()
+            ->addClass()
+            ->addOffline();
     }
 }
