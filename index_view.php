@@ -9,13 +9,17 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Helper\Html\Html;
+use Dotclear\Helper\Network\Http;
+
 if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
 if (empty($_GET['id'])) {
     dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 $nb_per_page = 20;
@@ -24,7 +28,7 @@ $page        = !empty($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
 dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
 if (dcCore::app()->admin->mymetaEntry == null) {
     dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -85,9 +89,9 @@ $statuses = [
 
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML(dcCore::app()->blog->name)             => '',
+        Html::escapeHTML(dcCore::app()->blog->name)             => '',
         __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
-        html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => '',
+        Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => '',
     ]
 ) . dcPage::notices();
 
@@ -99,7 +103,7 @@ $params = [
 
 $rs    = dcCore::app()->admin->mymeta->getMetadata($params, false);
 $count = dcCore::app()->admin->mymeta->getMetadata($params, true);
-echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), html::escapeHTML(dcCore::app()->admin->mymetaEntry->id)) . '</h3>';
+echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id)) . '</h3>';
 $list = new adminMyMetaList($rs, $count->f(0));
 echo $list->display($page, $nb_per_page, '%s');
 echo '</div>';

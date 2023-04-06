@@ -9,9 +9,8 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return;
-}
+
+use Dotclear\Helper\Html\Html;
 
 require_once __DIR__ . '/_widgets.php';
 
@@ -287,14 +286,14 @@ class widgetsMyMeta
             } elseif ($display_meta && $meta->enabled
                                     && $meta->url_list_enabled) {
                 $items[] = '<li><a href="' . $base_url . rawurlencode($meta->id) . '">' .
-                    html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
+                    Html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
             }
         }
         if (count($items) == 0) {
             return;
         }
 
-        $res = ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . '<ul>' . join('', $items) . '</ul>';
+        $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>' . join('', $items) . '</ul>';
 
         return $w->renderDiv($w->content_only, 'mymetalist ' . $w->class, '', $res);
     }
@@ -309,7 +308,7 @@ class widgetsMyMeta
             return;
         }
 
-        $res = ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . '<ul>';
+        $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>';
 
         $limit       = abs((int) $w->limit);
         $is_cloud    = ($w->displaymode == 'cloud');
@@ -351,7 +350,7 @@ class widgetsMyMeta
 
         if ($mymetaEntry->url_list_enabled && !is_null($w->allvalueslinktitle) && $w->allvalueslinktitle !== '') {
             $res .= '<p><strong><a href="' . $base_url . '">' .
-            html::escapeHTML($w->allvalueslinktitle) . '</a></strong></p>';
+            Html::escapeHTML($w->allvalueslinktitle) . '</a></strong></p>';
         }
 
         return $w->renderDiv($w->content_only, 'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class, '', $res);

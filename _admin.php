@@ -9,6 +9,9 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Helper\Network\Http;
+
 if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
@@ -28,22 +31,22 @@ dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
 );
 
 dcCore::app()->addBehaviors([
-    'adminPostFormSidebar'     => ['mymetaBehaviors','mymetaSidebar'],
-    'adminPostForm'            => ['mymetaBehaviors','mymetaInForm'],
+    'adminPostFormSidebar' => ['mymetaBehaviors','mymetaSidebar'],
+    'adminPostForm'        => ['mymetaBehaviors','mymetaInForm'],
 
-    'adminAfterPostCreate'     => ['mymetaBehaviors','setMymeta'],
-    'adminAfterPostUpdate'     => ['mymetaBehaviors','setMymeta'],
+    'adminAfterPostCreate' => ['mymetaBehaviors','setMymeta'],
+    'adminAfterPostUpdate' => ['mymetaBehaviors','setMymeta'],
 
-    'adminPageFormSidebar'     => ['mymetaBehaviors','mymetaSidebar'],
-    'adminPageForm'            => ['mymetaBehaviors','mymetaInForm'],
+    'adminPageFormSidebar' => ['mymetaBehaviors','mymetaSidebar'],
+    'adminPageForm'        => ['mymetaBehaviors','mymetaInForm'],
 
     'adminPostsActionsCombo'   => ['mymetaBehaviors','adminPostsActionsCombo'],
     'adminPostsActionsV2'      => ['mymetaBehaviors','adminPostsActions'],
     'adminPostsActionsContent' => ['mymetaBehaviors','adminPostsActionsContent'],
     'adminPostsActionsHeaders' => ['mymetaBehaviors','adminPostsActionsHeaders'],
 
-    'adminAfterPageCreate'     => ['mymetaBehaviors','setMymeta'],
-    'adminAfterPageUpdate'     => ['mymetaBehaviors','setMymeta'],
+    'adminAfterPageCreate' => ['mymetaBehaviors','setMymeta'],
+    'adminAfterPageUpdate' => ['mymetaBehaviors','setMymeta'],
 ]);
 dcCore::app()->addBehaviors([
     'adminPostForm' => ['mymetaBehaviors','mymetaPostHeader'],
@@ -97,7 +100,7 @@ class mymetaBehaviors
                     $mymeta->setMeta($posts->post_id, $_POST, false);
                 }
             }
-            http::redirect($redir);
+            Http::redirect($redir);
         }
     }
 

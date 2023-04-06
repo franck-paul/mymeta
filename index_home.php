@@ -9,6 +9,10 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Helper\Html\Html;
+use Dotclear\Helper\Network\Http;
+
 if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
@@ -43,7 +47,7 @@ if (dcCore::app()->admin->mymeta->settings->mymeta_fields != null) {
                 'MyMeta fields backup (0.3.x version)'
             );
         }
-        http::redirect(dcCore::app()->admin->getPageURL());
+        Http::redirect(dcCore::app()->admin->getPageURL());
         exit;
     }
 }
@@ -64,19 +68,19 @@ if (!empty($_POST['action']) && !empty($_POST['entries'])) {
     }
     dcCore::app()->admin->mymeta->store();
     dcPage::addSuccessNotice($msg);
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
     $section         = dcCore::app()->admin->mymeta->newSection();
-    $section->prompt = html::escapeHTML($_POST['mymeta_section']);
+    $section->prompt = Html::escapeHTML($_POST['mymeta_section']);
     dcCore::app()->admin->mymeta->update($section);
     dcCore::app()->admin->mymeta->store();
     dcPage::addSuccessNotice(sprintf(
         __('Section "%s" has been successfully created'),
-        html::escapeHTML($_POST['mymeta_section'])
+        Html::escapeHTML($_POST['mymeta_section'])
     ));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -95,7 +99,7 @@ if (!empty($_POST['saveorder']) && !empty($order)) {
     dcCore::app()->admin->mymeta->store();
 
     dcPage::addSuccessNotice(__('Mymeta have been successfully reordered'));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 $types = dcCore::app()->admin->mymeta->getTypesAsCombo();
@@ -121,7 +125,7 @@ $combo_action[__('delete')]  = 'delete';
 
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML(dcCore::app()->blog->name) => '',
+        Html::escapeHTML(dcCore::app()->blog->name) => '',
         __('My Metadata')                           => '',
     ]
 ) . dcPage::notices();
@@ -163,7 +167,7 @@ foreach ($allMeta as $meta) {
         '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=editsection&amp;id=' . $meta->id . '">' .
         '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
         '<td class="nowrap maximal" colspan="6">' .
-        '<strong>' . sprintf(__('Section: %s'), html::escapeHTML($meta->prompt)) . '</strong></td>' .
+        '<strong>' . sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)) . '</strong></td>' .
         '</tr>';
     } else {
         $img = '<img alt="%1$s" title="%1$s" src="images/%2$s" />';
@@ -185,7 +189,7 @@ foreach ($allMeta as $meta) {
         '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=edit&amp;id=' . $meta->id . '">' .
         '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
         '<td class="nowrap"><a href="plugin.php?p=mymeta&amp;m=view&amp;id=' . $meta->id . '">' .
-        html::escapeHTML($meta->id) . '</a></td>' .
+        Html::escapeHTML($meta->id) . '</a></td>' .
         '<td class="nowrap">' . $meta->getMetaTypeDesc() . '</td>' .
         '<td class="nowrap maximal">' . $meta->prompt . '</td>' .
         '<td>' . $restrictions . '</td><td class="nowrap">' .

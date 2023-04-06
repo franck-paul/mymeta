@@ -9,6 +9,10 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Helper\Html\Html;
+use Dotclear\Helper\Network\Http;
+
 if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
@@ -26,7 +30,7 @@ if (!empty($_POST['mymeta_id'])) {
     if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes') {
         if (isset($_POST['mymeta_restricted_types'])) {
             $post_types = explode(',', $_POST['mymeta_restricted_types']);
-            array_walk($post_types, fn ($v) => trim(html::escapeHTML($v)));
+            array_walk($post_types, fn ($v) => trim(Html::escapeHTML($v)));
             $mymetaEntry->post_types = $post_types;
         }
     }
@@ -40,9 +44,9 @@ if (!empty($_POST['mymeta_id'])) {
     dcCore::app()->admin->mymeta->store();
     dcPage::addsuccessNotice(sprintf(
         __('MyMeta "%s" has been successfully updated'),
-        html::escapeHTML($mymetaid)
+        Html::escapeHTML($mymetaid)
     ));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -58,13 +62,13 @@ if (array_key_exists('id', $_REQUEST)) {
     $mymetaentry = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
     if ($mymetaentry == null) {
         dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
-        http::redirect(dcCore::app()->admin->getPageURL());
+        Http::redirect(dcCore::app()->admin->getPageURL());
         exit;
     }
     $mymeta_type = $mymetaentry->getMetaTypeId();
     $lock_id     = true;
 } elseif (!empty($_REQUEST['mymeta_type'])) {
-    $mymeta_type = html::escapeHTML($_REQUEST['mymeta_type']);
+    $mymeta_type = Html::escapeHTML($_REQUEST['mymeta_type']);
     $page_title  = __('New MyMeta');
     $mymetaentry = dcCore::app()->admin->mymeta->newMyMeta($mymeta_type);
     $mymetaid    = '';
@@ -74,7 +78,7 @@ $types      = dcCore::app()->admin->mymeta->getTypesAsCombo();
 $type_label = array_search($mymeta_type, $types);
 if (!$type_label) {
     dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
 }
 
 ?>
@@ -88,7 +92,7 @@ if (!$type_label) {
 <?php
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML(dcCore::app()->blog->name) => '',
+        Html::escapeHTML(dcCore::app()->blog->name) => '',
         __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
         $page_title                                 => '',
     ]

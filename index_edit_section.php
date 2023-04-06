@@ -9,13 +9,17 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Helper\Html\Html;
+use Dotclear\Helper\Network\Http;
+
 if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
 if (!empty($_POST['saveconfig'])) {
-    $mymetaid     = html::escapeHTML($_POST['mymeta_id']);
-    $mymetaprompt = html::escapeHTML($_POST['mymeta_prompt']);
+    $mymetaid     = Html::escapeHTML($_POST['mymeta_id']);
+    $mymetaprompt = Html::escapeHTML($_POST['mymeta_prompt']);
 
     $mymetaSection = dcCore::app()->admin->mymeta->getByID($mymetaid);
     if ($mymetaSection instanceof myMetaSection) {
@@ -24,7 +28,7 @@ if (!empty($_POST['saveconfig'])) {
         dcCore::app()->admin->mymeta->store();
     }
     dcPage::addSuccessNotice(__('Section has been successfully updated'));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 
@@ -34,12 +38,12 @@ if (array_key_exists('id', $_REQUEST)) {
     $mymetasection = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
     if (!($mymetasection instanceof myMetaSection)) {
         dcPage::addErrorNotice(__('Something went wrong while editing section'));
-        http::redirect(dcCore::app()->admin->getPageURL());
+        Http::redirect(dcCore::app()->admin->getPageURL());
         exit;
     }
 } else {
     dcPage::addErrorNotice(__('Something went wrong while editing section'));
-    http::redirect(dcCore::app()->admin->getPageURL());
+    Http::redirect(dcCore::app()->admin->getPageURL());
     exit;
 }
 ?>
@@ -54,7 +58,7 @@ if (array_key_exists('id', $_REQUEST)) {
 <?php
 echo dcPage::breadcrumb(
     [
-        html::escapeHTML(dcCore::app()->blog->name) => '',
+        Html::escapeHTML(dcCore::app()->blog->name) => '',
         __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
         $page_title                                 => '',
     ]

@@ -9,6 +9,9 @@
  *
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Helper\Html\Html;
+
 myMeta::registerType('mmString');
 myMeta::registerType('mmList');
 myMeta::registerType('mmCheck');
@@ -84,7 +87,7 @@ abstract class myMetaField extends myMetaEntry
             $this_id = 'mymeta_' . $this->id;
             $value   = '';
             if (isset($_POST[$this_id])) {
-                $value = html::escapeHTML($_POST[$this_id]);
+                $value = Html::escapeHTML($_POST[$this_id]);
             } elseif ($post) {
                 $value = $dcmeta->getMetaStr($post->post_meta, $this->id);
             }
@@ -140,7 +143,7 @@ abstract class myMetaField extends myMetaEntry
             $dcmeta->delPostMeta($post_id, $this->id);
         }
         if (!empty($post['mymeta_' . $this->id])) {
-            $dcmeta->setPostMeta($post_id, $this->id, html::escapeHTML($post['mymeta_' . $this->id]));
+            $dcmeta->setPostMeta($post_id, $this->id, Html::escapeHTML($post['mymeta_' . $this->id]));
         }
     }
 
@@ -193,7 +196,7 @@ abstract class myMetaField extends myMetaEntry
      */
     public function adminUpdate($post)
     {
-        $this->prompt  = html::escapeHTML($post['mymeta_prompt']);
+        $this->prompt  = Html::escapeHTML($post['mymeta_prompt']);
         $this->enabled = (bool) $post['mymeta_enabled'];
     }
 
@@ -364,7 +367,7 @@ class mmDate extends myMetaField
     {
         $timestamp = $value ? strtotime($value) : time();
 
-        return form::datetime($id, ['default' => html::escapeHTML(dt::str('%Y-%m-%dT%H:%M', $timestamp))]);
+        return form::datetime($id, ['default' => Html::escapeHTML(dt::str('%Y-%m-%dT%H:%M', $timestamp))]);
     }
 
     public function getMetaTypeId()
