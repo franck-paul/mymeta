@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-22 15:43+0100\n"
+"POT-Creation-Date: 2023-06-15 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,345 +16,465 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../hg-plugins/mymeta/__html_tpl_dummy.php:6
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:6
 msgid "Entries by"
 msgstr ""
 
-#: ../hg-plugins/mymeta/__html_tpl_dummy.php:9
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:9
 msgid "Metadata"
 msgstr ""
 
-#: ../hg-plugins/mymeta/__html_tpl_dummy.php:10
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:10
 msgid "This metadata's comments RSS feed"
 msgstr ""
 
-#: ../hg-plugins/mymeta/__html_tpl_dummy.php:11
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:11
 msgid "This metadata's entries RSS feed"
 msgstr ""
 
-#: ../hg-plugins/mymeta/_admin.php:18 ../hg-plugins/mymeta/index_edit.php:87
-#: ../hg-plugins/mymeta/index_edit_section.php:57
-#: ../hg-plugins/mymeta/index_home.php:111
-#: ../hg-plugins/mymeta/index_home.php:126
-#: ../hg-plugins/mymeta/index_view.php:96
-#: ../hg-plugins/mymeta/index_view_posts.php:137
-msgid "My Metadata"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_admin.php:71 ../hg-plugins/mymeta/_public.php:276
-msgid "MyMeta"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_admin.php:71
-msgid "Set MyMeta"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_admin.php:102
-msgid "Set Metadata"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_admin.php:105
-#: ../hg-plugins/mymeta/index_view_posts.php:182
-msgid "save"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:23
-msgid "All sections"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:24
-msgid "MyMeta List"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:26
-msgid "Value to display"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:27 ../hg-plugins/mymeta/index_home.php:139
-msgid "ID"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:27 ../hg-plugins/mymeta/index_edit.php:101
-#: ../hg-plugins/mymeta/index_home.php:141
-msgid "Prompt"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:28
-msgid "Section to display"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:32
-msgid "MyMeta Values list"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:34
-msgid "MyMeta ID"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:35
-msgid "Display mode"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:36
-msgid "Cloud"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:36
-msgid "List"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:40
-msgid "Meta name"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:45
-msgid "All values"
-msgstr ""
-
-#: ../hg-plugins/mymeta/_widgets.php:45
-msgid "Link to all values:"
-msgstr ""
-
-#: ../hg-plugins/mymeta/class.mymeta.php:318
+#: ../git-plugins/mymeta/src/Backend.php:28
+#: ../git-plugins/mymeta/src/MyMeta.php:336
 msgid "My Meta"
 msgstr ""
 
-#: ../hg-plugins/mymeta/class.mymeta.php:367
-msgid "Mymeta errors :"
+#: ../git-plugins/mymeta/src/Backend.php:28
+msgid "User-defined metadata management in posts"
 msgstr ""
 
-#: ../hg-plugins/mymeta/class.mymetatypes.php:217
-msgid "String"
+#: ../git-plugins/mymeta/src/Backend.php:40
+#: ../git-plugins/mymeta/src/Manage.php:229
+#: ../git-plugins/mymeta/src/Manage.php:234
+#: ../git-plugins/mymeta/src/ManageEdit.php:131
+#: ../git-plugins/mymeta/src/ManageEditSection.php:100
+#: ../git-plugins/mymeta/src/ManageView.php:88
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:177
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:182
+msgid "My Metadata"
 msgstr ""
 
-#: ../hg-plugins/mymeta/class.mymetatypes.php:230
-msgid "Items List"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:49
+msgid "MyMeta"
 msgstr ""
 
-#: ../hg-plugins/mymeta/class.mymetatypes.php:279
-msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:49
+msgid "Set MyMeta"
 msgstr ""
 
-#: ../hg-plugins/mymeta/class.mymetatypes.php:302
-msgid "Checkbox"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:77
+msgid "Set Metadata"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_edit.php:42
-#, php-format
-msgid "MyMeta \"%s\" has been successfully updated"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:80
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:225
+msgid "save"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_edit.php:50
-msgid "Edit MyMeta"
+#: ../git-plugins/mymeta/src/BackendList.php:26
+msgid "No entries found"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_edit.php:54
-#: ../hg-plugins/mymeta/index_edit.php:70
-msgid "Something went wrong while editing mymeta"
+#: ../git-plugins/mymeta/src/BackendList.php:32
+msgid "Nb Posts"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_edit.php:62
-#: ../hg-plugins/mymeta/index_home.php:222
-msgid "New MyMeta"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:78
-#: ../hg-plugins/mymeta/index_edit_section.php:48
-#: ../hg-plugins/mymeta/index_view.php:87
-msgid "My metadata"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:94
-msgid "MyMeta definition"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:96
-msgid "Identifier (as stored in meta_type in database):"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:105
-#, php-format
-msgid "MyMeta type : %s"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:110
-msgid "MyMeta URLs"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:118
-msgid "Enable MyMeta values list public page"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:119
-msgid "List template file (leave empty for default mymetas.html)"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:124
-msgid "Enable single mymeta value public page"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:126
-msgid "Single template file (leave empty for default mymeta.html)"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:131
-msgid "MyMeta restrictions"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:135
-msgid "Display meta field for any post type"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit.php:137
-msgid "Restrict to the following post types :"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit_section.php:25
-msgid "Section has been successfully updated"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit_section.php:31
-msgid "Edit section"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit_section.php:35
-#: ../hg-plugins/mymeta/index_edit_section.php:40
-msgid "Something went wrong while editing section"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_edit_section.php:64
-msgid "MyMeta section definition"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_home.php:55
+#: ../git-plugins/mymeta/src/Manage.php:129
 msgid "Mymeta entries have been successfully enabled"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:56
+#: ../git-plugins/mymeta/src/Manage.php:130
 msgid "Mymeta entries have been successfully disabled"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:61
+#: ../git-plugins/mymeta/src/Manage.php:133
 msgid "Mymeta entries have been successfully deleted"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:74
+#: ../git-plugins/mymeta/src/Manage.php:152
 #, php-format
 msgid "Section \"%s\" has been successfully created"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:95
+#: ../git-plugins/mymeta/src/Manage.php:175
 msgid "Mymeta have been successfully reordered"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:103
+#: ../git-plugins/mymeta/src/Manage.php:221
 msgid "enable"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:104
+#: ../git-plugins/mymeta/src/Manage.php:222
 msgid "disable"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:130
+#: ../git-plugins/mymeta/src/Manage.php:223
+msgid "delete"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:241
 msgid "Add a metadata"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:132
+#: ../git-plugins/mymeta/src/Manage.php:244
 msgid "MyMeta list"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:143
+#: ../git-plugins/mymeta/src/Manage.php:251
+#: ../git-plugins/mymeta/src/Widgets.php:38
+msgid "ID"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:252
+msgid "Type"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:253
+#: ../git-plugins/mymeta/src/ManageEdit.php:148
+#: ../git-plugins/mymeta/src/Widgets.php:39
+msgid "Prompt"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:254
+msgid "Posts"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:255
 msgid "Count"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:164
-#: ../hg-plugins/mymeta/index_home.php:185
+#: ../git-plugins/mymeta/src/Manage.php:256
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:140
+msgid "Status"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:276
+#: ../git-plugins/mymeta/src/Manage.php:298
 msgid "edit MyMeta"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:166
+#: ../git-plugins/mymeta/src/Manage.php:278
 #, php-format
 msgid "Section: %s"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:178
+#: ../git-plugins/mymeta/src/Manage.php:283
+msgid "published"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:285
+msgid "unpublished"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:290
 msgid "All"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:211
+#: ../git-plugins/mymeta/src/Manage.php:321
+msgid "Save order"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:326
 msgid "Selected metas action:"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:221
+#: ../git-plugins/mymeta/src/Manage.php:330
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:201
+msgid "ok"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:338
 msgid "New metadata"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:224
+#: ../git-plugins/mymeta/src/Manage.php:339
+#: ../git-plugins/mymeta/src/ManageEdit.php:112
+msgid "New MyMeta"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:341
 msgid "Create MyMeta"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:232
+#: ../git-plugins/mymeta/src/Manage.php:349
 msgid "New section"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_home.php:234
+#: ../git-plugins/mymeta/src/Manage.php:351
 msgid "Create section"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view.php:15
-#: ../hg-plugins/mymeta/index_view.php:23
+#: ../git-plugins/mymeta/src/ManageEdit.php:72
+#, php-format
+msgid "MyMeta \"%s\" has been successfully updated"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:100
+msgid "Edit MyMeta"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:104
+#: ../git-plugins/mymeta/src/ManageEdit.php:120
+msgid "Something went wrong while editing mymeta"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:126
+#: ../git-plugins/mymeta/src/ManageEditSection.php:95
+#: ../git-plugins/mymeta/src/ManageView.php:83
+msgid "My metadata"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:141
+msgid "MyMeta definition"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:143
+msgid "Identifier (as stored in meta_type in database):"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:152
+#, php-format
+msgid "MyMeta type : %s"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:157
+msgid "MyMeta URLs"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:166
+msgid "Enable MyMeta values list public page"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:167
+msgid "List template file (leave empty for default mymetas.html)"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:172
+msgid "Enable single mymeta value public page"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:174
+msgid "Single template file (leave empty for default mymeta.html)"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:181
+msgid "MyMeta restrictions"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:185
+msgid "Display meta field for any post type"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:187
+msgid "Restrict to the following post types :"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:207
+#: ../git-plugins/mymeta/src/ManageEditSection.php:123
+msgid "Save"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEditSection.php:59
+msgid "Section has been successfully updated"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEditSection.php:79
+msgid "Edit section"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEditSection.php:83
+#: ../git-plugins/mymeta/src/ManageEditSection.php:88
+msgid "Something went wrong while editing section"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEditSection.php:110
+msgid "MyMeta section definition"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEditSection.php:112
+#: ../git-plugins/mymeta/src/Widgets.php:31
+#: ../git-plugins/mymeta/src/Widgets.php:58
+msgid "Title"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageView.php:47
+#: ../git-plugins/mymeta/src/ManageView.php:53
 msgid "Something went wrong when editing mymeta"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view.php:33
-msgid "No entries found"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_view.php:42
-msgid "Nb Posts"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_view.php:81
-msgid "Value has been successfully changed"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_view.php:110
+#: ../git-plugins/mymeta/src/ManageView.php:95
 #, php-format
 msgid "Values of metadata \"%s\""
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:15
-#: ../hg-plugins/mymeta/index_view_posts.php:22
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:51
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:57
 msgid "Something went wrong while editing mymeta value"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:42
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:70
 #, php-format
 msgid "Mymeta value successfully updated from \"%s\" to \"%s\""
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:118
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:141
+msgid "Publish"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:142
+msgid "Unpublish"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:143
+msgid "Schedule"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:144
+msgid "Mark as pending"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:147
+msgid "Mark"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:148
+msgid "Mark as selected"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:149
+msgid "Mark as unselected"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:151
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:155
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:156
+msgid "Change"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:151
+msgid "Change category"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:157
+msgid "Change author"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:164
+msgid "Delete"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:172
 msgid "Are you sure you want to remove this metadata?"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:139
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:184
 #, php-format
 msgid "Value \"%s\""
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:143
-msgid "MyMeta has been successfully renamed"
-msgstr ""
-
-#: ../hg-plugins/mymeta/index_view_posts.php:148
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:190
 #, php-format
 msgid "Entries having meta id \"%s\" set to \"%s\""
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:179
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:199
+msgid "Selected entries action:"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:222
 msgid "Change MyMeta value"
 msgstr ""
 
-#: ../hg-plugins/mymeta/index_view_posts.php:180
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:223
 msgid "This will change the meta value for all entries having this value"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMeta.php:388
+msgid "Mymeta errors :"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMetaCheck.php:32
+msgid "Checkbox"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMetaDate.php:39
+msgid "Date"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMetaList.php:31
+msgid "Items List"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMetaList.php:90
+msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMetaSection.php:31
+msgid "Section"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/MyMetaString.php:27
+msgid "String"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:26
+msgid "All sections"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:30
+msgid "MyMeta List"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:34
+msgid "Value to display"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:44
+msgid "Section to display"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:57
+msgid "MyMeta Values list"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:61
+msgid "MyMeta ID"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:68
+msgid "Display mode"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:72
+msgid "Cloud"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:73
+msgid "List"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:79
+msgid "Order by:"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:83
+msgid "Meta name"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:89
+msgid "Sort:"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:93
+msgid "Ascending"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:94
+msgid "Descending"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:97
+msgid "All values"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:97
+msgid "Link to all values:"
 msgstr ""

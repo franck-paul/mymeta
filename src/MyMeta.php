@@ -5,10 +5,23 @@
  * @package Dotclear
  * @subpackage Plugins
  *
- * @author Bruno Hondelatte and contributors
+ * @author Jean-Christian Denis, Franck Paul and contributors
  *
+ * @copyright Jean-Christian Denis, Franck Paul
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\mymeta;
+
+use dcAuth;
+use dcBlog;
+use dcCore;
+use dcMeta;
+use dcNamespace;
+use Dotclear\Database\MetaRecord;
+use Exception;
+use stdClass;
 
 /**
  * Core myMeta class
@@ -17,7 +30,7 @@
  *
  * @package MyMeta
  */
-class myMeta
+class MyMeta
 {
     private $con;
 
@@ -53,8 +66,8 @@ class myMeta
         $sample                    = new $class();
         $desc                      = $sample->getMetaTypeDesc();
         $type                      = $sample->getMetaTypeId();
-        myMeta::$typesCombo[$desc] = $type;
-        myMeta::$types[$type]      = [
+        MyMeta::$typesCombo[$desc] = $type;
+        MyMeta::$types[$type]      = [
             'desc'   => $desc,
             'object' => $class,
         ];
@@ -72,7 +85,7 @@ class myMeta
     public function __construct(bool $bypass_settings = false)
     {
         $this->dcmeta   = dcCore::app()->meta;
-        $this->settings = dcCore::app()->blog->settings->mymeta;
+        $this->settings = dcCore::app()->blog->settings->get(My::id());
 
         $this->con = & dcCore::app()->con;
         if (!$bypass_settings && $this->settings->mymeta_fields) {
@@ -84,7 +97,7 @@ class myMeta
             $this->mymeta = [];
         }
 
-        if (count((array) $this->mymeta) > 0 && get_class(current($this->mymeta)) == 'stdClass') {
+        if (count($this->mymeta) > 0 && get_class(current($this->mymeta)) === stdClass::class) {
             // Redirect to admin home to perform upgrade, old settings detected
             $this->mymeta = [];
         } else {
@@ -92,7 +105,7 @@ class myMeta
             $this->sep_max   = 0;
             foreach ($this->mymeta as $k => $v) {
                 $this->mymetaIDs[$v->id] = $k;
-                if ($v instanceof myMetaSection) {
+                if ($v instanceof MyMetaSection) {
                     // Compute max section id, to anticipate
                     // future section ids
                     $sep_id = substr($v->id, strlen($this->sep_prefix));
@@ -109,11 +122,11 @@ class myMeta
      *
      * Retrieves form-friendly registered mymeta types
      *
-     * @return array
+     * @return array|null
      */
-    public function getTypesAsCombo()
+    public function getTypesAsCombo(): ?array
     {
-        return myMeta::$typesCombo;
+        return MyMeta::$typesCombo;
     }
 
     /**
@@ -128,7 +141,7 @@ class myMeta
         $this->settings->put(
             'mymeta_fields',
             base64_encode(serialize($this->mymeta)),
-            'string',
+            dcNamespace::NS_STRING,
             'MyMeta fields'
         );
     }
@@ -152,7 +165,7 @@ class myMeta
      *
      * @param int $pos  the position
      *
-     * @return myMetaEntry the mymeta
+     * @return MyMetaEntry the mymeta
      */
     public function getByPos($pos)
     {
@@ -166,7 +179,7 @@ class myMeta
      *
      * @param String $id  the ID
      *
-     * @return myMetaEntry|null the mymeta
+     * @return MyMetaEntry|null the mymeta
      */
     public function getByID($id)
     {
@@ -201,7 +214,7 @@ class myMeta
     {
         $this->sep_max++;
         $sep_id  = $this->sep_prefix . $this->sep_max;
-        $sep     = new myMetaSection();
+        $sep     = new MyMetaSection();
         $sep->id = $sep_id;
 
         return $sep;
@@ -260,8 +273,8 @@ class myMeta
 
     public function newMyMeta($type = 'string', $id = '')
     {
-        if (!empty(myMeta::$types[$type])) {
-            return new myMeta::$types[$type]['object']($id);
+        if (!empty(MyMeta::$types[$type])) {
+            return new MyMeta::$types[$type]['object']($id);
         }
 
         return null;
@@ -283,7 +296,7 @@ class myMeta
     public function hasMeta()
     {
         foreach ($this->mymeta as $id => $meta) {
-            if ($meta instanceof myMetaField && $meta->enabled) {
+            if ($meta instanceof MyMetaField && $meta->enabled) {
                 return true;
             }
         }
@@ -295,7 +308,7 @@ class myMeta
     {
         $res = '';
         foreach ($this->mymeta as $meta) {
-            if ($meta instanceof myMetaField && $meta->enabled) {
+            if ($meta instanceof MyMetaField && $meta->enabled) {
                 $res .= $meta->postHeader($post, $standalone);
             }
         }
@@ -309,7 +322,7 @@ class myMeta
         $active_sections = ['' => true];
         $cur_section     = '';
         foreach ($this->mymeta as $id => $meta) {
-            if ($meta instanceof myMetaSection) {
+            if ($meta instanceof MyMetaSection) {
                 $cur_section = $meta->id;
             } elseif ($meta->enabled) {
                 $active_sections[$cur_section] = true;
@@ -322,7 +335,7 @@ class myMeta
         */
         $res .= '<div class="fieldset"><h3>' . __('My Meta') . '</h3>';
         foreach ($this->mymeta as $id => $meta) {
-            if ($meta instanceof myMetaSection) {
+            if ($meta instanceof MyMetaSection) {
                 if (isset($active_sections[$meta->id])) {
                     $res .= '<h4>' . __($meta->prompt) . '</h4>';
                 }
@@ -356,7 +369,7 @@ class myMeta
     {
         $errors = [];
         foreach ($this->mymeta as $meta) {
-            if ($meta instanceof myMetaField && $meta->enabled) {
+            if ($meta instanceof MyMetaField && $meta->enabled) {
                 if (!isset($POST['post_type']) || $meta->isEnabledFor($POST['post_type'])) {
                     try {
                         $meta->setPostMeta($this->dcmeta, $post_id, $POST, $deleteIfEmpty);
@@ -406,7 +419,7 @@ class myMeta
         $strReq .= 'GROUP BY meta_type,P.blog_id ' .
         'ORDER BY count DESC';
 
-        $rs = new dcRecord($this->con->select($strReq));
+        $rs = new MetaRecord($this->con->select($strReq));
         $rs = $rs->toStatic();
 
         return $rs;
@@ -465,7 +478,7 @@ class myMeta
         if (isset($params['limit']) && !$count_only) {
             $strReq .= $this->con->limit($params['limit']);
         }
-        $rs = new dcRecord($this->con->select($strReq));
+        $rs = new MetaRecord($this->con->select($strReq));
 
         return $rs;
     }
@@ -495,7 +508,7 @@ class myMeta
     {
         $arr = [];
         foreach ($this->mymeta as $k => $meta) {
-            if ($meta instanceof myMetaField && $meta->enabled) {
+            if ($meta instanceof MyMetaField && $meta->enabled) {
                 $arr[$meta->id] = $meta->id;
             }
         }
@@ -507,7 +520,7 @@ class myMeta
     {
         $arr = [];
         foreach ($this->mymeta as $k => $meta) {
-            if ($meta instanceof myMetaSection) {
+            if ($meta instanceof MyMetaSection) {
                 $arr[$meta->prompt] = $meta->id;
             }
         }
@@ -515,5 +528,3 @@ class myMeta
         return $arr;
     }
 }
-
-require_once __DIR__ . '/class.mymetatypes.php';

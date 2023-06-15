@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-22 15:43+0100\n"
+"POT-Creation-Date: 2023-06-15 10:57+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Kozlika <kozlika@free.fr>\n"
 "Language-Team: \n"
@@ -25,6 +25,12 @@ msgstr "flux RSS des commentaires pour cette valeur de métadonnée"
 msgid "This metadata's entries RSS feed"
 msgstr "flux RSS des billets pour cette valeur de métadonnée"
 
+msgid "My Meta"
+msgstr "Métadonnées personnalisées"
+
+msgid "User-defined metadata management in posts"
+msgstr ""
+
 msgid "My Metadata"
 msgstr "Mes métadonnées"
 
@@ -40,65 +46,101 @@ msgstr "Définir les métadonnées"
 msgid "save"
 msgstr "enregistrer"
 
-msgid "All sections"
-msgstr "Toutes les sections"
+msgid "No entries found"
+msgstr "Pas de billet trouvé"
 
-msgid "MyMeta List"
+msgid "Nb Posts"
+msgstr "Nombre de billets"
+
+msgid "Mymeta entries have been successfully enabled"
+msgstr "Les métadonnées ont été activées"
+
+msgid "Mymeta entries have been successfully disabled"
+msgstr "Les métadonnées ont été désactivées"
+
+msgid "Mymeta entries have been successfully deleted"
+msgstr "Les métadonnées ont été supprimées"
+
+#, php-format
+msgid "Section \"%s\" has been successfully created"
+msgstr "La section \"%s\" a été mise à jour avec succès"
+
+msgid "Mymeta have been successfully reordered"
+msgstr "Les métadonnées ont été réordonnées avec succès"
+
+msgid "enable"
+msgstr "activer"
+
+msgid "disable"
+msgstr "désactiver"
+
+msgid "delete"
+msgstr ""
+
+msgid "Add a metadata"
+msgstr "Ajouter une métadonnée"
+
+msgid "MyMeta list"
 msgstr "Liste de métadonnées"
-
-msgid "Value to display"
-msgstr "Valeur à afficher"
 
 msgid "ID"
 msgstr "Identifiant"
 
+msgid "Type"
+msgstr ""
+
 msgid "Prompt"
 msgstr "Libellé"
 
-msgid "Section to display"
-msgstr "Section à afficher"
+#, fuzzy
+msgid "Posts"
+msgstr "Nombre de billets"
 
-msgid "MyMeta Values list"
-msgstr "Liste des valeurs d'une métadonnée"
+msgid "Count"
+msgstr "Compteur"
 
-msgid "MyMeta ID"
-msgstr "Métadonnée"
+msgid "Status"
+msgstr ""
 
-msgid "Display mode"
-msgstr "Mode d'affichage"
+msgid "edit MyMeta"
+msgstr "Editer la métadonnée"
 
-msgid "Cloud"
-msgstr "Nuage"
+#, php-format
+msgid "Section: %s"
+msgstr "Section : %s"
 
-msgid "List"
-msgstr "Liste"
+msgid "published"
+msgstr ""
 
-msgid "Meta name"
-msgstr "Valeur de métadonnée"
+msgid "unpublished"
+msgstr ""
 
-msgid "All values"
-msgstr "Toutes les valeurs"
+msgid "All"
+msgstr "Tous"
 
-msgid "Link to all values:"
-msgstr "Lien vers toutes les valeurs :"
+msgid "Save order"
+msgstr ""
 
-msgid "My Meta"
-msgstr "Métadonnées personnalisées"
+msgid "Selected metas action:"
+msgstr "Action sur les métadonnées sélectionnées :"
 
-msgid "Mymeta errors :"
-msgstr "Erreurs Mymeta :"
+msgid "ok"
+msgstr ""
 
-msgid "String"
-msgstr "Chaîne"
+msgid "New metadata"
+msgstr "Nouvelle métadonnée"
 
-msgid "Items List"
-msgstr "Liste d'éléments"
+msgid "New MyMeta"
+msgstr "Nouvelle métadonnée"
 
-msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
-msgstr "Valeurs : entrer une valeur par ligne (syntaxe de la ligne : ID: description)"
+msgid "Create MyMeta"
+msgstr "Créer une métadonnée"
 
-msgid "Checkbox"
-msgstr "Case à cocher"
+msgid "New section"
+msgstr "Nouvelle section"
+
+msgid "Create section"
+msgstr "Créer la section"
 
 #, php-format
 msgid "MyMeta \"%s\" has been successfully updated"
@@ -109,9 +151,6 @@ msgstr "Editer la métadonnée"
 
 msgid "Something went wrong while editing mymeta"
 msgstr "Un problème a été renvontré lors de l'édition de la métadonnée"
-
-msgid "New MyMeta"
-msgstr "Nouvelle métadonnée"
 
 msgid "My metadata"
 msgstr "Mes métadonnées"
@@ -150,6 +189,9 @@ msgstr "Afficher le champ pour tous les types de billets"
 msgid "Restrict to the following post types :"
 msgstr "Restreindre l'affichage des champs aux types suivants :"
 
+msgid "Save"
+msgstr ""
+
 msgid "Section has been successfully updated"
 msgstr "La section a été mise à jour avec succès"
 
@@ -162,73 +204,11 @@ msgstr "Un problème a été rencontré lors de l'édition d'une section"
 msgid "MyMeta section definition"
 msgstr "Définition de la section de métadonnées"
 
-msgid "Mymeta entries have been successfully enabled"
-msgstr "Les métadonnées ont été activées"
-
-msgid "Mymeta entries have been successfully disabled"
-msgstr "Les métadonnées ont été désactivées"
-
-msgid "Mymeta entries have been successfully deleted"
-msgstr "Les métadonnées ont été supprimées"
-
-#, php-format
-msgid "Section \"%s\" has been successfully created"
-msgstr "La section \"%s\" a été mise à jour avec succès"
-
-msgid "Mymeta have been successfully reordered"
-msgstr "Les métadonnées ont été réordonnées avec succès"
-
-msgid "enable"
-msgstr "activer"
-
-msgid "disable"
-msgstr "désactiver"
-
-msgid "Add a metadata"
-msgstr "Ajouter une métadonnée"
-
-msgid "MyMeta list"
-msgstr "Liste de métadonnées"
-
-msgid "Count"
-msgstr "Compteur"
-
-msgid "edit MyMeta"
-msgstr "Editer la métadonnée"
-
-#, php-format
-msgid "Section: %s"
-msgstr "Section : %s"
-
-msgid "All"
-msgstr "Tous"
-
-msgid "Selected metas action:"
-msgstr "Action sur les métadonnées sélectionnées :"
-
-msgid "New metadata"
-msgstr "Nouvelle métadonnée"
-
-msgid "Create MyMeta"
-msgstr "Créer une métadonnée"
-
-msgid "New section"
-msgstr "Nouvelle section"
-
-msgid "Create section"
-msgstr "Créer la section"
+msgid "Title"
+msgstr ""
 
 msgid "Something went wrong when editing mymeta"
 msgstr "Un problème a été rencontré lors de l'édition de la métadonnée"
-
-msgid "No entries found"
-msgstr "Pas de billet trouvé"
-
-msgid "Nb Posts"
-msgstr "Nombre de billets"
-
-msgid "Value has been successfully changed"
-msgstr "La valeur a été changée"
 
 #, php-format
 msgid "Values of metadata \"%s\""
@@ -241,6 +221,39 @@ msgstr "Un problème a été rencontré lors de l'édition de la valeur de la m�
 msgid "Mymeta value successfully updated from \"%s\" to \"%s\""
 msgstr "La valeur de la métadonnée a été mise à jour de \"%s\" à \"%s\""
 
+msgid "Publish"
+msgstr ""
+
+msgid "Unpublish"
+msgstr ""
+
+msgid "Schedule"
+msgstr ""
+
+msgid "Mark as pending"
+msgstr ""
+
+msgid "Mark"
+msgstr ""
+
+msgid "Mark as selected"
+msgstr ""
+
+msgid "Mark as unselected"
+msgstr ""
+
+msgid "Change"
+msgstr ""
+
+msgid "Change category"
+msgstr ""
+
+msgid "Change author"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
 msgid "Are you sure you want to remove this metadata?"
 msgstr "Êtes-vous sûr de vouloir retirer cette métadonnée ?"
 
@@ -248,15 +261,92 @@ msgstr "Êtes-vous sûr de vouloir retirer cette métadonnée ?"
 msgid "Value \"%s\""
 msgstr "Valeur \"%s\""
 
-msgid "MyMeta has been successfully renamed"
-msgstr "La métadonnée a été renommée avec succès"
-
 #, php-format
 msgid "Entries having meta id \"%s\" set to \"%s\""
 msgstr "Entrées ayant la métadonnée \"%s\" définie à \"%s\""
+
+#, fuzzy
+msgid "Selected entries action:"
+msgstr "Action sur les métadonnées sélectionnées :"
 
 msgid "Change MyMeta value"
 msgstr "Changer la valeur actuelle"
 
 msgid "This will change the meta value for all entries having this value"
 msgstr "Ceci va changer la valeur de la métadonnée pour toutes les entrées ayant cette valeur"
+
+msgid "Mymeta errors :"
+msgstr "Erreurs Mymeta :"
+
+msgid "Checkbox"
+msgstr "Case à cocher"
+
+msgid "Date"
+msgstr ""
+
+msgid "Items List"
+msgstr "Liste d'éléments"
+
+msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
+msgstr "Valeurs : entrer une valeur par ligne (syntaxe de la ligne : ID: description)"
+
+#, fuzzy
+msgid "Section"
+msgstr "Section : %s"
+
+msgid "String"
+msgstr "Chaîne"
+
+msgid "All sections"
+msgstr "Toutes les sections"
+
+msgid "MyMeta List"
+msgstr "Liste de métadonnées"
+
+msgid "Value to display"
+msgstr "Valeur à afficher"
+
+msgid "Section to display"
+msgstr "Section à afficher"
+
+msgid "MyMeta Values list"
+msgstr "Liste des valeurs d'une métadonnée"
+
+msgid "MyMeta ID"
+msgstr "Métadonnée"
+
+msgid "Display mode"
+msgstr "Mode d'affichage"
+
+msgid "Cloud"
+msgstr "Nuage"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Order by:"
+msgstr ""
+
+msgid "Meta name"
+msgstr "Valeur de métadonnée"
+
+msgid "Sort:"
+msgstr ""
+
+msgid "Ascending"
+msgstr ""
+
+msgid "Descending"
+msgstr ""
+
+msgid "All values"
+msgstr "Toutes les valeurs"
+
+msgid "Link to all values:"
+msgstr "Lien vers toutes les valeurs :"
+
+#~ msgid "Value has been successfully changed"
+#~ msgstr "La valeur a été changée"
+
+#~ msgid "MyMeta has been successfully renamed"
+#~ msgstr "La métadonnée a été renommée avec succès"

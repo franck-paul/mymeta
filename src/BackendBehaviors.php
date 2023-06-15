@@ -5,59 +5,24 @@
  * @package Dotclear
  * @subpackage Plugins
  *
- * @author Bruno Hondelatte and contributors
+ * @author Franck Paul and contributors
  *
+ * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+declare(strict_types=1);
 
+namespace Dotclear\Plugin\mymeta;
+
+use dcCore;
 use Dotclear\Helper\Network\Http;
+use form;
 
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return;
-}
-
-require_once __DIR__ . '/class.mymeta.php';
-require_once __DIR__ . '/_widgets.php';
-
-dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
-    __('My Metadata'),
-    'plugin.php?p=mymeta',
-    'index.php?pf=mymeta/mymeta.png',
-    preg_match('/plugin.php\?p=mymeta(&.*)?$/', $_SERVER['REQUEST_URI']),
-    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-        dcAuth::PERMISSION_USAGE,
-        dcAuth::PERMISSION_CONTENT_ADMIN,
-    ]), dcCore::app()->blog->id)
-);
-
-dcCore::app()->addBehaviors([
-    'adminPostFormSidebar' => ['mymetaBehaviors','mymetaSidebar'],
-    'adminPostForm'        => ['mymetaBehaviors','mymetaInForm'],
-
-    'adminAfterPostCreate' => ['mymetaBehaviors','setMymeta'],
-    'adminAfterPostUpdate' => ['mymetaBehaviors','setMymeta'],
-
-    'adminPageFormSidebar' => ['mymetaBehaviors','mymetaSidebar'],
-    'adminPageForm'        => ['mymetaBehaviors','mymetaInForm'],
-
-    'adminPostsActionsCombo'   => ['mymetaBehaviors','adminPostsActionsCombo'],
-    'adminPostsActionsV2'      => ['mymetaBehaviors','adminPostsActions'],
-    'adminPostsActionsContent' => ['mymetaBehaviors','adminPostsActionsContent'],
-    'adminPostsActionsHeaders' => ['mymetaBehaviors','adminPostsActionsHeaders'],
-
-    'adminAfterPageCreate' => ['mymetaBehaviors','setMymeta'],
-    'adminAfterPageUpdate' => ['mymetaBehaviors','setMymeta'],
-]);
-dcCore::app()->addBehaviors([
-    'adminPostForm' => ['mymetaBehaviors','mymetaPostHeader'],
-]);
-
-# BEHAVIORS
-class mymetaBehaviors
+class BackendBehaviors
 {
     public static function mymetaPostHeader($post)
     {
-        $mymeta = new myMeta();
+        $mymeta = new MyMeta();
         echo $mymeta->postShowHeader($post);
     }
 
@@ -67,7 +32,7 @@ class mymetaBehaviors
 
     public static function mymetaInForm($post)
     {
-        $mymeta = new myMeta();
+        $mymeta = new MyMeta();
         if ($mymeta->hasMeta()) {
             echo $mymeta->postShowForm($post);
         }
@@ -75,7 +40,7 @@ class mymetaBehaviors
 
     public static function setMymeta($cur, $post_id)
     {
-        $mymeta = new myMeta();
+        $mymeta = new MyMeta();
         $mymeta->setMeta($post_id, $_POST);
     }
 
@@ -86,7 +51,7 @@ class mymetaBehaviors
 
     public static function adminPostsActionsHeaders()
     {
-        $mymeta = new myMeta();
+        $mymeta = new MyMeta();
 
         return $mymeta->postShowHeader(null, true);
     }
@@ -94,7 +59,7 @@ class mymetaBehaviors
     public static function adminPostsActions($posts, $action, $redir)
     {
         if ($action == 'mymeta_set' && !empty($_POST['mymeta_ok'])) {
-            $mymeta = new myMeta();
+            $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
                     $mymeta->setMeta($posts->post_id, $_POST, false);
@@ -107,7 +72,7 @@ class mymetaBehaviors
     public static function adminPostsActionsContent($core, $action, $hidden_fields)
     {
         if ($action == 'mymeta_set') {
-            $mymeta = new myMeta();
+            $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 echo '<h2>' . __('Set Metadata') . '</h2>' .
                     '<form action="posts_actions.php" method="post">' .

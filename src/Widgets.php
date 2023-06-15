@@ -5,24 +5,29 @@
  * @package Dotclear
  * @subpackage Plugins
  *
- * @author Bruno Hondelatte and contributors
+ * @author Franck Paul and contributors
  *
+ * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-dcCore::app()->addBehavior('initWidgets', ['MyMetaWidgets','initWidgets']);
+declare(strict_types=1);
 
-class MyMetaWidgets
+namespace Dotclear\Plugin\mymeta;
+
+use Dotclear\Plugin\widgets\WidgetsStack;
+
+class Widgets
 {
-    public static function initWidgets($w)
+    public static function initWidgets(WidgetsStack $w)
     {
-        $mymeta                             = new myMeta();
+        $mymeta                             = new MyMeta();
         $mymetalist                         = $mymeta->getIDsAsWidgetList();
         $mymetasections                     = $mymeta->getSectionsAsWidgetList();
         $mymetasections[__('All sections')] = '';
 
         // Widget for list of metadata
         $w
-            ->create('mymetalist', __('MyMeta List'), ['widgetsMyMeta', 'mymetaList'])
+            ->create('mymetalist', __('MyMeta List'), [FrontendWidgets::class, 'mymetaList'])
             ->addTitle(__('Title'))
             ->setting(
                 'prompt',
@@ -49,7 +54,7 @@ class MyMetaWidgets
         // Widget for currently displayed post
 
         $w
-            ->create('mymetavalues', __('MyMeta Values list'), ['widgetsMyMeta', 'mymetaValues'])
+            ->create('mymetavalues', __('MyMeta Values list'), [FrontendWidgets::class, 'mymetaValues'])
             ->addTitle(__('Title'))
             ->setting(
                 'mymetaid',
