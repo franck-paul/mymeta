@@ -59,7 +59,7 @@ class FrontendWidgets
 
         $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>' . join('', $items) . '</ul>';
 
-        return $w->renderDiv($w->content_only, 'mymetalist ' . $w->class, '', $res);
+        return $w->renderDiv((bool) $w->content_only, 'mymetalist ' . $w->class, '', $res);
     }
 
     public static function mymetaValues($w)
@@ -117,6 +117,6 @@ class FrontendWidgets
             Html::escapeHTML($w->allvalueslinktitle) . '</a></strong></p>';
         }
 
-        return $w->renderDiv($w->content_only, 'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class, '', $res);
+        return $w->renderDiv((bool) $w->content_only, 'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class, '', $res);
     }
 }
