@@ -20,7 +20,6 @@ use dcCore;
 use dcNsProcess;
 use dcPage;
 use Dotclear\Helper\Html\Html;
-use Dotclear\Helper\Network\Http;
 use Exception;
 use form;
 
@@ -49,13 +48,13 @@ class ManageViewPosts extends dcNsProcess
 
         if (empty($_GET['id']) || empty($_GET['value'])) {
             dcPage::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            Http::redirect(dcCore::app()->admin->getPageURL());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
         if (dcCore::app()->admin->mymetaEntry == null) {
             dcPage::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            Http::redirect(dcCore::app()->admin->getPageURL());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         $value = rawurldecode($_GET['value']);
@@ -71,7 +70,11 @@ class ManageViewPosts extends dcNsProcess
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
                     ));
-                    Http::redirect(dcCore::app()->admin->getPageURL() . '&m=view&id=' . dcCore::app()->admin->mymetaEntry->id . '&status=valchg');
+                    dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
+                        'm'      => 'view',
+                        'id'     => dcCore::app()->admin->mymetaEntry->id,
+                        'status' => 'valchg',
+                    ]);
                 }
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
@@ -85,7 +88,10 @@ class ManageViewPosts extends dcNsProcess
         ]), dcCore::app()->blog->id)) {
             try {
                 dcCore::app()->admin->mymeta->dcmeta->delMeta($value, dcCore::app()->admin->mymetaEntry->id);
-                Http::redirect(dcCore::app()->admin->getPageURL() . '&m=view&del=1');
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
+                    'm'   => 'view',
+                    'del' => 1,
+                ]);
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }

@@ -18,7 +18,6 @@ use dcCore;
 use dcNsProcess;
 use dcPage;
 use Dotclear\Helper\Html\Html;
-use Dotclear\Helper\Network\Http;
 use Exception;
 use form;
 
@@ -57,7 +56,7 @@ class ManageEditSection extends dcNsProcess
                     dcCore::app()->admin->mymeta->store();
                 }
                 dcPage::addSuccessNotice(__('Section has been successfully updated'));
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -81,12 +80,12 @@ class ManageEditSection extends dcNsProcess
             $mymetasection = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
             if (!($mymetasection instanceof MyMetaSection)) {
                 dcPage::addErrorNotice(__('Something went wrong while editing section'));
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
                 exit;
             }
         } else {
             dcPage::addErrorNotice(__('Something went wrong while editing section'));
-            Http::redirect(dcCore::app()->admin->getPageURL());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             exit;
         }
 

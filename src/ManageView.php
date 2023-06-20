@@ -18,7 +18,6 @@ use dcCore;
 use dcNsProcess;
 use dcPage;
 use Dotclear\Helper\Html\Html;
-use Dotclear\Helper\Network\Http;
 
 class ManageView extends dcNsProcess
 {
@@ -45,13 +44,13 @@ class ManageView extends dcNsProcess
 
         if (empty($_GET['id'])) {
             dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-            Http::redirect(dcCore::app()->admin->getPageURL());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
         if (dcCore::app()->admin->mymetaEntry == null) {
             dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-            Http::redirect(dcCore::app()->admin->getPageURL());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         return true;

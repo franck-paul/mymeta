@@ -18,7 +18,6 @@ use dcCore;
 use dcNsProcess;
 use dcPage;
 use Dotclear\Helper\Html\Html;
-use Dotclear\Helper\Network\Http;
 use Exception;
 use form;
 use stdClass;
@@ -113,7 +112,7 @@ class Manage extends dcNsProcess
                         'MyMeta fields backup (0.3.x version)'
                     );
                 }
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             }
         }
         dcCore::app()->admin->mymeta = new MyMeta();
@@ -135,7 +134,7 @@ class Manage extends dcNsProcess
                 dcCore::app()->admin->mymeta->store();
 
                 dcPage::addSuccessNotice($msg);
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -152,7 +151,7 @@ class Manage extends dcNsProcess
                     __('Section "%s" has been successfully created'),
                     Html::escapeHTML($_POST['mymeta_section'])
                 ));
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -173,7 +172,7 @@ class Manage extends dcNsProcess
                 dcCore::app()->admin->mymeta->store();
 
                 dcPage::addSuccessNotice(__('Mymeta have been successfully reordered'));
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }

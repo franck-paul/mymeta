@@ -18,7 +18,6 @@ use dcCore;
 use dcNsProcess;
 use dcPage;
 use Dotclear\Helper\Html\Html;
-use Dotclear\Helper\Network\Http;
 use Exception;
 use form;
 
@@ -72,7 +71,7 @@ class ManageEdit extends dcNsProcess
                     __('MyMeta "%s" has been successfully updated'),
                     Html::escapeHTML($mymetaid)
                 ));
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -102,7 +101,7 @@ class ManageEdit extends dcNsProcess
             $mymetaentry = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
             if ($mymetaentry == null) {
                 dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
-                Http::redirect(dcCore::app()->admin->getPageURL());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
                 exit;
             }
             $mymeta_type = $mymetaentry->getMetaTypeId();
@@ -118,7 +117,7 @@ class ManageEdit extends dcNsProcess
         $type_label = array_search($mymeta_type, $types);
         if (!$type_label) {
             dcPage::addErrorNotice(__('Something went wrong while editing mymeta'));
-            Http::redirect(dcCore::app()->admin->getPageURL());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         $head = dcPage::jsPageTabs('mymeta');
