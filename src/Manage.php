@@ -244,7 +244,7 @@ class Manage extends dcNsProcess
         '<h3>' . __('MyMeta list') . '</h3>';
 
         echo
-        '<form action="plugin.php" method="post" id="mymeta-form">' .
+        '<form action="' . dcCore::app()->admin->getPageURL() . '" method="post" id="mymeta-form">' .
         '<table class="dragable">' .
         '<thead>' .
         '<tr>' .
@@ -272,7 +272,10 @@ class Manage extends dcNsProcess
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=editsection&amp;id=' . $meta->id . '">' .
+                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                    'm'  => 'editsection',
+                    'id' => $meta->id,
+                ], '&') . '">' .
                 '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
                 '<td class="nowrap maximal" colspan="6">' .
                 '<strong>' . sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)) . '</strong></td>' .
@@ -294,9 +297,15 @@ class Manage extends dcNsProcess
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="plugin.php?p=mymeta&amp;m=edit&amp;id=' . $meta->id . '">' .
+                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                    'm'  => 'edit',
+                    'id' => $meta->id,
+                ], '&') . '">' .
                 '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
-                '<td class="nowrap"><a href="plugin.php?p=mymeta&amp;m=view&amp;id=' . $meta->id . '">' .
+                '<td class="nowrap"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                    'm'  => 'view',
+                    'id' => $meta->id,
+                ], '&') . '">' .
                 Html::escapeHTML($meta->id) . '</a></td>' .
                 '<td class="nowrap">' . $meta->getMetaTypeDesc() . '</td>' .
                 '<td class="nowrap maximal">' . $meta->prompt . '</td>' .
@@ -332,7 +341,7 @@ class Manage extends dcNsProcess
         '</div>' .
         '</form>' .
         '<div class="fieldset clear">' .
-        '<form method="post" action="plugin.php">';
+        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">';
 
         echo
         '<h3 id="new-meta">' . __('New metadata') . '</h3>' .
@@ -345,7 +354,7 @@ class Manage extends dcNsProcess
         '</form>';
 
         echo
-        '<form method="post" action="plugin.php">' .
+        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">' .
         '<p>' . __('New section') . ' : ' .
         form::field('mymeta_section', 20, 255) .
         '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '" />' .

@@ -347,6 +347,7 @@ class MyMeta
                     // try to guess post_type from URI
                     $u         = explode('?', $_SERVER['REQUEST_URI']);
                     $post_type = '';
+                    // TODO !!!
                     if (basename($u[0]) == 'post.php') {
                         $post_type = 'post';
                     } elseif (basename($u[0]) == 'plugin.php') {

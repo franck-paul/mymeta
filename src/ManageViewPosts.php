@@ -167,7 +167,7 @@ class ManageViewPosts extends dcNsProcess
         # --BEHAVIOR-- adminPostsActionsCombo
         dcCore::app()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
-        $head = dcPage::cssLoad('index.php?pf=tags/css/style.css') .
+        $head = dcPage::cssModuleLoad(My::id() . '/css/style.css') .
         dcPage::jsLoad('js/_posts_list.js') .
         dcPage::jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
         dcPage::jsModuleLoad(My::id() . '/js/mymeta.js') .

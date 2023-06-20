@@ -105,7 +105,7 @@ class ManageEditSection extends dcNsProcess
 
         // Form
         echo
-        '<form method="post" action="plugin.php">' .
+        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">' .
         '<div class="fieldset">' .
         '<h3>' . __('MyMeta section definition') . '</h3>' .
         '<p>' .
