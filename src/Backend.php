@@ -54,10 +54,7 @@ class Backend extends dcNsProcess
             'adminPageFormSidebar' => [BackendBehaviors::class,'mymetaSidebar'],
             'adminPageForm'        => [BackendBehaviors::class,'mymetaInForm'],
 
-            'adminPostsActionsCombo'   => [BackendBehaviors::class,'adminPostsActionsCombo'],
-            'adminPostsActionsV2'      => [BackendBehaviors::class,'adminPostsActions'],
-            'adminPostsActionsContent' => [BackendBehaviors::class,'adminPostsActionsContent'],
-            'adminPostsActionsHeaders' => [BackendBehaviors::class,'adminPostsActionsHeaders'],
+            'adminPostsActions' => [BackendBehaviors::class, 'adminPostsActions'],
 
             'adminAfterPageCreate' => [BackendBehaviors::class,'setMymeta'],
             'adminAfterPageUpdate' => [BackendBehaviors::class,'setMymeta'],

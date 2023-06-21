@@ -59,6 +59,18 @@ class ManageViewPosts extends dcNsProcess
 
         $value = rawurldecode($_GET['value']);
 
+        dcCore::app()->admin->posts_actions_page = new BackendActions(
+            dcCore::app()->adminurl->get('admin.plugin'),
+            ['p' => My::id(), 'm' => 'viewposts', 'id' => dcCore::app()->admin->mymetaEntry->id]
+        );
+
+        dcCore::app()->admin->posts_actions_page_rendered = null;
+        if (dcCore::app()->admin->posts_actions_page->process()) {
+            dcCore::app()->admin->posts_actions_page_rendered = true;
+
+            return true;
+        }
+
         // Rename a tag
         if (!empty($_POST['rename'])) {
             $new_value = $_POST['mymeta_' . dcCore::app()->admin->mymetaEntry->id];
@@ -106,6 +118,12 @@ class ManageViewPosts extends dcNsProcess
     public static function render(): void
     {
         if (!static::$init) {
+            return;
+        }
+
+        if (dcCore::app()->admin->posts_actions_page_rendered) {
+            dcCore::app()->admin->posts_actions_page->render();
+
             return;
         }
 
@@ -193,21 +211,24 @@ class ManageViewPosts extends dcNsProcess
         echo dcPage::notices();
 
         // Form
-        echo '<h3>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id), Html::escapeHTML($value)) . '</h3>';
+        echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
         // Show posts
         $post_list->display(
             $page,
             $nb_per_page,
-            '<form action="posts_actions.php" method="post" id="form-entries">' .
+            '<form action="' . dcCore::app()->admin->getPageURL() . '" method="post" id="form-entries">' .
+
             '%s' .
+
             '<div class="two-cols">' .
             '<p class="col checkboxes-helpers"></p>' .
-            '<p class="col right">' . __('Selected entries action:') . ' ' .
-            form::combo('action', $combo_action) .
+
+            '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
+            form::combo('action', dcCore::app()->admin->posts_actions_page->getCombo()) .
             '<input type="submit" value="' . __('ok') . '" /></p>' .
             form::hidden('post_type', '') .
-            form::hidden('redir', dcCore::app()->admin->getPageURL() . '&amp;m=view&amp;id=' .
-                    dcCore::app()->admin->mymetaEntry->id . '&amp;page=' . $page) .
+            form::hidden('m', 'serie_posts') .
+            form::hidden('id', dcCore::app()->admin->mymetaEntry->id) .
             dcCore::app()->formNonce() .
             '</div>' .
             '</form>'

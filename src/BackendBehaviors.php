@@ -14,8 +14,11 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
+use ArrayObject;
 use dcCore;
-use Dotclear\Helper\Network\Http;
+use dcPage;
+use dcPostsActions;
+use Dotclear\Helper\Html\Html;
 use form;
 
 class BackendBehaviors
@@ -44,45 +47,52 @@ class BackendBehaviors
         $mymeta->setMeta($post_id, $_POST);
     }
 
-    public static function adminPostsActionsCombo($args)
+    public static function adminPostsActions(dcPostsActions $ap)
     {
-        $args[0][__('MyMeta')] = [__('Set MyMeta') => 'mymeta_set'];
+        $ap->addAction(
+            [__('MyMeta') => [__('Set MyMeta') => 'mymeta_set']],
+            [static::class, 'adminSetMyMeta']
+        );
     }
 
-    public static function adminPostsActionsHeaders()
+    public static function adminSetMyMeta(dcPostsActions $ap, ArrayObject $post)
     {
-        $mymeta = new MyMeta();
-
-        return $mymeta->postShowHeader(null, true);
-    }
-
-    public static function adminPostsActions($posts, $action, $redir)
-    {
-        if ($action == 'mymeta_set' && !empty($_POST['mymeta_ok'])) {
+        if (!empty($post['mymeta_ok'])) {
+            // Cope with submission
+            $posts  = $ap->getRS();
             $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
                     $mymeta->setMeta($posts->post_id, $_POST, false);
                 }
             }
-            Http::redirect($redir);
-        }
-    }
-
-    public static function adminPostsActionsContent($core, $action, $hidden_fields)
-    {
-        if ($action == 'mymeta_set') {
+            $ap->redirect(true, ['upd' => 1]);
+        } else {
             $mymeta = new MyMeta();
-            if ($mymeta->hasMeta()) {
-                echo '<h2>' . __('Set Metadata') . '</h2>' .
-                    '<form action="posts_actions.php" method="post">' .
-                    $mymeta->postShowForm(null) .
-                    '<p><input type="submit" value="' . __('save') . '" />' .
-                    $hidden_fields .
-                    dcCore::app()->formNonce() .
-                    form::hidden(['action'], 'mymeta_set') .
-                    form::hidden(['mymeta_ok'], '1') . '</p></form>';
-            }
+            $head   = $mymeta->postShowHeader(null, true);
+
+            $ap->beginPage(
+                dcPage::breadcrumb(
+                    [
+                        Html::escapeHTML(dcCore::app()->blog->name) => '',
+                        __('Entries')                               => $ap->getRedirection(true),
+                        __('Set MyMeta')                            => '',
+                    ]
+                ),
+                $head
+            );
+
+            echo
+            '<form action="' . $ap->getURI() . '" method="post">' .
+            $ap->getCheckboxes() .
+            $mymeta->postShowForm(null) .
+            dcCore::app()->formNonce() . $ap->getHiddenFields() .
+            form::hidden(['action'], 'mymeta_set') .
+            form::hidden(['mymeta_ok'], '1') . '</p>' .
+            '<p><input type="submit" value="' . __('save') . '" name="set_mymeta" />' .
+            '</form>';
+
+            $ap->endPage();
         }
     }
 }
