@@ -36,7 +36,7 @@ msgid "My Meta"
 msgstr "Métadonnées personnalisées"
 
 msgid "User-defined metadata management in posts"
-msgstr "Métadonnées personnalisées pour les entrées"
+msgstr "Métadonnées personnalisées pour les billets"
 
 msgid "My Metadata"
 msgstr "Mes métadonnées"
@@ -100,7 +100,7 @@ msgid "Prompt"
 msgstr "Libellé"
 
 msgid "Posts"
-msgstr "Entrées"
+msgstr "Billets"
 
 msgid "Count"
 msgstr "Compteur"
@@ -197,7 +197,7 @@ msgid "Display meta field for any post type"
 msgstr "Afficher le champ pour tous les types de billets"
 
 msgid "Restrict to the following post types :"
-msgstr "Restreindre l'affichage des champs aux types suivants :"
+msgstr "Restreindre l'affichage des champs aux types de billet suivants :"
 
 msgid "Save"
 msgstr "Enregistrer"
