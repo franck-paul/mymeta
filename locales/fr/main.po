@@ -197,7 +197,7 @@ msgid "Display meta field for any post type"
 msgstr "Afficher le champ pour tous les types de billets"
 
 msgid "Restrict to the following post types :"
-msgstr "Restreindre l'affichage des champs aux types suivants :"
+msgstr "Restreindre l'affichage des champs aux types de billet suivants :"
 
 msgid "Save"
 msgstr "Enregistrer"
