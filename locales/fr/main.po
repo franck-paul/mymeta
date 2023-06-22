@@ -100,7 +100,7 @@ msgid "Prompt"
 msgstr "Libellé"
 
 msgid "Posts"
-msgstr "Entrées"
+msgstr "Billets"
 
 msgid "Count"
 msgstr "Compteur"
