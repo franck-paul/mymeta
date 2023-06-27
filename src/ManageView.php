@@ -21,6 +21,7 @@ use Dotclear\Helper\Html\Html;
 
 class ManageView extends dcNsProcess
 {
+    protected static $init = false; /** @deprecated since 2.27 */
     /**
      * Initializes the page.
      */

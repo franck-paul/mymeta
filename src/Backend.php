@@ -20,6 +20,7 @@ use dcNsProcess;
 
 class Backend extends dcNsProcess
 {
+    protected static $init = false; /** @deprecated since 2.27 */
     public static function init(): bool
     {
         static::$init = My::checkContext(My::BACKEND);
@@ -45,23 +46,23 @@ class Backend extends dcNsProcess
         );
 
         dcCore::app()->addBehaviors([
-            'adminPostFormSidebar' => [BackendBehaviors::class,'mymetaSidebar'],
-            'adminPostForm'        => [BackendBehaviors::class,'mymetaInForm'],
+            'adminPostFormSidebar' => [BackendBehaviors::class, 'mymetaSidebar'],
+            'adminPostForm'        => [BackendBehaviors::class, 'mymetaInForm'],
 
-            'adminAfterPostCreate' => [BackendBehaviors::class,'setMymeta'],
-            'adminAfterPostUpdate' => [BackendBehaviors::class,'setMymeta'],
+            'adminAfterPostCreate' => [BackendBehaviors::class, 'setMymeta'],
+            'adminAfterPostUpdate' => [BackendBehaviors::class, 'setMymeta'],
 
-            'adminPageFormSidebar' => [BackendBehaviors::class,'mymetaSidebar'],
-            'adminPageForm'        => [BackendBehaviors::class,'mymetaInForm'],
+            'adminPageFormSidebar' => [BackendBehaviors::class, 'mymetaSidebar'],
+            'adminPageForm'        => [BackendBehaviors::class, 'mymetaInForm'],
 
             'adminPostsActions' => [BackendBehaviors::class, 'adminPostsActions'],
 
-            'adminAfterPageCreate' => [BackendBehaviors::class,'setMymeta'],
-            'adminAfterPageUpdate' => [BackendBehaviors::class,'setMymeta'],
+            'adminAfterPageCreate' => [BackendBehaviors::class, 'setMymeta'],
+            'adminAfterPageUpdate' => [BackendBehaviors::class, 'setMymeta'],
         ]);
 
         dcCore::app()->addBehaviors([
-            'adminPostForm' => [BackendBehaviors::class,'mymetaPostHeader'],
+            'adminPostForm' => [BackendBehaviors::class, 'mymetaPostHeader'],
         ]);
 
         if (My::checkContext(My::WIDGETS)) {

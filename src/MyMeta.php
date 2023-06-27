@@ -328,12 +328,7 @@ class MyMeta
                 $active_sections[$cur_section] = true;
             }
         }
-        /* WTF ???
-        if (!count($active_sections)) {
-            return;
-        }
-        */
-        $res .= '<div class="fieldset"><h3>' . __('My Meta') . '</h3>';
+        $res .= '<div class="mymeta"><details><summary>' . __('My Meta') . '</summary>';
         foreach ($this->mymeta as $id => $meta) {
             if ($meta instanceof MyMetaSection) {
                 if (isset($active_sections[$meta->id])) {
@@ -361,7 +356,7 @@ class MyMeta
                 }
             }
         }
-        $res .= '</div>';
+        $res .= '</details></div>';
 
         return $res;
     }
