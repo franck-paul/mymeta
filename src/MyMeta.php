@@ -328,7 +328,6 @@ class MyMeta
                 $active_sections[$cur_section] = true;
             }
         }
-        $res .= '<div class="mymeta"><details><summary>' . __('My Meta') . '</summary>';
         foreach ($this->mymeta as $id => $meta) {
             if ($meta instanceof MyMetaSection) {
                 if (isset($active_sections[$meta->id])) {
@@ -356,9 +355,8 @@ class MyMeta
                 }
             }
         }
-        $res .= '</details></div>';
 
-        return $res;
+        return ($res !== '' ? '<div class="mymeta"><details open><summary>' . __('My Meta') . '</summary>' . $res . '</details></div>' : '');
     }
 
     public function setMeta($post_id, $POST, $deleteIfEmpty = true)

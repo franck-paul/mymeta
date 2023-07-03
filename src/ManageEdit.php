@@ -184,7 +184,7 @@ class ManageEdit extends dcNsProcess
         echo '<label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'none', $mymetaentry->isRestrictionEnabled()) .
         __('Display meta field for any post type') . '</label></p>';
         echo '<p><label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'yes', !$mymetaentry->isRestrictionEnabled()) .
-        __('Restrict to the following post types :');
+        __('Restrict to the following post types :') . ' ';
 
         $restrictions = $mymetaentry->getRestrictions();
         echo form::field('mymeta_restricted_types', 40, 255, $restrictions ?: '') . '</label></p>';
