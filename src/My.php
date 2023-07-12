@@ -194,7 +194,7 @@ class My
     {
         // Comment second line if you only have one icon.svg for both mode
         return [
-            urldecode(dcPage::getPF(self::id() . '/icon.png')),         // Light (or both) mode(s)
+            urldecode(dcPage::getPF(self::id() . '/icon.svg')),         // Light (or both) mode(s)
             // urldecode(dcPage::getPF(self::id() . '/icon-dark.svg')),    // Dark mode
         ];
     }
