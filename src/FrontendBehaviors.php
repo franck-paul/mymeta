@@ -15,13 +15,13 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
-use dcPublic;
+use Dotclear\Core\Frontend\Utility;
 
 class FrontendBehaviors
 {
     public static function addTplPath()
     {
-        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), My::path() . '/' . dcPublic::TPL_ROOT);
+        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), My::path() . '/' . Utility::TPL_ROOT);
     }
 
     public static function templateBeforeBlock($b, $attr)

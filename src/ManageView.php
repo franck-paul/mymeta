@@ -15,23 +15,21 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
-use dcNsProcess;
-use dcPage;
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
+use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 
-class ManageView extends dcNsProcess
+class ManageView extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     /**
      * Initializes the page.
      */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'view');
-
         dcCore::app()->admin->mymeta = new MyMeta();
 
-        return static::$init;
+        return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'view'));
     }
 
     /**
@@ -39,19 +37,19 @@ class ManageView extends dcNsProcess
      */
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
         if (empty($_GET['id'])) {
-            dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
+            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
         }
 
         dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
         if (dcCore::app()->admin->mymetaEntry == null) {
-            dcPage::addErrorNotice(__('Something went wrong when editing mymeta'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
+            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
         }
 
         return true;
@@ -62,7 +60,7 @@ class ManageView extends dcNsProcess
      */
     public static function render(): void
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return;
         }
 
@@ -78,18 +76,18 @@ class ManageView extends dcNsProcess
         $rs    = dcCore::app()->admin->mymeta->getMetadata($params, false);
         $count = dcCore::app()->admin->mymeta->getMetadata($params, true);
 
-        $head = dcPage::jsPageTabs('mymeta');
+        $head = Page::jsPageTabs('mymeta');
 
-        dcPage::openModule(__('My metadata') . '&gt;' . dcCore::app()->admin->mymetaEntry->id, $head);
+        Page::openModule(__('My metadata') . '&gt;' . dcCore::app()->admin->mymetaEntry->id, $head);
 
-        echo dcPage::breadcrumb(
+        echo Page::breadcrumb(
             [
                 Html::escapeHTML(dcCore::app()->blog->name)             => '',
                 __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
                 Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => '',
             ]
         );
-        echo dcPage::notices();
+        echo Notices::getNotices();
 
         // Form
         echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id)) . '</h3>';
@@ -97,6 +95,6 @@ class ManageView extends dcNsProcess
         echo $list->display($page, $nb_per_page, '%s');
         echo '</div>';
 
-        dcPage::closeModule();
+        Page::closeModule();
     }
 }

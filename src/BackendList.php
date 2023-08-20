@@ -14,18 +14,18 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use adminGenericListV2;
 use dcCore;
-use dcPager;
+use Dotclear\Core\Backend\Listing\Listing;
+use Dotclear\Core\Backend\Listing\Pager;
 
-class BackendList extends adminGenericListV2
+class BackendList extends Listing
 {
     public function display($page, $nb_per_page, $enclose_block = '')
     {
         if ($this->rs->isEmpty()) {
             echo '<p><strong>' . __('No entries found') . '</strong></p>';
         } else {
-            $pager = new dcPager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page);
+            $pager = new Pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page);
 
             $html_block = '<table class="clear"><tr>' .
             '<th>' . __('Value') . '</th>' .

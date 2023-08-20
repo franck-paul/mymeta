@@ -14,28 +14,26 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use adminPostList;
 use dcAuth;
 use dcCore;
-use dcNsProcess;
-use dcPage;
+use Dotclear\Core\Backend\Listing\ListingPosts;
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
+use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 use Exception;
 use form;
 
-class ManageViewPosts extends dcNsProcess
+class ManageViewPosts extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     /**
      * Initializes the page.
      */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'viewposts');
-
         dcCore::app()->admin->mymeta = new MyMeta();
 
-        return static::$init;
+        return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'viewposts'));
     }
 
     /**
@@ -43,25 +41,25 @@ class ManageViewPosts extends dcNsProcess
      */
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
         if (empty($_GET['id']) || empty($_GET['value'])) {
-            dcPage::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
+            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
         }
 
         dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
         if (dcCore::app()->admin->mymetaEntry == null) {
-            dcPage::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
+            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
         }
 
         $value = rawurldecode($_GET['value']);
 
         dcCore::app()->admin->posts_actions_page = new BackendActions(
-            dcCore::app()->adminurl->get('admin.plugin'),
+            dcCore::app()->admin->url->get('admin.plugin'),
             ['p' => My::id(), 'm' => 'viewposts', 'id' => dcCore::app()->admin->mymetaEntry->id]
         );
 
@@ -78,12 +76,12 @@ class ManageViewPosts extends dcNsProcess
 
             try {
                 if (dcCore::app()->admin->mymeta->dcmeta->updateMeta($value, $new_value, dcCore::app()->admin->mymetaEntry->id)) {
-                    dcPage::addSuccessNotice(sprintf(
+                    Notices::addSuccessNotice(sprintf(
                         __('Mymeta value successfully updated from "%s" to "%s"'),
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
                     ));
-                    dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
+                    dcCore::app()->admin->url->redirect('admin.plugin.' . My::id(), [
                         'm'      => 'view',
                         'id'     => dcCore::app()->admin->mymetaEntry->id,
                         'status' => 'valchg',
@@ -101,7 +99,7 @@ class ManageViewPosts extends dcNsProcess
         ]), dcCore::app()->blog->id)) {
             try {
                 dcCore::app()->admin->mymeta->dcmeta->delMeta($value, dcCore::app()->admin->mymetaEntry->id);
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id(), [
                     'm'   => 'view',
                     'del' => 1,
                 ]);
@@ -118,7 +116,7 @@ class ManageViewPosts extends dcNsProcess
      */
     public static function render(): void
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return;
         }
 
@@ -151,7 +149,7 @@ class ManageViewPosts extends dcNsProcess
         try {
             $posts     = dcCore::app()->admin->mymeta->dcmeta->getPostsByMeta($params);
             $counter   = dcCore::app()->admin->mymeta->dcmeta->getPostsByMeta($params, true);
-            $post_list = new adminPostList($posts, $counter->f(0));
+            $post_list = new ListingPosts($posts, $counter->f(0));
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
@@ -192,16 +190,16 @@ class ManageViewPosts extends dcNsProcess
         # --BEHAVIOR-- adminPostsActionsCombo
         dcCore::app()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
-        $head = dcPage::cssModuleLoad(My::id() . '/css/style.css') .
-        dcPage::jsLoad('js/_posts_list.js') .
-        dcPage::jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
-        dcPage::jsModuleLoad(My::id() . '/js/mymeta.js') .
-        dcPage::jsPageTabs('mymeta') .
+        $head = My::cssLoad('style.css') .
+        Page::jsLoad('js/_posts_list.js') .
+        Page::jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
+        My::jsLoad('mymeta.js') .
+        Page::jsPageTabs('mymeta') .
         dcCore::app()->admin->mymetaEntry->postHeader(null, true);
 
-        dcPage::openModule(__('My Metadata'), $head);
+        Page::openModule(__('My Metadata'), $head);
 
-        echo dcPage::breadcrumb(
+        echo Page::breadcrumb(
             [
                 Html::escapeHTML(dcCore::app()->blog->name)             => '',
                 __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
@@ -209,7 +207,7 @@ class ManageViewPosts extends dcNsProcess
                 sprintf(__('Value "%s"'), Html::escapeHTML($value))     => '',
             ]
         );
-        echo dcPage::notices();
+        echo Notices::getNotices();
 
         // Form
         echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
@@ -256,6 +254,6 @@ class ManageViewPosts extends dcNsProcess
             '</p></form></fieldset>';
         }
 
-        dcPage::closeModule();
+        Page::closeModule();
     }
 }

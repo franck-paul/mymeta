@@ -15,25 +15,23 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
-use dcNsProcess;
-use dcPage;
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
+use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 use Exception;
 use form;
 
-class ManageEditSection extends dcNsProcess
+class ManageEditSection extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     /**
      * Initializes the page.
      */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'editsection');
-
         dcCore::app()->admin->mymeta = new MyMeta();
 
-        return static::$init;
+        return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'editsection'));
     }
 
     /**
@@ -41,7 +39,7 @@ class ManageEditSection extends dcNsProcess
      */
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
@@ -56,8 +54,8 @@ class ManageEditSection extends dcNsProcess
                     dcCore::app()->admin->mymeta->update($mymetaSection);
                     dcCore::app()->admin->mymeta->store();
                 }
-                dcPage::addSuccessNotice(__('Section has been successfully updated'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                Notices::addSuccessNotice(__('Section has been successfully updated'));
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -71,7 +69,7 @@ class ManageEditSection extends dcNsProcess
      */
     public static function render(): void
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return;
         }
 
@@ -80,28 +78,28 @@ class ManageEditSection extends dcNsProcess
             $mymetaid      = $_REQUEST['id'];
             $mymetasection = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
             if (!($mymetasection instanceof MyMetaSection)) {
-                dcPage::addErrorNotice(__('Something went wrong while editing section'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                Notices::addErrorNotice(__('Something went wrong while editing section'));
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
                 exit;
             }
         } else {
-            dcPage::addErrorNotice(__('Something went wrong while editing section'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            Notices::addErrorNotice(__('Something went wrong while editing section'));
+            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
             exit;
         }
 
-        $head = dcPage::jsPageTabs('mymeta');
+        $head = Page::jsPageTabs('mymeta');
 
-        dcPage::openModule(__('My metadata'), $head);
+        Page::openModule(__('My metadata'), $head);
 
-        echo dcPage::breadcrumb(
+        echo Page::breadcrumb(
             [
                 Html::escapeHTML(dcCore::app()->blog->name) => '',
                 __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
                 $page_title                                 => '',
             ]
         );
-        echo dcPage::notices();
+        echo Notices::getNotices();
 
         // Form
         echo
@@ -124,6 +122,6 @@ class ManageEditSection extends dcNsProcess
         '</p>' .
         '</form>';
 
-        dcPage::closeModule();
+        Page::closeModule();
     }
 }

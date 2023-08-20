@@ -16,8 +16,8 @@ namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
 use dcCore;
-use dcPage;
-use dcPostsActions;
+use Dotclear\Core\Backend\Action\ActionsPosts;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Html;
 use form;
 
@@ -47,15 +47,15 @@ class BackendBehaviors
         $mymeta->setMeta($post_id, $_POST);
     }
 
-    public static function adminPostsActions(dcPostsActions $ap)
+    public static function adminPostsActions(ActionsPosts $ap)
     {
         $ap->addAction(
             [__('MyMeta') => [__('Set MyMeta') => 'mymeta_set']],
-            [static::class, 'adminSetMyMeta']
+            static::adminSetMyMeta(...)
         );
     }
 
-    public static function adminSetMyMeta(dcPostsActions $ap, ArrayObject $post)
+    public static function adminSetMyMeta(ActionsPosts $ap, ArrayObject $post)
     {
         if (!empty($post['mymeta_ok'])) {
             // Cope with submission
@@ -72,7 +72,7 @@ class BackendBehaviors
             $head   = $mymeta->postShowHeader(null, true);
 
             $ap->beginPage(
-                dcPage::breadcrumb(
+                Page::breadcrumb(
                     [
                         Html::escapeHTML(dcCore::app()->blog->name) => '',
                         __('Entries')                               => $ap->getRedirection(true),

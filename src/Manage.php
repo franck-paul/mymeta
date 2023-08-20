@@ -15,47 +15,40 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
-use dcNsProcess;
-use dcPage;
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
+use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 use Exception;
 use form;
 use stdClass;
 
-class Manage extends dcNsProcess
+class Manage extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     /**
      * Initializes the page.
      */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::MANAGE);
-
         dcCore::app()->admin->mymeta = new MyMeta();
 
         if (!empty($_REQUEST['m'])) {
             switch ($_REQUEST['m']) {
                 case 'edit':
-                    static::$init = static::$init && ManageEdit::init();
+                    return self::status(My::checkContext(My::MANAGE) && ManageEdit::init());
 
-                    break;
                 case 'editsection':
-                    static::$init = static::$init && ManageEditSection::init();
+                    return self::status(My::checkContext(My::MANAGE) && ManageEditSection::init());
 
-                    break;
                 case 'view':
-                    static::$init = static::$init && ManageView::init();
+                    return self::status(My::checkContext(My::MANAGE) && ManageView::init());
 
-                    break;
                 case 'viewposts':
-                    static::$init = static::$init && ManageViewPosts::init();
-
-                    break;
+                    return self::status(My::checkContext(My::MANAGE) && ManageViewPosts::init());
             }
         }
 
-        return static::$init;
+        return self::status(My::checkContext(My::MANAGE));
     }
 
     /**
@@ -63,7 +56,7 @@ class Manage extends dcNsProcess
      */
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
@@ -113,7 +106,7 @@ class Manage extends dcNsProcess
                         'MyMeta fields backup (0.3.x version)'
                     );
                 }
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
             }
         }
         dcCore::app()->admin->mymeta = new MyMeta();
@@ -134,8 +127,8 @@ class Manage extends dcNsProcess
                 }
                 dcCore::app()->admin->mymeta->store();
 
-                dcPage::addSuccessNotice($msg);
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                Notices::addSuccessNotice($msg);
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -148,11 +141,11 @@ class Manage extends dcNsProcess
                 dcCore::app()->admin->mymeta->update($section);
                 dcCore::app()->admin->mymeta->store();
 
-                dcPage::addSuccessNotice(sprintf(
+                Notices::addSuccessNotice(sprintf(
                     __('Section "%s" has been successfully created'),
                     Html::escapeHTML($_POST['mymeta_section'])
                 ));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -172,8 +165,8 @@ class Manage extends dcNsProcess
                 dcCore::app()->admin->mymeta->reorder($order);
                 dcCore::app()->admin->mymeta->store();
 
-                dcPage::addSuccessNotice(__('Mymeta have been successfully reordered'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                Notices::addSuccessNotice(__('Mymeta have been successfully reordered'));
+                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -187,7 +180,7 @@ class Manage extends dcNsProcess
      */
     public static function render(): void
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return;
         }
 
@@ -222,19 +215,19 @@ class Manage extends dcNsProcess
         $combo_action[__('disable')] = 'disable';
         $combo_action[__('delete')]  = 'delete';
 
-        $head = dcPage::jsLoad('js/jquery/jquery-ui.custom.js') .
-        dcPage::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
-        dcPage::jsModuleLoad(My::id() . '/js/_meta_lists.js');
+        $head = Page::jsLoad('js/jquery/jquery-ui.custom.js') .
+        Page::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
+        My::jsLoad('_meta_lists.js');
 
-        dcPage::openModule(__('My Metadata'), $head);
+        Page::openModule(__('My Metadata'), $head);
 
-        echo dcPage::breadcrumb(
+        echo Page::breadcrumb(
             [
                 Html::escapeHTML(dcCore::app()->blog->name) => '',
                 __('My Metadata')                           => '',
             ]
         );
-        echo dcPage::notices();
+        echo Notices::getNotices();
 
         // Form
         echo
@@ -272,7 +265,7 @@ class Manage extends dcNsProcess
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap minimal status"><a href="' . dcCore::app()->admin->url->get('admin.plugin.' . My::id(), [
                     'm'  => 'editsection',
                     'id' => $meta->id,
                 ], '&') . '">' .
@@ -297,12 +290,12 @@ class Manage extends dcNsProcess
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap minimal status"><a href="' . dcCore::app()->admin->url->get('admin.plugin.' . My::id(), [
                     'm'  => 'edit',
                     'id' => $meta->id,
                 ], '&') . '">' .
                 '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
-                '<td class="nowrap"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap"><a href="' . dcCore::app()->admin->url->get('admin.plugin.' . My::id(), [
                     'm'  => 'view',
                     'id' => $meta->id,
                 ], '&') . '">' .
@@ -364,6 +357,6 @@ class Manage extends dcNsProcess
         '</form>' .
         '</div>';
 
-        dcPage::closeModule();
+        Page::closeModule();
     }
 }

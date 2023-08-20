@@ -15,38 +15,35 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
-use dcNsProcess;
+use Dotclear\Core\Process;
 
-class Frontend extends dcNsProcess
+class Frontend extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::FRONTEND);
-
-        return static::$init;
+        return self::status(My::checkContext(My::FRONTEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
-        dcCore::app()->tpl->addValue('MetaType', [FrontendTemplate::class,'MetaType']);
-        dcCore::app()->tpl->addValue('MyMetaTypePrompt', [FrontendTemplate::class,'MyMetaTypePrompt']);
-        dcCore::app()->tpl->addValue('EntryMyMetaValue', [FrontendTemplate::class,'EntryMyMetaValue']);
-        dcCore::app()->tpl->addValue('MyMetaValue', [FrontendTemplate::class,'MyMetaValue']);
-        dcCore::app()->tpl->addValue('MyMetaURL', [FrontendTemplate::class,'MyMetaURL']);
-        dcCore::app()->tpl->addBlock('EntryMyMetaIf', [FrontendTemplate::class,'EntryMyMetaIf']);
-        dcCore::app()->tpl->addBlock('MyMetaIf', [FrontendTemplate::class,'EntryMyMetaIf']);
-        dcCore::app()->tpl->addBlock('MyMetaData', [FrontendTemplate::class,'MyMetaData']);
+        dcCore::app()->tpl->addValue('MetaType', FrontendTemplate::MetaType(...));
+        dcCore::app()->tpl->addValue('MyMetaTypePrompt', FrontendTemplate::MyMetaTypePrompt(...));
+        dcCore::app()->tpl->addValue('EntryMyMetaValue', FrontendTemplate::EntryMyMetaValue(...));
+        dcCore::app()->tpl->addValue('MyMetaValue', FrontendTemplate::MyMetaValue(...));
+        dcCore::app()->tpl->addValue('MyMetaURL', FrontendTemplate::MyMetaURL(...));
+        dcCore::app()->tpl->addBlock('EntryMyMetaIf', FrontendTemplate::EntryMyMetaIf(...));
+        dcCore::app()->tpl->addBlock('MyMetaIf', FrontendTemplate::EntryMyMetaIf(...));
+        dcCore::app()->tpl->addBlock('MyMetaData', FrontendTemplate::MyMetaData(...));
 
         dcCore::app()->addBehaviors([
-            'templateBeforeBlockV2'  => [FrontendBehaviors::class,'templateBeforeBlock'],
-            'publicBeforeDocumentV2' => [FrontendBehaviors::class,'addTplPath'],
+            'templateBeforeBlockV2'  => FrontendBehaviors::templateBeforeBlock(...),
+            'publicBeforeDocumentV2' => FrontendBehaviors::addTplPath(...),
 
-            'initWidgets' => [Widgets::class,'initWidgets'],
+            'initWidgets' => Widgets::initWidgets(...),
         ]);
 
         dcCore::app()->mymeta = new MyMeta();
