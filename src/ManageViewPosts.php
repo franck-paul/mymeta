@@ -197,7 +197,7 @@ class ManageViewPosts extends Process
         Page::jsPageTabs('mymeta') .
         dcCore::app()->admin->mymetaEntry->postHeader(null, true);
 
-        Page::openModule(__('My Metadata'), $head);
+        Page::openModule(My::name(), $head);
 
         echo Page::breadcrumb(
             [
@@ -225,10 +225,11 @@ class ManageViewPosts extends Process
             '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
             form::combo('action', dcCore::app()->admin->posts_actions_page->getCombo()) .
             '<input type="submit" value="' . __('ok') . '" /></p>' .
-            form::hidden('post_type', '') .
-            form::hidden('m', 'serie_posts') .
-            form::hidden('id', dcCore::app()->admin->mymetaEntry->id) .
-            dcCore::app()->formNonce() .
+            My::parsedHiddenFields([
+                'post_type' => '',
+                'm'         => 'serie_posts',
+                'id'        => dcCore::app()->admin->mymetaEntry->id,
+            ]) .
             '</div>' .
             '</form>'
         );
@@ -240,7 +241,8 @@ class ManageViewPosts extends Process
             echo
             '<form id="tag_delete" action="' . $this_url . '" method="post">' .
             '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '" />' .
-            dcCore::app()->formNonce() . '</p>' .
+            My::parsedHiddenFields() .
+            '</p>' .
             '</form>';
         }
         if (!$posts->isEmpty()) {
@@ -249,8 +251,9 @@ class ManageViewPosts extends Process
             '<p class="info">' . __('This will change the meta value for all entries having this value') . '</p>' .
             dcCore::app()->admin->mymetaEntry->postShowForm(dcCore::app()->admin->mymeta->dcmeta, null, Html::escapeHTML($value), true) .
             '<p><input type="submit" name="rename" value="' . __('save') . '" />' .
-            form::hidden(['value'], Html::escapeHTML($value)) .
-            dcCore::app()->formNonce() .
+            My::parsedHiddenFields([
+                'value' => Html::escapeHTML($value),
+            ]) .
             '</p></form></fieldset>';
         }
 

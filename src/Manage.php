@@ -219,7 +219,7 @@ class Manage extends Process
         Page::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
         My::jsLoad('_meta_lists.js');
 
-        Page::openModule(__('My Metadata'), $head);
+        Page::openModule(My::name(), $head);
 
         echo Page::breadcrumb(
             [
@@ -315,9 +315,10 @@ class Manage extends Process
         '<div class="two-cols">' .
         '<p class="col">';
 
-        echo form::hidden('mymeta_order', '');
-        echo form::hidden(['p'], 'mymeta');
-        echo dcCore::app()->formNonce();
+        echo My::parsedHiddenFields([
+            'mymeta_order' => '',
+            'p'            => 'mymeta',
+        ]);
 
         echo
         '<input type="submit" name="saveorder" value="' . __('Save order') . '" />' .
@@ -341,8 +342,10 @@ class Manage extends Process
         '<p>' . __('New MyMeta') . ' : ' .
         form::combo('mymeta_type', $types, '') .
         '&nbsp;<input type="submit" name="new" value="' . __('Create MyMeta') . '" />' .
-        form::hidden(['p'], 'mymeta') .
-        form::hidden(['m'], 'edit') . dcCore::app()->formNonce() .
+        My::parsedHiddenFields([
+            'p' => 'mymeta',
+            'm' => 'edit',
+        ]) .
         '</p>' .
         '</form>';
 
@@ -351,8 +354,9 @@ class Manage extends Process
         '<p>' . __('New section') . ' : ' .
         form::field('mymeta_section', 20, 255) .
         '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '" />' .
-        form::hidden(['p'], 'mymeta') .
-        dcCore::app()->formNonce() .
+        My::parsedHiddenFields([
+            'p' => 'mymeta',
+        ]) .
         '</p>' .
         '</form>' .
         '</div>';

@@ -121,7 +121,7 @@ class ManageEdit extends Process
 
         $head = Page::jsPageTabs('mymeta');
 
-        Page::openModule(__('My metadata'), $head);
+        Page::openModule(My::name(), $head);
 
         echo Page::breadcrumb(
             [
@@ -197,9 +197,10 @@ class ManageEdit extends Process
         if ($lock_id) {
             echo form::hidden(['mymeta_id'], $mymetaid);
         }
-        echo form::hidden(['mymeta_enabled'], $mymetaentry->enabled);
-        echo form::hidden(['mymeta_type'], $mymeta_type);
-        echo dcCore::app()->formNonce();
+        echo My::parsedHiddenFields([
+            'mymeta_enabled' => $mymetaentry->enabled,
+            'mymeta_type'    => $mymeta_type,
+        ]);
 
         echo
         '<input type="submit" name="saveconfig" value="' . __('Save') . '" />' .

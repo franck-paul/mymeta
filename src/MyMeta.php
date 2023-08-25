@@ -85,7 +85,7 @@ class MyMeta
     public function __construct(bool $bypass_settings = false)
     {
         $this->dcmeta   = dcCore::app()->meta;
-        $this->settings = dcCore::app()->blog->settings->get(My::id());
+        $this->settings = My::settings();
 
         $this->con = & dcCore::app()->con;
         if (!$bypass_settings && $this->settings->mymeta_fields) {

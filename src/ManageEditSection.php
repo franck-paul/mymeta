@@ -90,7 +90,7 @@ class ManageEditSection extends Process
 
         $head = Page::jsPageTabs('mymeta');
 
-        Page::openModule(__('My metadata'), $head);
+        Page::openModule(My::name(), $head);
 
         echo Page::breadcrumb(
             [
@@ -116,8 +116,9 @@ class ManageEditSection extends Process
         '<input type="hidden" name="p" value="mymeta" />' .
         '<input type="hidden" name="m" value="editsection" />';
 
-        echo form::hidden('mymeta_id', $mymetaid) .
-        dcCore::app()->formNonce() .
+        My::parsedHiddenFields([
+            'mymeta_id' => $mymetaid,
+        ]) .
         '<input type="submit" name="saveconfig" value="' . __('Save') . '" />' .
         '</p>' .
         '</form>';

@@ -34,13 +34,7 @@ class Backend extends Process
             return false;
         }
 
-        dcCore::app()->admin->menus[Menus::MENU_PLUGINS]->addItem(
-            __('My Metadata'),
-            My::manageUrl(),
-            My::icons(),
-            preg_match(My::urlScheme(), $_SERVER['REQUEST_URI']),
-            My::checkContext(My::MENU)
-        );
+        My::addBackendMenuItem(Menus::MENU_PLUGINS);
 
         dcCore::app()->addBehaviors([
             'adminPostFormSidebar' => BackendBehaviors::mymetaSidebar(...),

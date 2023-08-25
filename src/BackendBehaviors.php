@@ -19,7 +19,6 @@ use dcCore;
 use Dotclear\Core\Backend\Action\ActionsPosts;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Html;
-use form;
 
 class BackendBehaviors
 {
@@ -86,9 +85,12 @@ class BackendBehaviors
             '<form action="' . $ap->getURI() . '" method="post">' .
             $ap->getCheckboxes() .
             $mymeta->postShowForm(null) .
-            dcCore::app()->formNonce() . $ap->getHiddenFields() .
-            form::hidden(['action'], 'mymeta_set') .
-            form::hidden(['mymeta_ok'], '1') . '</p>' .
+            $ap->getHiddenFields() .
+            My::parsedHiddenFields([
+                'action'    => 'mymeta_set',
+                'mymeta_ok' => '1',
+            ]) .
+            '</p>' .
             '<p><input type="submit" value="' . __('save') . '" name="set_mymeta" />' .
             '</form>';
 

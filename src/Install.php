@@ -34,7 +34,7 @@ class Install extends Process
 
         try {
             // Init
-            $settings = dcCore::app()->blog->settings->get(My::id());
+            $settings = My::settings();
 
             if ($settings->mymeta_fields == null) {
                 return true;

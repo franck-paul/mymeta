@@ -78,7 +78,7 @@ class ManageView extends Process
 
         $head = Page::jsPageTabs('mymeta');
 
-        Page::openModule(__('My metadata') . '&gt;' . dcCore::app()->admin->mymetaEntry->id, $head);
+        Page::openModule(My::name() . ' &gt; ' . dcCore::app()->admin->mymetaEntry->id, $head);
 
         echo Page::breadcrumb(
             [
