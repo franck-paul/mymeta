@@ -87,7 +87,7 @@ class MyMeta
         $this->dcmeta   = dcCore::app()->meta;
         $this->settings = My::settings();
 
-        $this->con = & dcCore::app()->con;
+        $this->con = dcCore::app()->con;
         if (!$bypass_settings && $this->settings->mymeta_fields) {
             $this->mymeta = @unserialize(base64_decode($this->settings->mymeta_fields));
             if (!is_array($this->mymeta)) {
