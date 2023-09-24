@@ -57,7 +57,7 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @return mixed
      */
-    public function postShowForm(dcMeta $dcmeta, ?MetaRecord $post, $value = '', $bypass_disabled = false)
+    public function postShowForm($dcmeta, ?MetaRecord $post, $value = '', $bypass_disabled = false)
     {
         if ($this->enabled || $bypass_disabled) {
             $res     = '';
@@ -114,7 +114,7 @@ abstract class MyMetaField extends MyMetaEntry
      * @param integer $post_id post_id to update
      * @param array $post HTTP POST parameters
      */
-    public function setPostMeta(dcMeta $dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
     {
         if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
             $dcmeta->delPostMeta($post_id, $this->id);

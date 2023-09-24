@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcMeta;
 use form;
 
 // Checkbox meta type
@@ -37,7 +36,7 @@ class MyMetaCheck extends MyMetaField
         return form::checkbox($id, 1, $value);
     }
 
-    public function setPostMeta(dcMeta $dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
     {
         if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
             $dcmeta->delPostMeta($post_id, $this->id);

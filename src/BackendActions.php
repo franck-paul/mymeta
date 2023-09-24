@@ -18,5 +18,5 @@ use Dotclear\Core\Backend\Action\ActionsPosts;
 
 class BackendActions extends ActionsPosts
 {
-    protected $use_render = true;
+    protected bool $use_render = true;
 }

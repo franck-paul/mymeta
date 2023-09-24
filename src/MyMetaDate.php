@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcMeta;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Html;
 use form;
@@ -39,7 +38,7 @@ class MyMetaDate extends MyMetaField
         return __('Date');
     }
 
-    public function setPostMeta(dcMeta $dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
     {
         $timestamp = !empty($post['mymeta_' . $this->id]) ? strtotime($post['mymeta_' . $this->id]) : 0;
         $dcmeta->delPostMeta($post_id, $this->id);
