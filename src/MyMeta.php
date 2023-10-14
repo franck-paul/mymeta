@@ -20,6 +20,9 @@ use dcCore;
 use dcMeta;
 use dcNamespace;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Interface\Core\BlogWorkspaceInterface;
+use Dotclear\Interface\Core\ConnectionInterface;
+use Dotclear\Interface\Core\MetaInterface;
 use Exception;
 use stdClass;
 
@@ -32,25 +35,43 @@ use stdClass;
  */
 class MyMeta
 {
-    private $con;
+    private ConnectionInterface $con;
 
-    public $dcmeta;
-    public $settings;
+    public MetaInterface $dcmeta;
+    public BlogWorkspaceInterface $settings;
 
+    /**
+     * @var null|array<string, array<string, string>>
+     */
     private static ?array $types = null;
 
+    /**
+     * @var null|array<string, string>
+     */
     private static ?array $typesCombo = null;
 
-    /** @var array mymeta list of mymeta entries, indexed by meta position*/
-    protected $mymeta;
+    /**
+     * @var array<int, mixed> mymeta list of mymeta entries, indexed by meta position
+     */
+    protected array $mymeta;
 
-    /** @var array mymetaIDs, reference index for mymeta entries, indexed by meta ID */
-    protected $mymetaIDs;
-    protected $html_list = "<ul>\n%s</ul>\n";       ///< <b>string</b>      HTML errors list pattern
-    protected $html_item = "<li>%s</li>\n"; ///< <b>string</b>      HTML error item pattern
+    /**
+     * @var array<string, int> reference index for mymeta entries, indexed by meta ID
+     */
+    protected array $mymetaIDs;
 
-    protected $sep_max;
-    protected $sep_prefix = '__sep__';
+    /**
+     * @var string HTML errors list pattern
+     */
+    protected string $html_list = "<ul>\n%s</ul>\n";
+
+    /**
+     * @var string HTML error item pattern
+     */
+    protected string $html_item = "<li>%s</li>\n";
+
+    protected int $sep_max;
+    protected string $sep_prefix = '__sep__';
 
     /**
      * registerType
@@ -58,10 +79,8 @@ class MyMeta
      * Registers a new meta type. Must extend myMetaEntry class
      *
      * @param string $class class to register
-     *
-     * @return void
      */
-    public static function registerType($class)
+    public static function registerType(string $class): void
     {
         $sample                    = new $class();
         $desc                      = $sample->getMetaTypeDesc();
@@ -109,8 +128,8 @@ class MyMeta
                     // Compute max section id, to anticipate
                     // future section ids
                     $sep_id = substr($v->id, strlen($this->sep_prefix));
-                    if ($this->sep_max < $sep_id) {
-                        $this->sep_max = $sep_id;
+                    if ($this->sep_max < (int) $sep_id) {
+                        $this->sep_max = (int) $sep_id;
                     }
                 }
             }
@@ -122,7 +141,7 @@ class MyMeta
      *
      * Retrieves form-friendly registered mymeta types
      *
-     * @return array|null
+     * @return array<string, string>|null
      */
     public function getTypesAsCombo(): ?array
     {
@@ -136,7 +155,7 @@ class MyMeta
      *
      * @return void
      */
-    public function store()
+    public function store(): void
     {
         $this->settings->put(
             'mymeta_fields',
@@ -151,7 +170,7 @@ class MyMeta
      *
      * Retrieves all mymeta, indexed by position
      *
-     * @return array
+     * @return array<int, mixed>
      */
     public function getAll()
     {
@@ -167,7 +186,7 @@ class MyMeta
      *
      * @return MyMetaEntry the mymeta
      */
-    public function getByPos($pos)
+    public function getByPos(int $pos): MyMetaEntry
     {
         return $this->mymeta[$pos];
     }
@@ -181,7 +200,7 @@ class MyMeta
      *
      * @return MyMetaEntry|null the mymeta
      */
-    public function getByID($id)
+    public function getByID(string $id): ?MyMetaEntry
     {
         if (isset($this->mymetaIDs[$id])) {
             return $this->mymeta[$this->mymetaIDs[$id]];
@@ -197,7 +216,7 @@ class MyMeta
      *
      * @return void
      */
-    public function update($meta)
+    public function update($meta): void
     {
         $id = $meta->id;
         if (!isset($this->mymetaIDs[$id])) {
@@ -210,17 +229,20 @@ class MyMeta
         }
     }
 
-    public function newSection()
+    public function newSection(): MyMetaSection
     {
         $this->sep_max++;
-        $sep_id  = $this->sep_prefix . $this->sep_max;
+        $sep_id  = $this->sep_prefix . (string) $this->sep_max;
         $sep     = new MyMetaSection();
         $sep->id = $sep_id;
 
         return $sep;
     }
 
-    public function reorder($order = null)
+    /**
+     * @param      array<string>|null  $order  The order
+     */
+    public function reorder(?array $order = null): void
     {
         $pos          = 0;
         $newmymeta    = [];
@@ -245,7 +267,13 @@ class MyMeta
         $this->mymeta    = $newmymeta;
         $this->mymetaIDs = $newmymetaIDs;
     }
-    public function delete($ids)
+
+    /**
+     * Deletes the given identifiers.
+     *
+     * @param      array<string>|string  $ids    The identifiers
+     */
+    public function delete($ids): void
     {
         if (!is_array($ids)) {
             $ids = [$ids];
@@ -258,7 +286,13 @@ class MyMeta
         }
     }
 
-    public function setEnabled($ids, $enabled)
+    /**
+     * Sets the enabled.
+     *
+     * @param      array<string>|string     $ids      The identifiers
+     * @param      bool                     $enabled  The enabled
+     */
+    public function setEnabled($ids, bool $enabled): void
     {
         if (!is_array($ids)) {
             $ids = [$ids];
@@ -271,7 +305,13 @@ class MyMeta
         }
     }
 
-    public function newMyMeta($type = 'string', $id = '')
+    /**
+     * @param      string  $type   The type
+     * @param      string  $id     The identifier
+     *
+     * @return     MyMetaField  My meta.
+     */
+    public function newMyMeta(string $type = 'string', string $id = ''): ?MyMetaField
     {
         if (!empty(MyMeta::$types[$type])) {
             return new MyMeta::$types[$type]['object']($id);
@@ -280,7 +320,7 @@ class MyMeta
         return null;
     }
 
-    public function isMetaEnabled($id)
+    public function isMetaEnabled(string $id): bool
     {
         if (!isset($this->mymetaIDs[$id])) {
             return false;
@@ -293,7 +333,7 @@ class MyMeta
         return false;
     }
 
-    public function hasMeta()
+    public function hasMeta(): bool
     {
         foreach ($this->mymeta as $id => $meta) {
             if ($meta instanceof MyMetaField && $meta->enabled) {
@@ -304,7 +344,7 @@ class MyMeta
         return false;
     }
 
-    public function postShowHeader($post, $standalone = false)
+    public function postShowHeader(?MetaRecord $post, bool $standalone = false): string
     {
         $res = '';
         foreach ($this->mymeta as $meta) {
@@ -316,7 +356,7 @@ class MyMeta
         return $res;
     }
 
-    public function postShowForm($post)
+    public function postShowForm(?MetaRecord $post): string
     {
         $res             = '';
         $active_sections = ['' => true];
@@ -335,7 +375,7 @@ class MyMeta
                 }
             } elseif ($meta->enabled) {
                 $display_item = true;
-                if (isset($post) && $post->exists('post_type')) {
+                if (!is_null($post) && $post->exists('post_type')) {
                     $display_item = $meta->isEnabledFor($post->post_type);
                 } else {
                     // try to guess post_type from URI
@@ -359,7 +399,16 @@ class MyMeta
         return ($res !== '' ? '<div class="mymeta"><details open><summary>' . __('My Meta') . '</summary>' . $res . '</details></div>' : '');
     }
 
-    public function setMeta($post_id, $POST, $deleteIfEmpty = true)
+    /**
+     * Sets the meta.
+     *
+     * @param      int                      $post_id        The post identifier
+     * @param      array<string, string>    $POST           The post
+     * @param      bool                     $deleteIfEmpty  The delete if empty
+     *
+     * @throws     Exception
+     */
+    public function setMeta(int $post_id, array $POST, bool $deleteIfEmpty = true): void
     {
         $errors = [];
         foreach ($this->mymeta as $meta) {
@@ -384,7 +433,8 @@ class MyMeta
     }
 
     // DB requests
-    public function getMyMetaStats()
+
+    public function getMyMetaStats(): MetaRecord
     {
         $table = dcCore::app()->prefix . dcMeta::META_TABLE_NAME;
 
@@ -420,7 +470,16 @@ class MyMeta
     }
 
     // Metadata generic requests
-    public function getMetadata($params = [], $count_only = false)
+
+    /**
+     * Gets the metadata.
+     *
+     * @param      array<string, mixed>     $params      The parameters
+     * @param      bool                     $count_only  The count only
+     *
+     * @return     MetaRecord
+     */
+    public function getMetadata(array $params = [], bool $count_only = false): MetaRecord
     {
         if ($count_only) {
             $strReq = 'SELECT count(distinct M.meta_id) ';
@@ -477,7 +536,7 @@ class MyMeta
         return $rs;
     }
 
-    public function getMeta($type = null, $limit = null, $meta_id = null, $post_id = null)
+    public function getMeta(?string $type = null, ?string $limit = null, ?string $meta_id = null, ?int $post_id = null): MetaRecord
     {
         $params = [];
 
@@ -498,7 +557,12 @@ class MyMeta
         return $this->dcmeta->computeMetaStats($rs);
     }
 
-    public function getIDsAsWidgetList()
+    /**
+     * Gets IDs as widget list.
+     *
+     * @return     array<string, string>
+     */
+    public function getIDsAsWidgetList(): array
     {
         $arr = [];
         foreach ($this->mymeta as $k => $meta) {
@@ -510,7 +574,12 @@ class MyMeta
         return $arr;
     }
 
-    public function getSectionsAsWidgetList()
+    /**
+     * Gets the sections as widget list.
+     *
+     * @return     array<string, string>
+     */
+    public function getSectionsAsWidgetList(): array
     {
         $arr = [];
         foreach ($this->mymeta as $k => $meta) {

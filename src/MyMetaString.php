@@ -17,12 +17,12 @@ namespace Dotclear\Plugin\mymeta;
 // Simple textfield meta type
 class MyMetaString extends MyMetaField
 {
-    public function getMetaTypeId()
+    public function getMetaTypeId(): string
     {
         return 'string';
     }
 
-    public function getMetaTypeDesc()
+    public function getMetaTypeDesc(): string
     {
         return __('String');
     }

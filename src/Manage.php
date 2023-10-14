@@ -106,7 +106,7 @@ class Manage extends Process
                         'MyMeta fields backup (0.3.x version)'
                     );
                 }
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             }
         }
         dcCore::app()->admin->mymeta = new MyMeta();
@@ -128,7 +128,7 @@ class Manage extends Process
                 dcCore::app()->admin->mymeta->store();
 
                 Notices::addSuccessNotice($msg);
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -145,7 +145,7 @@ class Manage extends Process
                     __('Section "%s" has been successfully created'),
                     Html::escapeHTML($_POST['mymeta_section'])
                 ));
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -166,7 +166,7 @@ class Manage extends Process
                 dcCore::app()->admin->mymeta->store();
 
                 Notices::addSuccessNotice(__('Mymeta have been successfully reordered'));
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -265,7 +265,7 @@ class Manage extends Process
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . dcCore::app()->admin->url->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
                     'm'  => 'editsection',
                     'id' => $meta->id,
                 ], '&') . '">' .
@@ -290,12 +290,12 @@ class Manage extends Process
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . dcCore::app()->admin->url->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
                     'm'  => 'edit',
                     'id' => $meta->id,
                 ], '&') . '">' .
                 '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
-                '<td class="nowrap"><a href="' . dcCore::app()->admin->url->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
                     'm'  => 'view',
                     'id' => $meta->id,
                 ], '&') . '">' .

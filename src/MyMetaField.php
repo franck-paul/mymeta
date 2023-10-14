@@ -14,33 +14,35 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcMeta;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
+use Dotclear\Interface\Core\MetaInterface;
 use form;
 
 abstract class MyMetaField extends MyMetaEntry
 {
-    public $enabled;
-    public $default;
-    public $contexts;
+    public bool $enabled;
+    public string $default;
+    public string $tpl_list         = '';
+    public bool $url_list_enabled   = true;
+    public string $tpl_single       = '';
+    public bool $url_single_enabled = true;
+
+    /**
+     * @var array<string, string>
+     */
+    public array $values;
+
+    /**
+     * @var bool|null|array<string>
+     */
     public $post_types;
-    public $tpl_list           = '';
-    public $url_list_enabled   = true;
-    public $tpl_single         = '';
-    public $url_single_enabled = true;
 
-    public static function cmp_pos($a, $b)
-    {
-        return $a->pos <=> $b->pos;
-    }
-
-    public function __construct($id = '')
+    public function __construct(string $id = '')
     {
         $this->enabled    = false;
         $this->prompt     = '';
         $this->default    = '';
-        $this->contexts   = [];
         $this->pos        = 1000;
         $this->id         = $id;
         $this->post_types = null;
@@ -52,12 +54,12 @@ abstract class MyMetaField extends MyMetaEntry
      * Displays form input field (when editting a post) including prompt
      * Notice : submitted field name must be prefixed with "mymeta_"
      *
-     * @param dcMeta            $dcmeta     dcMeta instance to use
+     * @param MetaInterface     $dcmeta     dcMeta instance to use
      * @param MetaRecord|null   $post       the post resultset
      *
-     * @return mixed
+     * @return string
      */
-    public function postShowForm($dcmeta, ?MetaRecord $post, $value = '', $bypass_disabled = false)
+    public function postShowForm(MetaInterface $dcmeta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): string
     {
         if ($this->enabled || $bypass_disabled) {
             $res     = '';
@@ -74,6 +76,8 @@ abstract class MyMetaField extends MyMetaEntry
 
             return $res;
         }
+
+        return '';
     }
 
     /**
@@ -83,9 +87,9 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @param MetaRecord $post the post resultset
      *
-     * @return mixed
+     * @return string
      */
-    public function postHeader($post = null, $standalone = false)
+    public function postHeader($post = null, bool $standalone = false): string
     {
         return '';
     }
@@ -100,7 +104,7 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @return string
      */
-    protected function postShowField($id, $value)
+    protected function postShowField(string $id, string $value): string
     {
         return form::field($id, 40, 255, $value, 'maximal');
     }
@@ -110,11 +114,12 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * updates post meta for a given post, when a post is submitted
      *
-     * @param dcMeta $dcmeta current dcMeta instance
-     * @param integer $post_id post_id to update
-     * @param array $post HTTP POST parameters
+     * @param MetaInterface             $dcmeta         current dcMeta instance
+     * @param int                       $post_id        post_id to update
+     * @param array<string, string>     $post           HTTP POST parameters
+     * @param bool                      $deleteIfEmpty
      */
-    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
     {
         if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
             $dcmeta->delPostMeta($post_id, $this->id);
@@ -131,7 +136,7 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @return     string
      */
-    public function displayValue(string $value)
+    public function displayValue(string $value): string
     {
         return $value;
     }
@@ -142,11 +147,12 @@ abstract class MyMetaField extends MyMetaEntry
      * Returns public value for a given mymeta value
      * usually returns the value itself
      *
-     * @param string $value the value to retrieve
+     * @param string                $value the value to retrieve
+     * @param array<string, mixed>  $attr
      *
      * @return string the converted public value
      */
-    public function getValue($value, $attr)
+    public function getValue(string $value, array $attr): string
     {
         return $value;
     }
@@ -158,7 +164,7 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @return string the html code to output
      */
-    public function adminForm()
+    public function adminForm(): string
     {
         return '';
     }
@@ -169,15 +175,15 @@ abstract class MyMetaField extends MyMetaEntry
      * This function is triggered on mymeta update
      * to set mymeta fields defined in adminForm
      *
-     * @param MetaRecord $post the post resultset
+     * @param array<string, string> $post the post resultset
      */
-    public function adminUpdate($post)
+    public function adminUpdate(array $post): void
     {
         $this->prompt  = Html::escapeHTML($post['mymeta_prompt']);
         $this->enabled = (bool) $post['mymeta_enabled'];
     }
 
-    public function isEnabledFor($mode)
+    public function isEnabledFor(string $mode): bool
     {
         if (is_array($this->post_types)) {
             return in_array($mode, $this->post_types);
@@ -186,12 +192,12 @@ abstract class MyMetaField extends MyMetaEntry
         return true;
     }
 
-    public function isRestrictionEnabled()
+    public function isRestrictionEnabled(): bool
     {
         return !is_array($this->post_types);
     }
 
-    public function getRestrictions()
+    public function getRestrictions(): string|bool
     {
         if (is_array($this->post_types)) {
             return join(',', $this->post_types);

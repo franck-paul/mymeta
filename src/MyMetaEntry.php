@@ -16,9 +16,9 @@ namespace Dotclear\Plugin\mymeta;
 
 abstract class MyMetaEntry
 {
-    public $id;
-    public $prompt;
-    public $pos;
+    public string $id;
+    public string $prompt;
+    public int $pos;
 
     /**
      * getMetaTypeId
@@ -27,7 +27,7 @@ abstract class MyMetaEntry
      *
      * @return string the meta type
      */
-    abstract public function getMetaTypeId();
+    abstract public function getMetaTypeId(): string;
 
     /**
      * getMetaTypeDesc
@@ -36,5 +36,5 @@ abstract class MyMetaEntry
      *
      * @return string the description
      */
-    abstract public function getMetaTypeDesc();
+    abstract public function getMetaTypeDesc(): string;
 }

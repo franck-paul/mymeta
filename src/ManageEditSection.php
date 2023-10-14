@@ -55,7 +55,7 @@ class ManageEditSection extends Process
                     dcCore::app()->admin->mymeta->store();
                 }
                 Notices::addSuccessNotice(__('Section has been successfully updated'));
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -79,12 +79,12 @@ class ManageEditSection extends Process
             $mymetasection = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
             if (!($mymetasection instanceof MyMetaSection)) {
                 Notices::addErrorNotice(__('Something went wrong while editing section'));
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
                 exit;
             }
         } else {
             Notices::addErrorNotice(__('Something went wrong while editing section'));
-            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             exit;
         }
 

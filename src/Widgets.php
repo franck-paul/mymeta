@@ -18,7 +18,7 @@ use Dotclear\Plugin\widgets\WidgetsStack;
 
 class Widgets
 {
-    public static function initWidgets(WidgetsStack $w)
+    public static function initWidgets(WidgetsStack $w): string
     {
         $mymeta                             = new MyMeta();
         $mymetalist                         = $mymeta->getIDsAsWidgetList();
@@ -99,5 +99,7 @@ class Widgets
             ->addContentOnly()
             ->addClass()
             ->addOffline();
+
+        return '';
     }
 }

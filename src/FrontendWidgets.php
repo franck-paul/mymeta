@@ -16,17 +16,18 @@ namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
 use Dotclear\Helper\Html\Html;
+use Dotclear\Plugin\widgets\WidgetsElement;
 
 class FrontendWidgets
 {
-    public static function mymetaList($w)
+    public static function mymetaList(WidgetsElement $w): string
     {
         if ($w->offline) {
-            return;
+            return '';
         }
 
         if (($w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)) || ($w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type))) {
-            return;
+            return '';
         }
 
         $allmeta  = dcCore::app()->mymeta->getAll();
@@ -54,7 +55,7 @@ class FrontendWidgets
             }
         }
         if (count($items) == 0) {
-            return;
+            return '';
         }
 
         $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>' . join('', $items) . '</ul>';
@@ -62,14 +63,14 @@ class FrontendWidgets
         return $w->renderDiv((bool) $w->content_only, 'mymetalist ' . $w->class, '', $res);
     }
 
-    public static function mymetaValues($w)
+    public static function mymetaValues(WidgetsElement $w): string
     {
         if ($w->offline) {
-            return;
+            return '';
         }
 
         if (($w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)) || ($w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type))) {
-            return;
+            return '';
         }
 
         $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>';

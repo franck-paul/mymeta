@@ -18,43 +18,58 @@ use ArrayObject;
 use dcCore;
 use Dotclear\Core\Backend\Action\ActionsPosts;
 use Dotclear\Core\Backend\Page;
+use Dotclear\Database\Cursor;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
 
 class BackendBehaviors
 {
-    public static function mymetaPostHeader($post)
+    public static function mymetaPostHeader(?MetaRecord $post): string
     {
         $mymeta = new MyMeta();
         echo $mymeta->postShowHeader($post);
+
+        return '';
     }
 
-    public static function mymetaSidebar($post)
+    public static function mymetaSidebar(?MetaRecord $post): string
     {
+        return '';
     }
 
-    public static function mymetaInForm($post)
+    public static function mymetaInForm(?MetaRecord $post): string
     {
         $mymeta = new MyMeta();
         if ($mymeta->hasMeta()) {
             echo $mymeta->postShowForm($post);
         }
+
+        return '';
     }
 
-    public static function setMymeta($cur, $post_id)
+    public static function setMymeta(Cursor $cur, int $post_id): string
     {
         $mymeta = new MyMeta();
         $mymeta->setMeta($post_id, $_POST);
+
+        return '';
     }
 
-    public static function adminPostsActions(ActionsPosts $ap)
+    public static function adminPostsActions(ActionsPosts $ap): string
     {
         $ap->addAction(
             [__('MyMeta') => [__('Set MyMeta') => 'mymeta_set']],
             static::adminSetMyMeta(...)
         );
+
+        return '';
     }
 
-    public static function adminSetMyMeta(ActionsPosts $ap, ArrayObject $post)
+    /**
+     * @param      ActionsPosts                 $ap     Actions
+     * @param      ArrayObject<string, mixed>   $post   The post
+     */
+    public static function adminSetMyMeta(ActionsPosts $ap, ArrayObject $post): void
     {
         if (!empty($post['mymeta_ok'])) {
             // Cope with submission

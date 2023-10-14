@@ -19,19 +19,22 @@ use form;
 // Items list meta type
 class MyMetaList extends MyMetaField
 {
-    public $values;
-
-    public function getMetaTypeId()
+    public function getMetaTypeId(): string
     {
         return 'list';
     }
 
-    public function getMetaTypeDesc()
+    public function getMetaTypeDesc(): string
     {
         return __('Items List');
     }
 
-    private function valuesToArray($values)
+    /**
+     * @param      string  $values  The values
+     *
+     * @return     array<string, string>
+     */
+    private function valuesToArray(string $values): array
     {
         $arr   = [];
         $lines = explode("\n", $values);
@@ -51,7 +54,12 @@ class MyMetaList extends MyMetaField
         return $arr;
     }
 
-    private function arrayToValues($array)
+    /**
+     * @param      array<string, string>   $array  The array
+     *
+     * @return     string
+     */
+    private function arrayToValues(array $array): string
     {
         $res = '';
         if (is_array($array)) {
@@ -63,7 +71,13 @@ class MyMetaList extends MyMetaField
         return $res;
     }
 
-    public function getValue($value, $attr)
+    /**
+     * @param      string                   $value  The value
+     * @param      array<string, mixed>     $attr   The attribute
+     *
+     * @return     string  The value.
+     */
+    public function getValue(string $value, array $attr): string
     {
         $key = array_search($value, $this->values);
         if (isset($attr['key']) && $attr['key'] == 1) {
@@ -76,7 +90,7 @@ class MyMetaList extends MyMetaField
         return $value;
     }
 
-    protected function postShowField($id, $value)
+    protected function postShowField(string $id, string $value): string
     {
         $list     = $this->values;
         $list[''] = '';
@@ -84,7 +98,7 @@ class MyMetaList extends MyMetaField
         return form::combo($id, $list, $value);
     }
 
-    public function adminForm()
+    public function adminForm(): string
     {
         return '<p><label>' .
         __('Values : enter 1 value per line (syntax for each line : ID: description)') .
@@ -93,7 +107,10 @@ class MyMetaList extends MyMetaField
         '</p>';
     }
 
-    public function adminUpdate($post)
+    /**
+     * @param      array<string, string>  $post   The post
+     */
+    public function adminUpdate(array $post): void
     {
         parent::adminUpdate($post);
         if (isset($post['mymeta_values'])) {

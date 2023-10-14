@@ -16,29 +16,38 @@ namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Html;
+use Dotclear\Interface\Core\MetaInterface;
 use form;
 
 // Datepicker  meta type
 class MyMetaDate extends MyMetaField
 {
-    protected function postShowField($id, $value)
+    protected function postShowField(string $id, string $value): string
     {
         $timestamp = $value ? strtotime($value) : time();
 
         return form::datetime($id, ['default' => Html::escapeHTML(Date::str('%Y-%m-%dT%H:%M', $timestamp))]);
     }
 
-    public function getMetaTypeId()
+    public function getMetaTypeId(): string
     {
         return 'date';
     }
 
-    public function getMetaTypeDesc()
+    public function getMetaTypeDesc(): string
     {
         return __('Date');
     }
 
-    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    /**
+     * Sets the post meta.
+     *
+     * @param      MetaInterface            $dcmeta         current dcMeta instance
+     * @param      int                      $post_id        The post identifier
+     * @param      array<string, string>    $post           The post
+     * @param      bool                     $deleteIfEmpty  The delete if empty
+     */
+    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
     {
         $timestamp = !empty($post['mymeta_' . $this->id]) ? strtotime($post['mymeta_' . $this->id]) : 0;
         $dcmeta->delPostMeta($post_id, $this->id);
@@ -48,8 +57,8 @@ class MyMetaDate extends MyMetaField
         }
     }
 
-    public function displayValue(string $value)
+    public function displayValue(string $value): string
     {
-        return date('Y-m-d H:i', strtotime($value)) . ' UTC';
+        return (string) date('Y-m-d H:i', strtotime($value)) . ' UTC';
     }
 }

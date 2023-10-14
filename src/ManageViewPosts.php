@@ -47,19 +47,19 @@ class ManageViewPosts extends Process
 
         if (empty($_GET['id']) || empty($_GET['value'])) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
         if (dcCore::app()->admin->mymetaEntry == null) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         $value = rawurldecode($_GET['value']);
 
         dcCore::app()->admin->posts_actions_page = new BackendActions(
-            dcCore::app()->admin->url->get('admin.plugin'),
+            dcCore::app()->adminurl->get('admin.plugin'),
             ['p' => My::id(), 'm' => 'viewposts', 'id' => dcCore::app()->admin->mymetaEntry->id]
         );
 
@@ -81,7 +81,7 @@ class ManageViewPosts extends Process
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
                     ));
-                    dcCore::app()->admin->url->redirect('admin.plugin.' . My::id(), [
+                    dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
                         'm'      => 'view',
                         'id'     => dcCore::app()->admin->mymetaEntry->id,
                         'status' => 'valchg',
@@ -99,7 +99,7 @@ class ManageViewPosts extends Process
         ]), dcCore::app()->blog->id)) {
             try {
                 dcCore::app()->admin->mymeta->dcmeta->delMeta($value, dcCore::app()->admin->mymetaEntry->id);
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id(), [
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
                     'm'   => 'view',
                     'del' => 1,
                 ]);

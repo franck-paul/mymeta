@@ -20,7 +20,7 @@ use Dotclear\Core\Backend\Listing\Pager;
 
 class BackendList extends Listing
 {
-    public function display($page, $nb_per_page, $enclose_block = '')
+    public function display(int $page, int $nb_per_page, string $enclose_block = ''): void
     {
         if ($this->rs->isEmpty()) {
             echo '<p><strong>' . __('No entries found') . '</strong></p>';
@@ -51,7 +51,7 @@ class BackendList extends Listing
         }
     }
 
-    private function postLine()
+    private function postLine(): string
     {
         return
         '<tr class="line">' .

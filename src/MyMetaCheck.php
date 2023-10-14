@@ -14,29 +14,36 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
+use Dotclear\Interface\Core\MetaInterface;
 use form;
 
 // Checkbox meta type
 class MyMetaCheck extends MyMetaField
 {
-    public $values;
-
-    public function getMetaTypeId()
+    public function getMetaTypeId(): string
     {
         return 'boolean';
     }
 
-    public function getMetaTypeDesc()
+    public function getMetaTypeDesc(): string
     {
         return __('Checkbox');
     }
 
-    protected function postShowField($id, $value)
+    protected function postShowField(string $id, string $value): string
     {
         return form::checkbox($id, 1, $value);
     }
 
-    public function setPostMeta($dcmeta, $post_id, $post, $deleteIfEmpty = true)
+    /**
+     * Sets the post meta.
+     *
+     * @param      MetaInterface            $dcmeta         The dcmeta
+     * @param      int                      $post_id        The post identifier
+     * @param      array<string, string>    $post           The post
+     * @param      bool                     $deleteIfEmpty  The delete if empty
+     */
+    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
     {
         if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
             $dcmeta->delPostMeta($post_id, $this->id);
@@ -46,7 +53,7 @@ class MyMetaCheck extends MyMetaField
         }
     }
 
-    public function displayValue(string $value)
+    public function displayValue(string $value): string
     {
         return (bool) $value ? '[x]' : '[ ]';
     }

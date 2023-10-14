@@ -43,13 +43,13 @@ class ManageView extends Process
 
         if (empty($_GET['id'])) {
             Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
-            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
         if (dcCore::app()->admin->mymetaEntry == null) {
             Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
-            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         return true;

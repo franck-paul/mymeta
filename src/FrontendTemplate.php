@@ -14,11 +14,17 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
+use ArrayObject;
 use dcCore;
 
 class FrontendTemplate
 {
-    public static function getCommonMyMeta($attr)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     *
+     * @return     string
+     */
+    public static function getCommonMyMeta(array|ArrayObject $attr): string
     {
         if (isset($attr['type'])) {
             $attr['id'] = $attr['type'];
@@ -32,7 +38,13 @@ class FrontendTemplate
 
         return '%s';
     }
-    protected static function attr2str($attr)
+
+    /**
+     * @param      ArrayObject<string, mixed>|array<string, mixed>  $attr   The attribute
+     *
+     * @return     string
+     */
+    protected static function attr2str(array|ArrayObject $attr): string
     {
         $filter = ['id','type'];
         $a      = [];
@@ -45,7 +57,7 @@ class FrontendTemplate
         return 'array(' . join(',', $a) . ')';
     }
 
-    public static function getOperator($op)
+    public static function getOperator(string $op): string
     {
         switch (strtolower($op)) {
             case 'or':
@@ -58,7 +70,12 @@ class FrontendTemplate
         }
     }
 
-    public static function MyMetaURL($attr)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     *
+     * @return     string
+     */
+    public static function MyMetaURL(array|ArrayObject $attr): string
     {
         $f = dcCore::app()->tpl->getFilters($attr);
 
@@ -66,14 +83,24 @@ class FrontendTemplate
         '"/".dcCore::app()->ctx->mymeta->id."/".rawurlencode(dcCore::app()->ctx->meta->meta_id)') . '; ?>';
     }
 
-    public static function MetaType($attr)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     *
+     * @return     string
+     */
+    public static function MetaType(array|ArrayObject $attr): string
     {
         $f = dcCore::app()->tpl->getFilters($attr);
 
         return '<?php echo ' . sprintf($f, 'dcCore::app()->ctx->meta->meta_type') . '; ?>';
     }
 
-    public static function MyMetaTypePrompt($attr)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     *
+     * @return     string
+     */
+    public static function MyMetaTypePrompt(array|ArrayObject $attr): string
     {
         $f   = FrontendTemplate::getCommonMyMeta($attr);
         $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) echo dcCore::app()->ctx->mymeta->prompt; ?>' . "\n";
@@ -81,7 +108,12 @@ class FrontendTemplate
         return sprintf($f, $res);
     }
 
-    public static function EntryMyMetaValue($attr)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     *
+     * @return     string
+     */
+    public static function EntryMyMetaValue(array|ArrayObject $attr): string
     {
         $f = FrontendTemplate::getCommonMyMeta($attr);
 
@@ -92,7 +124,12 @@ class FrontendTemplate
         return sprintf($f, $res);
     }
 
-    public static function MyMetaValue($attr)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     *
+     * @return     string
+     */
+    public static function MyMetaValue(array|ArrayObject $attr): string
     {
         $f = FrontendTemplate::getCommonMyMeta($attr);
 
@@ -103,7 +140,13 @@ class FrontendTemplate
         return sprintf($f, $res);
     }
 
-    public static function EntryMyMetaIf($attr, $content)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     * @param      string                                            $content   The content
+     *
+     * @return     string
+     */
+    public static function EntryMyMetaIf(array|ArrayObject $attr, string $content): string
     {
         $f        = FrontendTemplate::getCommonMyMeta($attr);
         $if       = [];
@@ -131,7 +174,13 @@ class FrontendTemplate
         return sprintf($f, $res);
     }
 
-    public static function MyMetaData($attr, $content)
+    /**
+     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
+     * @param      string                                            $content   The content
+     *
+     * @return     string
+     */
+    public static function MyMetaData(array|ArrayObject $attr, string $content): string
     {
         $f     = FrontendTemplate::getCommonMyMeta($attr);
         $limit = isset($attr['limit']) ? (int) $attr['limit'] : 'null';

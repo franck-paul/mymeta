@@ -19,7 +19,10 @@ use dcUrlHandlers;
 
 class FrontendUrl extends dcUrlHandlers
 {
-    public static function tag($args)
+    /**
+     * @param      null|string  $args   The arguments
+     */
+    public static function tag(?string $args): void
     {
         $n = self::getPageNumber($args);
         if ($args == '' && !$n) {

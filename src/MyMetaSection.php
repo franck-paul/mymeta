@@ -21,12 +21,12 @@ namespace Dotclear\Plugin\mymeta;
 #[\AllowDynamicProperties]
 class MyMetaSection extends MyMetaEntry
 {
-    public function getMetaTypeId()
+    public function getMetaTypeId(): string
     {
         return 'section';
     }
 
-    public function getMetaTypeDesc()
+    public function getMetaTypeDesc(): string
     {
         return __('Section');
     }

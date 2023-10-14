@@ -70,7 +70,7 @@ class ManageEdit extends Process
                     __('MyMeta "%s" has been successfully updated'),
                     Html::escapeHTML($mymetaid)
                 ));
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -100,7 +100,7 @@ class ManageEdit extends Process
             $mymetaentry = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
             if ($mymetaentry == null) {
                 Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
-                dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
                 exit;
             }
             $mymeta_type = $mymetaentry->getMetaTypeId();
@@ -116,7 +116,7 @@ class ManageEdit extends Process
         $type_label = array_search($mymeta_type, $types);
         if (!$type_label) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
-            dcCore::app()->admin->url->redirect('admin.plugin.' . My::id());
+            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
         }
 
         $head = Page::jsPageTabs('mymeta');

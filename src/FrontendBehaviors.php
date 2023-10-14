@@ -14,17 +14,26 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
+use ArrayObject;
 use dcCore;
 use Dotclear\Core\Frontend\Utility;
 
 class FrontendBehaviors
 {
-    public static function addTplPath()
+    public static function addTplPath(): string
     {
         dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), My::path() . '/' . Utility::TPL_ROOT);
+
+        return '';
     }
 
-    public static function templateBeforeBlock($b, $attr)
+    /**
+     * @param      string                                               $b      The block
+     * @param      array<string, string>|ArrayObject<string, string>    $attr   The attribute
+     *
+     * @return     string
+     */
+    public static function templateBeforeBlock(string $b, array|ArrayObject $attr): string
     {
         /* tpl:Entries extra attributes :
             <tpl:Entries mymetaid="<id>" mymetavalue="value1,value2,value3">
@@ -37,7 +46,7 @@ class FrontendBehaviors
                 selects mymeta entries having mymetaid <id> not set
         */
         if ($b != 'Entries' && $b != 'Comments') {
-            return;
+            return '';
         }
         if (!isset($attr['mymetaid'])) {
             if (empty($attr['no_context'])) {
@@ -53,7 +62,7 @@ class FrontendBehaviors
                 "} ?>\n";
             }
 
-            return;
+            return '';
         }
         $metaid = dcCore::app()->con->escape($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
