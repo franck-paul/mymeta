@@ -92,7 +92,7 @@ class ManageView extends Process
         // Form
         echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id)) . '</h3>';
         $list = new BackendList($rs, $count->f(0));
-        echo $list->display($page, $nb_per_page, '%s');
+        $list->display($page, $nb_per_page, '%s');
         echo '</div>';
 
         Page::closeModule();
