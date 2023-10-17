@@ -64,7 +64,7 @@ class FrontendBehaviors
 
             return '';
         }
-        $metaid = dcCore::app()->con->escape($attr['mymetaid']);
+        $metaid = dcCore::app()->con->escapeStr($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
             $values  = $attr['mymetavalue'];
             $in_expr = ' in ';
@@ -74,7 +74,7 @@ class FrontendBehaviors
             }
             $cond = [];
             foreach (explode(',', $values) as $expr) {
-                $cond[] = "'" . dcCore::app()->con->escape($expr) . "'";
+                $cond[] = "'" . dcCore::app()->con->escapeStr($expr) . "'";
             }
 
             return

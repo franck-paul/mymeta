@@ -160,9 +160,9 @@ class Manage extends Process
         } elseif (!empty($_POST['mymeta_order'])) {
             $order = explode(',', $_POST['mymeta_order']);
         }
-        if (!empty($_POST['saveorder']) && !empty($order)) {
+        if (!empty($_POST['saveorder']) && $order !== false && !empty($order)) {
             try {
-                dcCore::app()->admin->mymeta->reorder($order);
+                dcCore::app()->admin->mymeta->reorder($order);  // @phpstan-ignore-line
                 dcCore::app()->admin->mymeta->store();
 
                 Notices::addSuccessNotice(__('Mymeta have been successfully reordered'));

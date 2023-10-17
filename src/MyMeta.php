@@ -82,11 +82,11 @@ class MyMeta
      */
     public static function registerType(string $class): void
     {
-        $sample                    = new $class();
-        $desc                      = $sample->getMetaTypeDesc();
-        $type                      = $sample->getMetaTypeId();
-        MyMeta::$typesCombo[$desc] = $type;
-        MyMeta::$types[$type]      = [
+        $sample                  = new $class();
+        $desc                    = $sample->getMetaTypeDesc();  // @phpstan-ignore-line
+        $type                    = $sample->getMetaTypeId();    // @phpstan-ignore-line
+        self::$typesCombo[$desc] = $type;                       // @phpstan-ignore-line
+        self::$types[$type]      = [                            // @phpstan-ignore-line
             'desc'   => $desc,
             'object' => $class,
         ];
@@ -123,7 +123,7 @@ class MyMeta
             $this->mymetaIDs = [];
             $this->sep_max   = 0;
             foreach ($this->mymeta as $k => $v) {
-                $this->mymetaIDs[$v->id] = $k;
+                $this->mymetaIDs[$v->id] = (int) $k;    // @phpstan-ignore-line
                 if ($v instanceof MyMetaSection) {
                     // Compute max section id, to anticipate
                     // future section ids
@@ -222,7 +222,7 @@ class MyMeta
         if (!isset($this->mymetaIDs[$id])) {
             // new id => create
             $this->mymeta[]       = $meta;
-            $this->mymetaIDs[$id] = sizeof($this->mymeta);
+            $this->mymetaIDs[$id] = (int) sizeof($this->mymeta);    // @phpstan-ignore-line
         } else {
             // ID already exists => update
             $this->mymeta[$this->mymetaIDs[$id]] = $meta;
@@ -262,10 +262,10 @@ class MyMeta
         foreach ($this->mymeta as $m) {
             $m->pos               = $pos++;
             $newmymeta[]          = $m;
-            $newmymetaIDs[$m->id] = count($newmymeta) - 1;
+            $newmymetaIDs[$m->id] = (int) count($newmymeta) - 1;
         }
         $this->mymeta    = $newmymeta;
-        $this->mymetaIDs = $newmymetaIDs;
+        $this->mymetaIDs = $newmymetaIDs;   // @phpstan-ignore-line
     }
 
     /**
@@ -309,12 +309,12 @@ class MyMeta
      * @param      string  $type   The type
      * @param      string  $id     The identifier
      *
-     * @return     MyMetaField  My meta.
+     * @return     MyMetaField|null  My meta.
      */
     public function newMyMeta(string $type = 'string', string $id = ''): ?MyMetaField
     {
         if (!empty(MyMeta::$types[$type])) {
-            return new MyMeta::$types[$type]['object']($id);
+            return new MyMeta::$types[$type]['object']($id);    // @phpstan-ignore-line
         }
 
         return null;
@@ -335,7 +335,7 @@ class MyMeta
 
     public function hasMeta(): bool
     {
-        foreach ($this->mymeta as $id => $meta) {
+        foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaField && $meta->enabled) {
                 return true;
             }
@@ -361,14 +361,14 @@ class MyMeta
         $res             = '';
         $active_sections = ['' => true];
         $cur_section     = '';
-        foreach ($this->mymeta as $id => $meta) {
+        foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 $cur_section = $meta->id;
             } elseif ($meta->enabled) {
                 $active_sections[$cur_section] = true;
             }
         }
-        foreach ($this->mymeta as $id => $meta) {
+        foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 if (isset($active_sections[$meta->id])) {
                     $res .= '<h4>' . __($meta->prompt) . '</h4>';
@@ -396,7 +396,7 @@ class MyMeta
             }
         }
 
-        return ($res !== '' ? '<div class="mymeta"><details open><summary>' . __('My Meta') . '</summary>' . $res . '</details></div>' : '');
+        return $res !== '' ? '<div class="mymeta"><details open><summary>' . __('My Meta') . '</summary>' . $res . '</details></div>' : '';
     }
 
     /**
@@ -441,7 +441,7 @@ class MyMeta
         $strReq = 'SELECT meta_type, COUNT(M.post_id) as count ' .
         'FROM ' . $table . ' M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
         'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escape(dcCore::app()->blog->id) . "' ";
+        "WHERE P.blog_id = '" . $this->con->escapeStr(dcCore::app()->blog->id) . "' ";
 
         if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
@@ -454,7 +454,7 @@ class MyMeta
             $strReq .= ') ';
 
             if (dcCore::app()->auth->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escape(dcCore::app()->auth->userID()) . "')";
+                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(dcCore::app()->auth->userID()) . "')";
             } else {
                 $strReq .= ') ';
             }
@@ -489,14 +489,14 @@ class MyMeta
 
         $strReq .= 'FROM ' . dcCore::app()->prefix . dcMeta::META_TABLE_NAME . ' M LEFT JOIN ' . dcCore::app()->prefix . dcBlog::POST_TABLE_NAME . ' P ' .
         'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escape(dcCore::app()->blog->id) . "' ";
+        "WHERE P.blog_id = '" . $this->con->escapeStr(dcCore::app()->blog->id) . "' ";
 
         if (isset($params['meta_type'])) {
-            $strReq .= " AND meta_type = '" . $this->con->escape($params['meta_type']) . "' ";
+            $strReq .= " AND meta_type = '" . $this->con->escapeStr($params['meta_type']) . "' ";
         }
 
         if (isset($params['meta_id'])) {
-            $strReq .= " AND meta_id = '" . $this->con->escape($params['meta_id']) . "' ";
+            $strReq .= " AND meta_id = '" . $this->con->escapeStr($params['meta_id']) . "' ";
         }
 
         if (isset($params['post_id'])) {
@@ -514,7 +514,7 @@ class MyMeta
             $strReq .= ') ';
 
             if (dcCore::app()->auth->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escape(dcCore::app()->auth->userID()) . "')";
+                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(dcCore::app()->auth->userID()) . "')";
             } else {
                 $strReq .= ') ';
             }
@@ -531,9 +531,8 @@ class MyMeta
         if (isset($params['limit']) && !$count_only) {
             $strReq .= $this->con->limit($params['limit']);
         }
-        $rs = new MetaRecord($this->con->select($strReq));
 
-        return $rs;
+        return new MetaRecord($this->con->select($strReq));
     }
 
     public function getMeta(?string $type = null, ?string $limit = null, ?string $meta_id = null, ?int $post_id = null): MetaRecord
@@ -565,7 +564,7 @@ class MyMeta
     public function getIDsAsWidgetList(): array
     {
         $arr = [];
-        foreach ($this->mymeta as $k => $meta) {
+        foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaField && $meta->enabled) {
                 $arr[$meta->id] = $meta->id;
             }
@@ -582,7 +581,7 @@ class MyMeta
     public function getSectionsAsWidgetList(): array
     {
         $arr = [];
-        foreach ($this->mymeta as $k => $meta) {
+        foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 $arr[$meta->prompt] = $meta->id;
             }
