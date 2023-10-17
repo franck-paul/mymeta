@@ -154,7 +154,6 @@ class ManageEdit extends Process
         '<div class="fieldset">' .
         '<h3>' . __('MyMeta URLs') . '</h3>';
 
-        $base_url   = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaentry->id;
         $tpl_single = $mymetaentry->tpl_single;
         $tpl_list   = $mymetaentry->tpl_list;
 

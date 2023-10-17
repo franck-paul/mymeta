@@ -114,8 +114,7 @@ class ManageEditSection extends Process
         '</div>' .
         '<p>' .
         '<input type="hidden" name="p" value="mymeta" />' .
-        '<input type="hidden" name="m" value="editsection" />';
-
+        '<input type="hidden" name="m" value="editsection" />' .
         My::parsedHiddenFields([
             'mymeta_id' => $mymetaid,
         ]) .

@@ -41,7 +41,7 @@ class FrontendWidgets
         } else {
             $display_meta = true;
         }
-        foreach ($allmeta as $k => $meta) {
+        foreach ($allmeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 if ($meta->id == $section) {
                     $display_meta = true;
