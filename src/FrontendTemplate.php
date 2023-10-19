@@ -79,7 +79,7 @@ class FrontendTemplate
     {
         $f = dcCore::app()->tpl->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, 'dcCore::app()->blog->url.dcCore::app()->url->getBase("mymeta").' .
+        return '<?php echo ' . sprintf($f, 'App::blog()->url().dcCore::app()->url->getBase("mymeta").' .
         '"/".dcCore::app()->ctx->mymeta->id."/".rawurlencode(dcCore::app()->ctx->meta->meta_id)') . '; ?>';
     }
 

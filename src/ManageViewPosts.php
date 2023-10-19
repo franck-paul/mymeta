@@ -16,6 +16,7 @@ namespace Dotclear\Plugin\mymeta;
 
 use dcAuth;
 use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Listing\ListingPosts;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
@@ -96,7 +97,7 @@ class ManageViewPosts extends Process
         if (!empty($_POST['delete']) && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_PUBLISH,
             dcAuth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             try {
                 dcCore::app()->admin->mymeta->dcmeta->delMeta($value, dcCore::app()->admin->mymetaEntry->id);
                 dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
@@ -159,7 +160,7 @@ class ManageViewPosts extends Process
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_PUBLISH,
             dcAuth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             $combo_action[__('Status')] = [
                 __('Publish')         => 'publish',
                 __('Unpublish')       => 'unpublish',
@@ -174,7 +175,7 @@ class ManageViewPosts extends Process
         $combo_action[__('Change')] = [__('Change category') => 'category'];
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             $combo_action[__('Change')] = array_merge(
                 $combo_action[__('Change')],
                 [__('Change author') => 'author']
@@ -183,7 +184,7 @@ class ManageViewPosts extends Process
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_DELETE,
             dcAuth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             $combo_action[__('Delete')] = [__('Delete') => 'delete'];
         }
 
@@ -201,7 +202,7 @@ class ManageViewPosts extends Process
 
         echo Page::breadcrumb(
             [
-                Html::escapeHTML(dcCore::app()->blog->name)             => '',
+                Html::escapeHTML(App::blog()->name())                   => '',
                 __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
                 Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => dcCore::app()->admin->getPageURL() . '&m=view&id=' . dcCore::app()->admin->mymetaEntry->id,
                 sprintf(__('Value "%s"'), Html::escapeHTML($value))     => '',
@@ -212,32 +213,34 @@ class ManageViewPosts extends Process
         // Form
         echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
         // Show posts
-        $post_list->display(
-            $page,
-            $nb_per_page,
-            '<form action="' . dcCore::app()->admin->getPageURL() . '" method="post" id="form-entries">' .
+        if ($post_list) {
+            $post_list->display(
+                $page,
+                $nb_per_page,
+                '<form action="' . dcCore::app()->admin->getPageURL() . '" method="post" id="form-entries">' .
 
-            '%s' .
+                '%s' .
 
-            '<div class="two-cols">' .
-            '<p class="col checkboxes-helpers"></p>' .
+                '<div class="two-cols">' .
+                '<p class="col checkboxes-helpers"></p>' .
 
-            '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
-            form::combo('action', dcCore::app()->admin->posts_actions_page->getCombo()) .
-            '<input type="submit" value="' . __('ok') . '" /></p>' .
-            My::parsedHiddenFields([
-                'post_type' => '',
-                'm'         => 'serie_posts',
-                'id'        => dcCore::app()->admin->mymetaEntry->id,
-            ]) .
-            '</div>' .
-            '</form>'
-        );
+                '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
+                form::combo('action', dcCore::app()->admin->posts_actions_page->getCombo()) .
+                '<input type="submit" value="' . __('ok') . '" /></p>' .
+                My::parsedHiddenFields([
+                    'post_type' => '',
+                    'm'         => 'serie_posts',
+                    'id'        => dcCore::app()->admin->mymetaEntry->id,
+                ]) .
+                '</div>' .
+                '</form>'
+            );
+        }
 
         // Remove tag
         if (!$posts->isEmpty() && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             echo
             '<form id="tag_delete" action="' . $this_url . '" method="post">' .
             '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '" />' .

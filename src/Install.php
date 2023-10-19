@@ -50,17 +50,19 @@ class Install extends Process
 
             $mymeta = new MyMeta(true);
             foreach ($fields as $k => $v) {
-                $newfield          = $mymeta->newMyMeta($v->type);
-                $newfield->id      = $k;
-                $newfield->enabled = $v->enabled;
-                $newfield->prompt  = $v->prompt;
-                switch ($v->type) {
-                    case 'list':
-                        $newfield->values = $v->values;
+                $newfield = $mymeta->newMyMeta($v->type);
+                if ($newfield) {
+                    $newfield->id      = $k;
+                    $newfield->enabled = $v->enabled;
+                    $newfield->prompt  = $v->prompt;
+                    switch ($v->type) {
+                        case 'list':
+                            $newfield->values = $v->values;
 
-                        break;
+                            break;
+                    }
+                    $mymeta->update($newfield);
                 }
-                $mymeta->update($newfield);
             }
             $mymeta->reorder();
             $mymeta->store();

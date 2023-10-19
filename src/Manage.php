@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
@@ -83,17 +84,19 @@ class Manage extends Process
             if (is_array($fields) && count($fields) > 0
                                   && get_class(current($fields)) === stdClass::class) {
                 foreach ($fields as $k => $v) {
-                    $newfield          = dcCore::app()->admin->mymeta->newMyMeta($v->type);
-                    $newfield->id      = $k;
-                    $newfield->enabled = $v->enabled;
-                    $newfield->prompt  = $v->prompt;
-                    switch ($v->type) {
-                        case 'list':
-                            $newfield->values = $v->values;
+                    $newfield = dcCore::app()->admin->mymeta->newMyMeta($v->type);
+                    if ($newfield) {
+                        $newfield->id      = $k;
+                        $newfield->enabled = $v->enabled;
+                        $newfield->prompt  = $v->prompt;
+                        switch ($v->type) {
+                            case 'list':
+                                $newfield->values = $v->values;
 
-                            break;
+                                break;
+                        }
+                        dcCore::app()->admin->mymeta->update($newfield);
                     }
-                    dcCore::app()->admin->mymeta->update($newfield);
                 }
                 dcCore::app()->admin->mymeta->reorder();
                 dcCore::app()->admin->mymeta->store();
@@ -223,8 +226,8 @@ class Manage extends Process
 
         echo Page::breadcrumb(
             [
-                Html::escapeHTML(dcCore::app()->blog->name) => '',
-                __('My Metadata')                           => '',
+                Html::escapeHTML(App::blog()->name()) => '',
+                __('My Metadata')                     => '',
             ]
         );
         echo Notices::getNotices();

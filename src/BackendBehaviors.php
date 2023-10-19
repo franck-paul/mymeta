@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Action\ActionsPosts;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
@@ -88,9 +88,9 @@ class BackendBehaviors
             $ap->beginPage(
                 Page::breadcrumb(
                     [
-                        Html::escapeHTML(dcCore::app()->blog->name) => '',
-                        __('Entries')                               => $ap->getRedirection(true),
-                        __('Set MyMeta')                            => '',
+                        Html::escapeHTML(App::blog()->name()) => '',
+                        __('Entries')                         => $ap->getRedirection(true),
+                        __('Set MyMeta')                      => '',
                     ]
                 ),
                 $head

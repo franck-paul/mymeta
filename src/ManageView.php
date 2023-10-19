@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
@@ -82,7 +83,7 @@ class ManageView extends Process
 
         echo Page::breadcrumb(
             [
-                Html::escapeHTML(dcCore::app()->blog->name)             => '',
+                Html::escapeHTML(App::blog()->name())                   => '',
                 __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
                 Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => '',
             ]

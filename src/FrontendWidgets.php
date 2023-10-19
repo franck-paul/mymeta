@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
+use Dotclear\App;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsElement;
 
@@ -33,7 +34,7 @@ class FrontendWidgets
         $allmeta  = dcCore::app()->mymeta->getAll();
         $prompt   = ($w->prompt == 'prompt');
         $items    = [];
-        $base_url = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/';
+        $base_url = App::blog()->url() . dcCore::app()->url->getBase('mymeta') . '/';
         $section  = '';
         if ($w->section != '') {
             $section      = $w->section;
@@ -101,7 +102,7 @@ class FrontendWidgets
 
         $rs->sort($sort, $order);
 
-        $base_url = dcCore::app()->blog->url . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaEntry->id;
+        $base_url = App::blog()->url() . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaEntry->id;
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {

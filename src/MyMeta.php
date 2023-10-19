@@ -19,6 +19,7 @@ use dcBlog;
 use dcCore;
 use dcMeta;
 use dcNamespace;
+use Dotclear\App;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Interface\Core\BlogWorkspaceInterface;
 use Dotclear\Interface\Core\ConnectionInterface;
@@ -441,14 +442,14 @@ class MyMeta
         $strReq = 'SELECT meta_type, COUNT(M.post_id) as count ' .
         'FROM ' . $table . ' M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
         'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escapeStr(dcCore::app()->blog->id) . "' ";
+        "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
 
         if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             $strReq .= 'AND ((post_status = ' . dcBlog::POST_PUBLISHED . ' ';
 
-            if (dcCore::app()->blog->without_password) {
+            if (App::blog()->withoutPassword()) {
                 $strReq .= 'AND post_password IS NULL ';
             }
             $strReq .= ') ';
@@ -489,7 +490,7 @@ class MyMeta
 
         $strReq .= 'FROM ' . dcCore::app()->prefix . dcMeta::META_TABLE_NAME . ' M LEFT JOIN ' . dcCore::app()->prefix . dcBlog::POST_TABLE_NAME . ' P ' .
         'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escapeStr(dcCore::app()->blog->id) . "' ";
+        "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
 
         if (isset($params['meta_type'])) {
             $strReq .= " AND meta_type = '" . $this->con->escapeStr($params['meta_type']) . "' ";
@@ -505,10 +506,10 @@ class MyMeta
 
         if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             $strReq .= 'AND ((post_status = ' . dcBlog::POST_PUBLISHED . ' ';
 
-            if (dcCore::app()->blog->without_password) {
+            if (App::blog()->withoutPassword()) {
                 $strReq .= 'AND post_password IS NULL ';
             }
             $strReq .= ') ';

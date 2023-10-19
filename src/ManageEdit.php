@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
@@ -125,9 +126,9 @@ class ManageEdit extends Process
 
         echo Page::breadcrumb(
             [
-                Html::escapeHTML(dcCore::app()->blog->name) => '',
-                __('My Metadata')                           => dcCore::app()->admin->getPageURL(),
-                $page_title                                 => '',
+                Html::escapeHTML(App::blog()->name()) => '',
+                __('My Metadata')                     => dcCore::app()->admin->getPageURL(),
+                $page_title                           => '',
             ]
         );
         echo Notices::getNotices();
