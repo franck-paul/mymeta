@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
@@ -31,7 +30,7 @@ class Manage extends Process
      */
     public static function init(): bool
     {
-        dcCore::app()->admin->mymeta = new MyMeta();
+        App::backend()->mymeta = new MyMeta();
 
         if (!empty($_REQUEST['m'])) {
             switch ($_REQUEST['m']) {
@@ -77,14 +76,14 @@ class Manage extends Process
             }
         }
 
-        dcCore::app()->admin->mymeta = new MyMeta(true);
-        if (dcCore::app()->admin->mymeta->settings->mymeta_fields != null) {
-            $backup = dcCore::app()->admin->mymeta->settings->mymeta_fields;
-            $fields = unserialize(base64_decode(dcCore::app()->admin->mymeta->settings->mymeta_fields));
+        App::backend()->mymeta = new MyMeta(true);
+        if (App::backend()->mymeta->settings->mymeta_fields != null) {
+            $backup = App::backend()->mymeta->settings->mymeta_fields;
+            $fields = unserialize(base64_decode(App::backend()->mymeta->settings->mymeta_fields));
             if (is_array($fields) && count($fields) > 0
                                   && get_class(current($fields)) === stdClass::class) {
                 foreach ($fields as $k => $v) {
-                    $newfield = dcCore::app()->admin->mymeta->newMyMeta($v->type);
+                    $newfield = App::backend()->mymeta->newMyMeta($v->type);
                     if ($newfield) {
                         $newfield->id      = $k;
                         $newfield->enabled = $v->enabled;
@@ -95,24 +94,24 @@ class Manage extends Process
 
                                 break;
                         }
-                        dcCore::app()->admin->mymeta->update($newfield);
+                        App::backend()->mymeta->update($newfield);
                     }
                 }
-                dcCore::app()->admin->mymeta->reorder();
-                dcCore::app()->admin->mymeta->store();
+                App::backend()->mymeta->reorder();
+                App::backend()->mymeta->store();
 
-                if (dcCore::app()->admin->mymeta->settings->mymeta_fields_backup == null) {
-                    dcCore::app()->admin->mymeta->settings->put(
+                if (App::backend()->mymeta->settings->mymeta_fields_backup == null) {
+                    App::backend()->mymeta->settings->put(
                         'mymeta_fields_backup',
                         $backup,
                         'string',
                         'MyMeta fields backup (0.3.x version)'
                     );
                 }
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
             }
         }
-        dcCore::app()->admin->mymeta = new MyMeta();
+        App::backend()->mymeta = new MyMeta();
 
         if (!empty($_POST['action']) && !empty($_POST['entries'])) {
             try {
@@ -120,37 +119,37 @@ class Manage extends Process
                 $action  = (string) $_POST['action'];
                 $msg     = '';
                 if (preg_match('/^(enable|disable)$/', $action)) {
-                    dcCore::app()->admin->mymeta->setEnabled($entries, ($action === 'enable'));
+                    App::backend()->mymeta->setEnabled($entries, ($action === 'enable'));
                     $msg = ($action === 'enable') ?
                         __('Mymeta entries have been successfully enabled')
                         : __('Mymeta entries have been successfully disabled');
                 } elseif (preg_match('/^(delete)$/', $action)) {
-                    dcCore::app()->admin->mymeta->delete($entries);
+                    App::backend()->mymeta->delete($entries);
                     $msg = __('Mymeta entries have been successfully deleted');
                 }
-                dcCore::app()->admin->mymeta->store();
+                App::backend()->mymeta->store();
 
                 Notices::addSuccessNotice($msg);
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
         if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
             try {
-                $section         = dcCore::app()->admin->mymeta->newSection();
+                $section         = App::backend()->mymeta->newSection();
                 $section->prompt = Html::escapeHTML($_POST['mymeta_section']);
-                dcCore::app()->admin->mymeta->update($section);
-                dcCore::app()->admin->mymeta->store();
+                App::backend()->mymeta->update($section);
+                App::backend()->mymeta->store();
 
                 Notices::addSuccessNotice(sprintf(
                     __('Section "%s" has been successfully created'),
                     Html::escapeHTML($_POST['mymeta_section'])
                 ));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -165,13 +164,13 @@ class Manage extends Process
         }
         if (!empty($_POST['saveorder']) && $order !== false && !empty($order)) {
             try {
-                dcCore::app()->admin->mymeta->reorder($order);  // @phpstan-ignore-line
-                dcCore::app()->admin->mymeta->store();
+                App::backend()->mymeta->reorder($order);  // @phpstan-ignore-line
+                App::backend()->mymeta->store();
 
                 Notices::addSuccessNotice(__('Mymeta have been successfully reordered'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -211,7 +210,7 @@ class Manage extends Process
             }
         }
 
-        $types = dcCore::app()->admin->mymeta->getTypesAsCombo();
+        $types = App::backend()->mymeta->getTypesAsCombo();
 
         $combo_action                = [];
         $combo_action[__('enable')]  = 'enable';
@@ -240,7 +239,7 @@ class Manage extends Process
         '<h3>' . __('MyMeta list') . '</h3>';
 
         echo
-        '<form action="' . dcCore::app()->admin->getPageURL() . '" method="post" id="mymeta-form">' .
+        '<form action="' . App::backend()->getPageURL() . '" method="post" id="mymeta-form">' .
         '<table class="dragable">' .
         '<thead>' .
         '<tr>' .
@@ -254,13 +253,13 @@ class Manage extends Process
         '</thead>' .
         '<tbody id="mymeta-list">';
 
-        $metaStat = dcCore::app()->admin->mymeta->getMyMetaStats();
+        $metaStat = App::backend()->mymeta->getMyMetaStats();
         $stats    = [];
         while ($metaStat->fetch()) {
             $stats[$metaStat->meta_type] = $metaStat->count;
         }
 
-        $allMeta = dcCore::app()->admin->mymeta->getAll();
+        $allMeta = App::backend()->mymeta->getAll();
         foreach ($allMeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 echo
@@ -268,7 +267,7 @@ class Manage extends Process
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap minimal status"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
                     'm'  => 'editsection',
                     'id' => $meta->id,
                 ], '&') . '">' .
@@ -293,12 +292,12 @@ class Manage extends Process
                  '<td class="handle minimal">' .
                 form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap minimal status"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
                     'm'  => 'edit',
                     'id' => $meta->id,
                 ], '&') . '">' .
                 '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
-                '<td class="nowrap"><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id(), [
+                '<td class="nowrap"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
                     'm'  => 'view',
                     'id' => $meta->id,
                 ], '&') . '">' .
@@ -338,7 +337,7 @@ class Manage extends Process
         '</div>' .
         '</form>' .
         '<div class="fieldset clear">' .
-        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">';
+        '<form method="post" action="' . App::backend()->getPageURL() . '">';
 
         echo
         '<h3 id="new-meta">' . __('New metadata') . '</h3>' .
@@ -353,7 +352,7 @@ class Manage extends Process
         '</form>';
 
         echo
-        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">' .
+        '<form method="post" action="' . App::backend()->getPageURL() . '">' .
         '<p>' . __('New section') . ' : ' .
         form::field('mymeta_section', 20, 255) .
         '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '" />' .

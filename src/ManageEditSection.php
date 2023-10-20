@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
@@ -30,7 +29,7 @@ class ManageEditSection extends Process
      */
     public static function init(): bool
     {
-        dcCore::app()->admin->mymeta = new MyMeta();
+        App::backend()->mymeta = new MyMeta();
 
         return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'editsection'));
     }
@@ -49,16 +48,16 @@ class ManageEditSection extends Process
                 $mymetaid     = Html::escapeHTML($_POST['mymeta_id']);
                 $mymetaprompt = Html::escapeHTML($_POST['mymeta_prompt']);
 
-                $mymetaSection = dcCore::app()->admin->mymeta->getByID($mymetaid);
+                $mymetaSection = App::backend()->mymeta->getByID($mymetaid);
                 if ($mymetaSection instanceof MyMetaSection) {
                     $mymetaSection->prompt = $mymetaprompt;
-                    dcCore::app()->admin->mymeta->update($mymetaSection);
-                    dcCore::app()->admin->mymeta->store();
+                    App::backend()->mymeta->update($mymetaSection);
+                    App::backend()->mymeta->store();
                 }
                 Notices::addSuccessNotice(__('Section has been successfully updated'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -77,15 +76,15 @@ class ManageEditSection extends Process
         if (array_key_exists('id', $_REQUEST)) {
             $page_title    = __('Edit section');
             $mymetaid      = $_REQUEST['id'];
-            $mymetasection = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
+            $mymetasection = App::backend()->mymeta->getByID($_REQUEST['id']);
             if (!($mymetasection instanceof MyMetaSection)) {
                 Notices::addErrorNotice(__('Something went wrong while editing section'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
                 exit;
             }
         } else {
             Notices::addErrorNotice(__('Something went wrong while editing section'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            My::redirect();
             exit;
         }
 
@@ -96,7 +95,7 @@ class ManageEditSection extends Process
         echo Page::breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name()) => '',
-                __('My Metadata')                     => dcCore::app()->admin->getPageURL(),
+                __('My Metadata')                     => App::backend()->getPageURL(),
                 $page_title                           => '',
             ]
         );
@@ -104,7 +103,7 @@ class ManageEditSection extends Process
 
         // Form
         echo
-        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">' .
+        '<form method="post" action="' . App::backend()->getPageURL() . '">' .
         '<div class="fieldset">' .
         '<h3>' . __('MyMeta section definition') . '</h3>' .
         '<p>' .

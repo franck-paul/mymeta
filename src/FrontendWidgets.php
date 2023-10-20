@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
 use Dotclear\App;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsElement;
@@ -27,14 +26,14 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)) || ($w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type))) {
+        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->type)) || ($w->homeonly == 2 && App::url()->isHome(App::url()->type))) {
             return '';
         }
 
-        $allmeta  = dcCore::app()->mymeta->getAll();
+        $allmeta  = App::frontend()->mymeta->getAll();
         $prompt   = ($w->prompt == 'prompt');
         $items    = [];
-        $base_url = App::blog()->url() . dcCore::app()->url->getBase('mymeta') . '/';
+        $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/';
         $section  = '';
         if ($w->section != '') {
             $section      = $w->section;
@@ -70,7 +69,7 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)) || ($w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type))) {
+        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->type)) || ($w->homeonly == 2 && App::url()->isHome(App::url()->type))) {
             return '';
         }
 
@@ -78,13 +77,13 @@ class FrontendWidgets
 
         $limit       = abs((int) $w->limit);
         $is_cloud    = ($w->displaymode == 'cloud');
-        $mymetaEntry = dcCore::app()->mymeta->getByID($w->mymetaid);
+        $mymetaEntry = App::frontend()->mymeta->getByID($w->mymetaid);
 
         if ($mymetaEntry == null || !$mymetaEntry->enabled) {
             return '<li>not enabled</li>';
         }
 
-        $rs = dcCore::app()->mymeta->getMeta($mymetaEntry->id, $limit);
+        $rs = App::frontend()->mymeta->getMeta($mymetaEntry->id, $limit);
 
         if ($rs->isEmpty()) {
             return '<li>empty</li>';
@@ -102,7 +101,7 @@ class FrontendWidgets
 
         $rs->sort($sort, $order);
 
-        $base_url = App::blog()->url() . dcCore::app()->url->getBase('mymeta') . '/' . $mymetaEntry->id;
+        $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/' . $mymetaEntry->id;
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {

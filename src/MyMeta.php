@@ -14,13 +14,9 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcAuth;
-use dcBlog;
-use dcCore;
-use dcMeta;
-use dcNamespace;
 use Dotclear\App;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Interface\Core\BlogInterface;
 use Dotclear\Interface\Core\BlogWorkspaceInterface;
 use Dotclear\Interface\Core\ConnectionInterface;
 use Dotclear\Interface\Core\MetaInterface;
@@ -104,10 +100,10 @@ class MyMeta
      */
     public function __construct(bool $bypass_settings = false)
     {
-        $this->dcmeta   = dcCore::app()->meta;
+        $this->dcmeta   = App::meta();
         $this->settings = My::settings();
 
-        $this->con = dcCore::app()->con;
+        $this->con = App::con();
         if (!$bypass_settings && $this->settings->mymeta_fields) {
             $this->mymeta = @unserialize(base64_decode($this->settings->mymeta_fields));
             if (!is_array($this->mymeta)) {
@@ -161,7 +157,7 @@ class MyMeta
         $this->settings->put(
             'mymeta_fields',
             base64_encode(serialize($this->mymeta)),
-            dcNamespace::NS_STRING,
+            App::blogWorkspace()::NS_STRING,
             'MyMeta fields'
         );
     }
@@ -437,25 +433,25 @@ class MyMeta
 
     public function getMyMetaStats(): MetaRecord
     {
-        $table = dcCore::app()->prefix . dcMeta::META_TABLE_NAME;
+        $table = App::con()->prefix() . MetaInterface::META_TABLE_NAME;
 
         $strReq = 'SELECT meta_type, COUNT(M.post_id) as count ' .
-        'FROM ' . $table . ' M LEFT JOIN ' . dcCore::app()->prefix . 'post P ' .
+        'FROM ' . $table . ' M LEFT JOIN ' . App::con()->prefix() . 'post P ' .
         'ON M.post_id = P.post_id ' .
         "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
 
-        if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        if (!App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            $strReq .= 'AND ((post_status = ' . dcBlog::POST_PUBLISHED . ' ';
+            $strReq .= 'AND ((post_status = ' . BlogInterface::POST_PUBLISHED . ' ';
 
             if (App::blog()->withoutPassword()) {
                 $strReq .= 'AND post_password IS NULL ';
             }
             $strReq .= ') ';
 
-            if (dcCore::app()->auth->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(dcCore::app()->auth->userID()) . "')";
+            if (App::auth()->userID()) {
+                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(App::auth()->userID()) . "')";
             } else {
                 $strReq .= ') ';
             }
@@ -488,7 +484,7 @@ class MyMeta
             $strReq = 'SELECT M.meta_id, M.meta_type, COUNT(M.post_id) as count ';
         }
 
-        $strReq .= 'FROM ' . dcCore::app()->prefix . dcMeta::META_TABLE_NAME . ' M LEFT JOIN ' . dcCore::app()->prefix . dcBlog::POST_TABLE_NAME . ' P ' .
+        $strReq .= 'FROM ' . App::con()->prefix() . MetaInterface::META_TABLE_NAME . ' M LEFT JOIN ' . App::con()->prefix() . BlogInterface::POST_TABLE_NAME . ' P ' .
         'ON M.post_id = P.post_id ' .
         "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
 
@@ -504,18 +500,18 @@ class MyMeta
             $strReq .= ' AND P.post_id ' . $this->con->in($params['post_id']) . ' ';
         }
 
-        if (!dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        if (!App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            $strReq .= 'AND ((post_status = ' . dcBlog::POST_PUBLISHED . ' ';
+            $strReq .= 'AND ((post_status = ' . BlogInterface::POST_PUBLISHED . ' ';
 
             if (App::blog()->withoutPassword()) {
                 $strReq .= 'AND post_password IS NULL ';
             }
             $strReq .= ') ';
 
-            if (dcCore::app()->auth->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(dcCore::app()->auth->userID()) . "')";
+            if (App::auth()->userID()) {
+                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(App::auth()->userID()) . "')";
             } else {
                 $strReq .= ') ';
             }

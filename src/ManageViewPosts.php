@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcAuth;
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Backend\Listing\ListingPosts;
 use Dotclear\Core\Backend\Notices;
@@ -32,7 +30,7 @@ class ManageViewPosts extends Process
      */
     public static function init(): bool
     {
-        dcCore::app()->admin->mymeta = new MyMeta();
+        App::backend()->mymeta = new MyMeta();
 
         return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'viewposts'));
     }
@@ -48,64 +46,64 @@ class ManageViewPosts extends Process
 
         if (empty($_GET['id']) || empty($_GET['value'])) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            My::redirect();
         }
 
-        dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
-        if (dcCore::app()->admin->mymetaEntry == null) {
+        App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
+        if (App::backend()->mymetaEntry == null) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            My::redirect();
         }
 
         $value = rawurldecode($_GET['value']);
 
-        dcCore::app()->admin->posts_actions_page = new BackendActions(
-            dcCore::app()->adminurl->get('admin.plugin'),
-            ['p' => My::id(), 'm' => 'viewposts', 'id' => dcCore::app()->admin->mymetaEntry->id]
+        App::backend()->posts_actions_page = new BackendActions(
+            App::backend()->url()->get('admin.plugin'),
+            ['p' => My::id(), 'm' => 'viewposts', 'id' => App::backend()->mymetaEntry->id]
         );
 
-        dcCore::app()->admin->posts_actions_page_rendered = null;
-        if (dcCore::app()->admin->posts_actions_page->process()) {
-            dcCore::app()->admin->posts_actions_page_rendered = true;
+        App::backend()->posts_actions_page_rendered = null;
+        if (App::backend()->posts_actions_page->process()) {
+            App::backend()->posts_actions_page_rendered = true;
 
             return true;
         }
 
         // Rename a tag
         if (!empty($_POST['rename'])) {
-            $new_value = $_POST['mymeta_' . dcCore::app()->admin->mymetaEntry->id];
+            $new_value = $_POST['mymeta_' . App::backend()->mymetaEntry->id];
 
             try {
-                if (dcCore::app()->admin->mymeta->dcmeta->updateMeta($value, $new_value, dcCore::app()->admin->mymetaEntry->id)) {
+                if (App::backend()->mymeta->dcmeta->updateMeta($value, $new_value, App::backend()->mymetaEntry->id)) {
                     Notices::addSuccessNotice(sprintf(
                         __('Mymeta value successfully updated from "%s" to "%s"'),
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
                     ));
-                    dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
+                    My::redirect([
                         'm'      => 'view',
-                        'id'     => dcCore::app()->admin->mymetaEntry->id,
+                        'id'     => App::backend()->mymetaEntry->id,
                         'status' => 'valchg',
                     ]);
                 }
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
         // Delete a tag
-        if (!empty($_POST['delete']) && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_PUBLISH,
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        if (!empty($_POST['delete']) && App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_PUBLISH,
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             try {
-                dcCore::app()->admin->mymeta->dcmeta->delMeta($value, dcCore::app()->admin->mymetaEntry->id);
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id(), [
+                App::backend()->mymeta->dcmeta->delMeta($value, App::backend()->mymetaEntry->id);
+                My::redirect([
                     'm'   => 'view',
                     'del' => 1,
                 ]);
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -121,15 +119,15 @@ class ManageViewPosts extends Process
             return;
         }
 
-        if (dcCore::app()->admin->posts_actions_page_rendered) {
-            dcCore::app()->admin->posts_actions_page->render();
+        if (App::backend()->posts_actions_page_rendered) {
+            App::backend()->posts_actions_page->render();
 
             return;
         }
 
         $value = rawurldecode($_GET['value']);
 
-        $this_url = dcCore::app()->admin->getPageURL() . '&amp;m=viewposts&amp;id=' . dcCore::app()->admin->mymetaEntry->id . '&amp;value=' . rawurlencode($value);
+        $this_url = App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($value);
 
         $page        = !empty($_GET['page']) ? $_GET['page'] : 1;
         $nb_per_page = 30;
@@ -139,7 +137,7 @@ class ManageViewPosts extends Process
         $params['no_content'] = true;
 
         $params['meta_id']   = $value;
-        $params['meta_type'] = dcCore::app()->admin->mymetaEntry->id;
+        $params['meta_type'] = App::backend()->mymetaEntry->id;
 
         $params['post_type'] = '';
 
@@ -148,18 +146,18 @@ class ManageViewPosts extends Process
         $posts     = null;
 
         try {
-            $posts     = dcCore::app()->admin->mymeta->dcmeta->getPostsByMeta($params);
-            $counter   = dcCore::app()->admin->mymeta->dcmeta->getPostsByMeta($params, true);
+            $posts     = App::backend()->mymeta->dcmeta->getPostsByMeta($params);
+            $counter   = App::backend()->mymeta->dcmeta->getPostsByMeta($params, true);
             $post_list = new ListingPosts($posts, $counter->f(0));
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         # Actions combo box
         $combo_action = [];
-        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_PUBLISH,
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        if (App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_PUBLISH,
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             $combo_action[__('Status')] = [
                 __('Publish')         => 'publish',
@@ -173,51 +171,51 @@ class ManageViewPosts extends Process
             __('Mark as unselected') => 'unselected',
         ];
         $combo_action[__('Change')] = [__('Change category') => 'category'];
-        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_ADMIN,
+        if (App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_ADMIN,
         ]), App::blog()->id())) {
             $combo_action[__('Change')] = array_merge(
                 $combo_action[__('Change')],
                 [__('Change author') => 'author']
             );
         }
-        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_DELETE,
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        if (App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_DELETE,
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             $combo_action[__('Delete')] = [__('Delete') => 'delete'];
         }
 
         # --BEHAVIOR-- adminPostsActionsCombo
-        dcCore::app()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
+        App::behavior()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
         $head = My::cssLoad('style.css') .
         Page::jsLoad('js/_posts_list.js') .
         Page::jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
         My::jsLoad('mymeta.js') .
         Page::jsPageTabs('mymeta') .
-        dcCore::app()->admin->mymetaEntry->postHeader(null, true);
+        App::backend()->mymetaEntry->postHeader(null, true);
 
         Page::openModule(My::name(), $head);
 
         echo Page::breadcrumb(
             [
-                Html::escapeHTML(App::blog()->name())                   => '',
-                __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
-                Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => dcCore::app()->admin->getPageURL() . '&m=view&id=' . dcCore::app()->admin->mymetaEntry->id,
-                sprintf(__('Value "%s"'), Html::escapeHTML($value))     => '',
+                Html::escapeHTML(App::blog()->name())               => '',
+                __('My Metadata')                                   => App::backend()->getPageURL(),
+                Html::escapeHTML(App::backend()->mymetaEntry->id)   => App::backend()->getPageURL() . '&m=view&id=' . App::backend()->mymetaEntry->id,
+                sprintf(__('Value "%s"'), Html::escapeHTML($value)) => '',
             ]
         );
         echo Notices::getNotices();
 
         // Form
-        echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
+        echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
         // Show posts
         if ($post_list) {
             $post_list->display(
                 $page,
                 $nb_per_page,
-                '<form action="' . dcCore::app()->admin->getPageURL() . '" method="post" id="form-entries">' .
+                '<form action="' . App::backend()->getPageURL() . '" method="post" id="form-entries">' .
 
                 '%s' .
 
@@ -225,12 +223,12 @@ class ManageViewPosts extends Process
                 '<p class="col checkboxes-helpers"></p>' .
 
                 '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
-                form::combo('action', dcCore::app()->admin->posts_actions_page->getCombo()) .
+                form::combo('action', App::backend()->posts_actions_page->getCombo()) .
                 '<input type="submit" value="' . __('ok') . '" /></p>' .
                 My::parsedHiddenFields([
                     'post_type' => '',
                     'm'         => 'serie_posts',
-                    'id'        => dcCore::app()->admin->mymetaEntry->id,
+                    'id'        => App::backend()->mymetaEntry->id,
                 ]) .
                 '</div>' .
                 '</form>'
@@ -238,8 +236,8 @@ class ManageViewPosts extends Process
         }
 
         // Remove tag
-        if (!$posts->isEmpty() && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        if (!$posts->isEmpty() && App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             echo
             '<form id="tag_delete" action="' . $this_url . '" method="post">' .
@@ -252,7 +250,7 @@ class ManageViewPosts extends Process
             echo
             '<fieldset><legend>' . __('Change MyMeta value') . '</legend><form action="' . $this_url . '" method="post">' .
             '<p class="info">' . __('This will change the meta value for all entries having this value') . '</p>' .
-            dcCore::app()->admin->mymetaEntry->postShowForm(dcCore::app()->admin->mymeta->dcmeta, null, Html::escapeHTML($value), true) .
+            App::backend()->mymetaEntry->postShowForm(App::backend()->mymeta->dcmeta, null, Html::escapeHTML($value), true) .
             '<p><input type="submit" name="rename" value="' . __('save') . '" />' .
             My::parsedHiddenFields([
                 'value' => Html::escapeHTML($value),

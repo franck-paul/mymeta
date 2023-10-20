@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
 class Frontend extends Process
@@ -30,23 +30,23 @@ class Frontend extends Process
             return false;
         }
 
-        dcCore::app()->tpl->addValue('MetaType', FrontendTemplate::MetaType(...));
-        dcCore::app()->tpl->addValue('MyMetaTypePrompt', FrontendTemplate::MyMetaTypePrompt(...));
-        dcCore::app()->tpl->addValue('EntryMyMetaValue', FrontendTemplate::EntryMyMetaValue(...));
-        dcCore::app()->tpl->addValue('MyMetaValue', FrontendTemplate::MyMetaValue(...));
-        dcCore::app()->tpl->addValue('MyMetaURL', FrontendTemplate::MyMetaURL(...));
-        dcCore::app()->tpl->addBlock('EntryMyMetaIf', FrontendTemplate::EntryMyMetaIf(...));
-        dcCore::app()->tpl->addBlock('MyMetaIf', FrontendTemplate::EntryMyMetaIf(...));
-        dcCore::app()->tpl->addBlock('MyMetaData', FrontendTemplate::MyMetaData(...));
+        App::frontend()->template()->addValue('MetaType', FrontendTemplate::MetaType(...));
+        App::frontend()->template()->addValue('MyMetaTypePrompt', FrontendTemplate::MyMetaTypePrompt(...));
+        App::frontend()->template()->addValue('EntryMyMetaValue', FrontendTemplate::EntryMyMetaValue(...));
+        App::frontend()->template()->addValue('MyMetaValue', FrontendTemplate::MyMetaValue(...));
+        App::frontend()->template()->addValue('MyMetaURL', FrontendTemplate::MyMetaURL(...));
+        App::frontend()->template()->addBlock('EntryMyMetaIf', FrontendTemplate::EntryMyMetaIf(...));
+        App::frontend()->template()->addBlock('MyMetaIf', FrontendTemplate::EntryMyMetaIf(...));
+        App::frontend()->template()->addBlock('MyMetaData', FrontendTemplate::MyMetaData(...));
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             'templateBeforeBlockV2'  => FrontendBehaviors::templateBeforeBlock(...),
             'publicBeforeDocumentV2' => FrontendBehaviors::addTplPath(...),
 
             'initWidgets' => Widgets::initWidgets(...),
         ]);
 
-        dcCore::app()->mymeta = new MyMeta();
+        App::frontend()->mymeta = new MyMeta();
 
         return true;
     }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Menus;
 use Dotclear\Core\Process;
 
@@ -36,7 +36,7 @@ class Backend extends Process
 
         My::addBackendMenuItem(Menus::MENU_PLUGINS);
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             'adminPostFormSidebar' => BackendBehaviors::mymetaSidebar(...),
             'adminPostForm'        => BackendBehaviors::mymetaInForm(...),
 
@@ -52,12 +52,12 @@ class Backend extends Process
             'adminAfterPageUpdate' => BackendBehaviors::setMymeta(...),
         ]);
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             'adminPostForm' => BackendBehaviors::mymetaPostHeader(...),
         ]);
 
         if (My::checkContext(My::WIDGETS)) {
-            dcCore::app()->addBehaviors([
+            App::behavior()->addBehaviors([
                 'initWidgets' => Widgets::initWidgets(...),
             ]);
         }

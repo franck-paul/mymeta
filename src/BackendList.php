@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Listing\Listing;
 use Dotclear\Core\Backend\Listing\Pager;
 
@@ -55,7 +55,7 @@ class BackendList extends Listing
     {
         return
         '<tr class="line">' .
-        '<td class="nowrap"><a href="' . dcCore::app()->admin->getPageURL() . '&amp;m=viewposts&amp;id=' . dcCore::app()->admin->mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' . dcCore::app()->admin->mymetaEntry->displayValue($this->rs->meta_id) . '</a></td>' .
+        '<td class="nowrap"><a href="' . App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' . App::backend()->mymetaEntry->displayValue($this->rs->meta_id) . '</a></td>' .
         '<td class="nowrap">' . $this->rs->count . ' ' . (($this->rs->count <= 1) ? __('entry') : __('entries')) . '</td>' .
         '</tr>';
     }

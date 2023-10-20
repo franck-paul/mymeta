@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 
 class FrontendTemplate
 {
@@ -31,9 +31,9 @@ class FrontendTemplate
         }
         if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', (string) $attr['id'])) {
             return '<?php' . "\n" .
-            'dcCore::app()->ctx->mymeta = dcCore::app()->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
+            'App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
             '%s' . "\n" .
-            '<?php dcCore::app()->ctx->mymeta = null;' . "\n" . '?>';
+            '<?php App::frontend()->context()->mymeta = null;' . "\n" . '?>';
         }
 
         return '%s';
@@ -77,10 +77,10 @@ class FrontendTemplate
      */
     public static function MyMetaURL(array|ArrayObject $attr): string
     {
-        $f = dcCore::app()->tpl->getFilters($attr);
+        $f = App::frontend()->template()->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, 'App::blog()->url().dcCore::app()->url->getBase("mymeta").' .
-        '"/".dcCore::app()->ctx->mymeta->id."/".rawurlencode(dcCore::app()->ctx->meta->meta_id)') . '; ?>';
+        return '<?php echo ' . sprintf($f, 'App::blog()->url().App::url()->getBase("mymeta").' .
+        '"/".App::frontend()->context()->mymeta->id."/".rawurlencode(App::frontend()->context()->meta->meta_id)') . '; ?>';
     }
 
     /**
@@ -90,9 +90,9 @@ class FrontendTemplate
      */
     public static function MetaType(array|ArrayObject $attr): string
     {
-        $f = dcCore::app()->tpl->getFilters($attr);
+        $f = App::frontend()->template()->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, 'dcCore::app()->ctx->meta->meta_type') . '; ?>';
+        return '<?php echo ' . sprintf($f, 'App::frontend()->context()->meta->meta_type') . '; ?>';
     }
 
     /**
@@ -103,7 +103,7 @@ class FrontendTemplate
     public static function MyMetaTypePrompt(array|ArrayObject $attr): string
     {
         $f   = FrontendTemplate::getCommonMyMeta($attr);
-        $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) echo dcCore::app()->ctx->mymeta->prompt; ?>' . "\n";
+        $res = '<?php if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) echo App::frontend()->context()->mymeta->prompt; ?>' . "\n";
 
         return sprintf($f, $res);
     }
@@ -117,8 +117,8 @@ class FrontendTemplate
     {
         $f = FrontendTemplate::getCommonMyMeta($attr);
 
-        $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled)' . "\n" .
-        'echo dcCore::app()->ctx->mymeta->getValue(dcCore::app()->mymeta->dcmeta->getMetaStr(dcCore::app()->ctx->posts->post_meta,dcCore::app()->ctx->mymeta->id),' .
+        $res = '<?php if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled)' . "\n" .
+        'echo App::frontend()->context()->mymeta->getValue(App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta,App::frontend()->context()->mymeta->id),' .
         FrontendTemplate::attr2str($attr) . '); ?>';
 
         return sprintf($f, $res);
@@ -133,8 +133,8 @@ class FrontendTemplate
     {
         $f = FrontendTemplate::getCommonMyMeta($attr);
 
-        $res = '<?php if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) {' . "\n" .
-        'echo dcCore::app()->ctx->mymeta->getValue(dcCore::app()->ctx->meta->meta_id,' . FrontendTemplate::attr2str($attr) . '); ' . "\n" .
+        $res = '<?php if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) {' . "\n" .
+        'echo App::frontend()->context()->mymeta->getValue(App::frontend()->context()->meta->meta_id,' . FrontendTemplate::attr2str($attr) . '); ' . "\n" .
         '} ?>';
 
         return sprintf($f, $res);
@@ -164,8 +164,8 @@ class FrontendTemplate
             }
         }
         $res = '<?php' . "\n" .
-        'if (dcCore::app()->ctx->mymeta != null && dcCore::app()->ctx->mymeta->enabled) :' . "\n" .
-        '  $value=dcCore::app()->mymeta->dcmeta->getMetaStr(dcCore::app()->ctx->posts->post_meta,dcCore::app()->ctx->mymeta->id); ' . "\n" .
+        'if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) :' . "\n" .
+        '  $value=App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta,App::frontend()->context()->mymeta->id); ' . "\n" .
         '  if(' . implode(' ' . $operator . ' ', $if) . ') : ?>' .
         $content .
         '  <?php endif; ' . "\n" .
@@ -196,17 +196,17 @@ class FrontendTemplate
         }
 
         $res = "<?php\n" .
-        'dcCore::app()->ctx->meta = dcCore::app()->meta->computeMetaStats(dcCore::app()->mymeta->dcmeta->getMetadata([' .
-            "'meta_id' => dcCore::app()->ctx->mymeta->id, " .
+        'App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->dcmeta->getMetadata([' .
+            "'meta_id' => App::frontend()->context()->mymeta->id, " .
             "'limit' => " . $limit .
         '])); ' .
-        "dcCore::app()->ctx->meta->sort('" . $sortby . "','" . $order . "'); " .
+        "App::frontend()->context()->meta->sort('" . $sortby . "','" . $order . "'); " .
         '?>';
 
-        $res .= '<?php while (dcCore::app()->ctx->meta->fetch()) : ' . "\n" .
-        'dcCore::app()->ctx->mymeta = dcCore::app()->mymeta->getByID(dcCore::app()->ctx->meta->meta_type); ?>' . "\n" .
-        $content . '<?php dcCore::app()->ctx->mymeta = null; endwhile; ' .
-        'dcCore::app()->ctx->meta = null; ?>';
+        $res .= '<?php while (App::frontend()->context()->meta->fetch()) : ' . "\n" .
+        'App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID(App::frontend()->context()->meta->meta_type); ?>' . "\n" .
+        $content . '<?php App::frontend()->context()->mymeta = null; endwhile; ' .
+        'App::frontend()->context()->meta = null; ?>';
 
         return sprintf($f, $res);
     }

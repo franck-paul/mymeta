@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
@@ -28,7 +27,7 @@ class ManageView extends Process
      */
     public static function init(): bool
     {
-        dcCore::app()->admin->mymeta = new MyMeta();
+        App::backend()->mymeta = new MyMeta();
 
         return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'view'));
     }
@@ -44,13 +43,13 @@ class ManageView extends Process
 
         if (empty($_GET['id'])) {
             Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            My::redirect();
         }
 
-        dcCore::app()->admin->mymetaEntry = dcCore::app()->admin->mymeta->getByID($_GET['id']);
-        if (dcCore::app()->admin->mymetaEntry == null) {
+        App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
+        if (App::backend()->mymetaEntry == null) {
             Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            My::redirect();
         }
 
         return true;
@@ -69,29 +68,29 @@ class ManageView extends Process
         $page        = !empty($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
 
         $params = [
-            'meta_type' => dcCore::app()->admin->mymetaEntry->id,
+            'meta_type' => App::backend()->mymetaEntry->id,
             'order'     => 'count DESC',
             'limit'     => [(($page - 1) * $nb_per_page),$nb_per_page],
         ];
 
-        $rs    = dcCore::app()->admin->mymeta->getMetadata($params, false);
-        $count = dcCore::app()->admin->mymeta->getMetadata($params, true);
+        $rs    = App::backend()->mymeta->getMetadata($params, false);
+        $count = App::backend()->mymeta->getMetadata($params, true);
 
         $head = Page::jsPageTabs('mymeta');
 
-        Page::openModule(My::name() . ' &gt; ' . dcCore::app()->admin->mymetaEntry->id, $head);
+        Page::openModule(My::name() . ' &gt; ' . App::backend()->mymetaEntry->id, $head);
 
         echo Page::breadcrumb(
             [
-                Html::escapeHTML(App::blog()->name())                   => '',
-                __('My Metadata')                                       => dcCore::app()->admin->getPageURL(),
-                Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id) => '',
+                Html::escapeHTML(App::blog()->name())             => '',
+                __('My Metadata')                                 => App::backend()->getPageURL(),
+                Html::escapeHTML(App::backend()->mymetaEntry->id) => '',
             ]
         );
         echo Notices::getNotices();
 
         // Form
-        echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), Html::escapeHTML(dcCore::app()->admin->mymetaEntry->id)) . '</h3>';
+        echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id)) . '</h3>';
         $list = new BackendList($rs, $count->f(0));
         $list->display($page, $nb_per_page, '%s');
         echo '</div>';

@@ -15,14 +15,14 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Frontend\Utility;
 
 class FrontendBehaviors
 {
     public static function addTplPath(): string
     {
-        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), My::path() . '/' . Utility::TPL_ROOT);
+        App::frontend()->template()->setPath(App::frontend()->template()->getPath(), My::path() . '/' . Utility::TPL_ROOT);
 
         return '';
     }
@@ -51,20 +51,20 @@ class FrontendBehaviors
         if (!isset($attr['mymetaid'])) {
             if (empty($attr['no_context'])) {
                 return
-                '<?php if (dcCore::app()->ctx->exists("mymeta")) { ' .
+                '<?php if (App::frontend()->context()->exists("mymeta")) { ' .
                     "if (!isset(\$params)) { \$params = array(); }\n" .
                     "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
                     "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
-                    "\$params['from'] .= ', '.dcCore::app()->prefix.'meta META ';\n" .
+                    "\$params['from'] .= ', '.App::con()->prefix().'meta META ';\n" .
                     "\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
-                    "\$params['sql'] .= \"AND META.meta_type = '\".dcCore::app()->con->escape(dcCore::app()->ctx->mymeta->id).\"' \";\n" .
-                    "\$params['sql'] .= \"AND META.meta_id = '\".dcCore::app()->con->escape(dcCore::app()->ctx->meta->meta_id).\"' \";\n" .
+                    "\$params['sql'] .= \"AND META.meta_type = '\".App::con()->escapeStr(App::frontend()->context()->mymeta->id).\"' \";\n" .
+                    "\$params['sql'] .= \"AND META.meta_id = '\".App::con()->escapeStr(App::frontend()->context()->meta->meta_id).\"' \";\n" .
                 "} ?>\n";
             }
 
             return '';
         }
-        $metaid = dcCore::app()->con->escapeStr($attr['mymetaid']);
+        $metaid = App::con()->escapeStr($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
             $values  = $attr['mymetavalue'];
             $in_expr = ' in ';
@@ -74,7 +74,7 @@ class FrontendBehaviors
             }
             $cond = [];
             foreach (explode(',', $values) as $expr) {
-                $cond[] = "'" . dcCore::app()->con->escapeStr($expr) . "'";
+                $cond[] = "'" . App::con()->escapeStr($expr) . "'";
             }
 
             return
@@ -82,7 +82,7 @@ class FrontendBehaviors
             "if (!isset(\$params)) { \$params = array(); }\n" .
             "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
             "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
-            "@\$params['from'] .= ', '.dcCore::app()->prefix.'meta META ';\n" .
+            "@\$params['from'] .= ', '.App::con()->prefix().'meta META ';\n" .
             "@\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
             "\$params['sql'] .= \"AND META.meta_type = '" . $metaid . "' \";\n" .
             "\$params['sql'] .= \"AND META.meta_id " . $in_expr . ' (' . join(',', $cond) . ") \";\n" .
@@ -97,7 +97,7 @@ class FrontendBehaviors
         return
         "<?php\n" .
         "@\$params['sql'] .= \"AND P.post_id " . $in_expr .
-            "(SELECT META.post_id from \".dcCore::app()->prefix.\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
+            "(SELECT META.post_id from \".App::con()->prefix().\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
         "?>\n";
     }
 }

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
@@ -30,7 +29,7 @@ class ManageEdit extends Process
      */
     public static function init(): bool
     {
-        dcCore::app()->admin->mymeta = new MyMeta();
+        App::backend()->mymeta = new MyMeta();
 
         return self::status(My::checkContext(My::MANAGE) && (($_REQUEST['m'] ?? 'mymeta') === 'edit'));
     }
@@ -49,7 +48,7 @@ class ManageEdit extends Process
         if (!empty($_POST['mymeta_id'])) {
             try {
                 $mymetaid                = preg_replace('#[^a-zA-Z0-9_-]#', '', (string) $_POST['mymeta_id']);
-                $mymetaEntry             = dcCore::app()->admin->mymeta->newMyMeta($_POST['mymeta_type'], $mymetaid);
+                $mymetaEntry             = App::backend()->mymeta->newMyMeta($_POST['mymeta_type'], $mymetaid);
                 $mymetaEntry->id         = $mymetaid;
                 $mymetaEntry->post_types = false;
                 if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes') {
@@ -65,15 +64,15 @@ class ManageEdit extends Process
                 $mymetaEntry->tpl_list           = $filterTplFile($_POST['list_tpl']) ?: 'mymetas.html';
 
                 $mymetaEntry->adminUpdate($_POST);
-                dcCore::app()->admin->mymeta->update($mymetaEntry);
-                dcCore::app()->admin->mymeta->store();
+                App::backend()->mymeta->update($mymetaEntry);
+                App::backend()->mymeta->store();
                 Notices::addsuccessNotice(sprintf(
                     __('MyMeta "%s" has been successfully updated'),
                     Html::escapeHTML($mymetaid)
                 ));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -98,10 +97,10 @@ class ManageEdit extends Process
         if (array_key_exists('id', $_REQUEST)) {
             $page_title  = __('Edit MyMeta');
             $mymetaid    = $_REQUEST['id'];
-            $mymetaentry = dcCore::app()->admin->mymeta->getByID($_REQUEST['id']);
+            $mymetaentry = App::backend()->mymeta->getByID($_REQUEST['id']);
             if ($mymetaentry == null) {
                 Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
-                dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+                My::redirect();
                 exit;
             }
             $mymeta_type = $mymetaentry->getMetaTypeId();
@@ -109,15 +108,15 @@ class ManageEdit extends Process
         } elseif (!empty($_REQUEST['mymeta_type'])) {
             $mymeta_type = Html::escapeHTML($_REQUEST['mymeta_type']);
             $page_title  = __('New MyMeta');
-            $mymetaentry = dcCore::app()->admin->mymeta->newMyMeta($mymeta_type);
+            $mymetaentry = App::backend()->mymeta->newMyMeta($mymeta_type);
             $mymetaid    = '';
             $lock_id     = false;
         }
-        $types      = dcCore::app()->admin->mymeta->getTypesAsCombo();
+        $types      = App::backend()->mymeta->getTypesAsCombo();
         $type_label = array_search($mymeta_type, $types);
         if (!$type_label) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
-            dcCore::app()->adminurl->redirect('admin.plugin.' . My::id());
+            My::redirect();
         }
 
         $head = Page::jsPageTabs('mymeta');
@@ -127,7 +126,7 @@ class ManageEdit extends Process
         echo Page::breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name()) => '',
-                __('My Metadata')                     => dcCore::app()->admin->getPageURL(),
+                __('My Metadata')                     => App::backend()->getPageURL(),
                 $page_title                           => '',
             ]
         );
@@ -135,7 +134,7 @@ class ManageEdit extends Process
 
         // Form
         echo
-        '<form method="post" action="' . dcCore::app()->admin->getPageURL() . '">' .
+        '<form method="post" action="' . App::backend()->getPageURL() . '">' .
         '<div class="fieldset">' .
         '<h3>' . __('MyMeta definition') . '</h3>' .
         '<p>' .

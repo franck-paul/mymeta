@@ -14,8 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
-use dcNamespace;
+use Dotclear\App;
 use Dotclear\Core\Process;
 use Exception;
 
@@ -71,14 +70,14 @@ class Install extends Process
                 $settings->put(
                     'mymeta_fields_backup',
                     $backup,
-                    dcNamespace::NS_STRING,
+                    App::blogWorkspace()::NS_STRING,
                     'MyMeta fields backup (0.3.x version)'
                 );
             }
 
             return true;
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
 class Prepend extends Process
@@ -30,7 +30,7 @@ class Prepend extends Process
             return false;
         }
 
-        dcCore::app()->url->register('mymeta', 'meta', '^meta/(.+)$', FrontendUrl::tag(...));
+        App::url()->register('mymeta', 'meta', '^meta/(.+)$', FrontendUrl::tag(...));
 
         MyMeta::registerType(MyMetaString::class);
         MyMeta::registerType(MyMetaList::class);
