@@ -51,7 +51,7 @@ class Install extends Process
             foreach ($fields as $k => $v) {
                 $newfield = $mymeta->newMyMeta($v->type);
                 if ($newfield) {
-                    $newfield->id      = $k;
+                    $newfield->id      = (string) $k;
                     $newfield->enabled = $v->enabled;
                     $newfield->prompt  = $v->prompt;
                     switch ($v->type) {

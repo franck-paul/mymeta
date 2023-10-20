@@ -85,7 +85,7 @@ class Manage extends Process
                 foreach ($fields as $k => $v) {
                     $newfield = App::backend()->mymeta->newMyMeta($v->type);
                     if ($newfield) {
-                        $newfield->id      = $k;
+                        $newfield->id      = (string) $k;
                         $newfield->enabled = $v->enabled;
                         $newfield->prompt  = $v->prompt;
                         switch ($v->type) {
