@@ -31,12 +31,12 @@ class FrontendWidgets
         }
 
         $allmeta  = App::frontend()->mymeta->getAll();
-        $prompt   = ($w->prompt == 'prompt');
+        $prompt   = ($w->get('prompt') == 'prompt');
         $items    = [];
         $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/';
         $section  = '';
-        if ($w->section != '') {
-            $section      = $w->section;
+        if ($w->get('section') != '') {
+            $section      = $w->get('section');
             $display_meta = false;
         } else {
             $display_meta = true;
@@ -75,9 +75,9 @@ class FrontendWidgets
 
         $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>';
 
-        $limit       = abs((int) $w->limit);
-        $is_cloud    = ($w->displaymode == 'cloud');
-        $mymetaEntry = App::frontend()->mymeta->getByID($w->mymetaid);
+        $limit       = abs((int) $w->get('limit'));
+        $is_cloud    = ($w->get('displaymode') == 'cloud');
+        $mymetaEntry = App::frontend()->mymeta->getByID($w->get('mymetaid'));
 
         if ($mymetaEntry == null || !$mymetaEntry->enabled) {
             return '<li>not enabled</li>';
@@ -89,12 +89,12 @@ class FrontendWidgets
             return '<li>empty</li>';
         }
 
-        $sort = $w->sortby;
+        $sort = $w->get('sortby');
         if (!in_array($sort, ['meta_id_lower','count'])) {
             $sort = 'meta_id_lower';
         }
 
-        $order = $w->orderby;
+        $order = $w->get('orderby');
         if ($order != 'asc') {
             $order = 'desc';
         }
@@ -113,9 +113,9 @@ class FrontendWidgets
 
         $res .= '</ul>';
 
-        if ($mymetaEntry->url_list_enabled && !is_null($w->allvalueslinktitle) && $w->allvalueslinktitle !== '') {
+        if ($mymetaEntry->url_list_enabled && !is_null($w->get('allvalueslinktitle')) && $w->get('allvalueslinktitle') !== '') {
             $res .= '<p><strong><a href="' . $base_url . '">' .
-            Html::escapeHTML($w->allvalueslinktitle) . '</a></strong></p>';
+            Html::escapeHTML($w->get('allvalueslinktitle')) . '</a></strong></p>';
         }
 
         return $w->renderDiv((bool) $w->content_only, 'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class, '', $res);
