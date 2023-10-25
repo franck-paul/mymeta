@@ -153,18 +153,23 @@ class Manage extends Process
             }
         }
 
-        // Order links
+        /**
+         * Order links
+         *
+         * @var        array<string>
+         */
         $order = [];
         if (empty($_POST['mymeta_order']) && !empty($_POST['order'])) {
-            $order = $_POST['order'];
-            asort($order);
-            $order = array_keys($order);
+            $postOrder = $_POST['order'];
+            asort($postOrder);
+            $order = array_map(fn ($value) => (string) $value, array_keys($postOrder));
         } elseif (!empty($_POST['mymeta_order'])) {
-            $order = explode(',', $_POST['mymeta_order']);
+            $metaOrder = explode(',', $_POST['mymeta_order']);
+            $order     = $metaOrder;
         }
         if (!empty($_POST['saveorder']) && $order !== false && !empty($order)) {
             try {
-                App::backend()->mymeta->reorder($order);  // @phpstan-ignore-line
+                App::backend()->mymeta->reorder($order);
                 App::backend()->mymeta->store();
 
                 Notices::addSuccessNotice(__('Mymeta have been successfully reordered'));
