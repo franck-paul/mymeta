@@ -16,13 +16,12 @@ namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
 use Dotclear\App;
-use Dotclear\Core\Frontend\Utility;
 
 class FrontendBehaviors
 {
     public static function addTplPath(): string
     {
-        App::frontend()->template()->appendPath(implode(DIRECTORY_SEPARATOR, [My::path(), Utility::TPL_ROOT]));
+        App::frontend()->template()->appendPath(My::tplPath());
 
         return '';
     }
