@@ -21,31 +21,33 @@ use form;
 
 abstract class MyMetaField extends MyMetaEntry
 {
-    public bool $enabled;
-    public string $default;
+    public bool $enabled = false;
+
+    public string $default = '';
+
     public string $tpl_list         = '';
+
     public bool $url_list_enabled   = true;
+
     public string $tpl_single       = '';
+
     public bool $url_single_enabled = true;
 
     /**
      * @var array<string, string>
      */
-    public array $values;
+    public array $values = [];
 
     /**
      * @var bool|null|array<string>
      */
-    public $post_types;
+    public $post_types = null;
 
     public function __construct(string $id = '')
     {
-        $this->enabled    = false;
         $this->prompt     = '';
-        $this->default    = '';
         $this->pos        = 1000;
         $this->id         = $id;
-        $this->post_types = null;
     }
 
     /**
@@ -70,11 +72,11 @@ abstract class MyMetaField extends MyMetaEntry
             } elseif (!is_null($post)) {
                 $value = $dcmeta->getMetaStr($post->post_meta, $this->id);
             }
+
             $res .= '<p><label for="' . $this_id . '"><strong>' . $this->prompt . '</strong></label>';
             $res .= $this->postShowField($this_id, $value);
-            $res .= '</p>';
 
-            return $res;
+            return $res . '</p>';
         }
 
         return '';
@@ -124,6 +126,7 @@ abstract class MyMetaField extends MyMetaEntry
         if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
             $dcmeta->delPostMeta($post_id, $this->id);
         }
+
         if (!empty($post['mymeta_' . $this->id])) {
             $dcmeta->setPostMeta($post_id, $this->id, Html::escapeHTML($post['mymeta_' . $this->id]));
         }
@@ -200,7 +203,7 @@ abstract class MyMetaField extends MyMetaEntry
     public function getRestrictions(): string|bool
     {
         if (is_array($this->post_types)) {
-            return join(',', $this->post_types);
+            return implode(',', $this->post_types);
         }
 
         return false;

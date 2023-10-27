@@ -29,6 +29,7 @@ class FrontendTemplate
         if (isset($attr['type'])) {
             $attr['id'] = $attr['type'];
         }
+
         if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', (string) $attr['id'])) {
             return '<?php' . "\n" .
             'App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
@@ -54,7 +55,7 @@ class FrontendTemplate
             }
         }
 
-        return 'array(' . join(',', $a) . ')';
+        return 'array(' . implode(',', $a) . ')';
     }
 
     public static function getOperator(string $op): string
@@ -155,14 +156,12 @@ class FrontendTemplate
             $sign = ($attr['defined'] == 'true' || $attr['defined'] == '1') ? '!' : '';
             $if[] = $sign . 'empty($value)';
         }
+
         if (isset($attr['value'])) {
             $value = $attr['value'];
-            if (substr($value, 1, 1) == '!') {
-                $if[] = "\$value !='" . substr($value, 1) . "'";
-            } else {
-                $if[] = "\$value =='" . $value . "'";
-            }
+            $if[] = substr($value, 1, 1) == '!' ? "\$value !='" . substr($value, 1) . "'" : "\$value =='" . $value . "'";
         }
+
         $res = '<?php' . "\n" .
         'if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) :' . "\n" .
         '  $value=App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta,App::frontend()->context()->mymeta->id); ' . "\n" .

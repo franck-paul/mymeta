@@ -54,6 +54,7 @@ class ManageEditSection extends Process
                     App::backend()->mymeta->update($mymetaSection);
                     App::backend()->mymeta->store();
                 }
+
                 Notices::addSuccessNotice(__('Section has been successfully updated'));
                 My::redirect();
             } catch (Exception $e) {

@@ -34,6 +34,7 @@ class MyMeta
     private ConnectionInterface $con;
 
     public MetaInterface $dcmeta;
+
     public BlogWorkspaceInterface $settings;
 
     /**
@@ -49,12 +50,12 @@ class MyMeta
     /**
      * @var array<int, mixed> mymeta list of mymeta entries, indexed by meta position
      */
-    protected array $mymeta;
+    protected array $mymeta = [];
 
     /**
      * @var array<string, int> reference index for mymeta entries, indexed by meta ID
      */
-    protected array $mymetaIDs;
+    protected array $mymetaIDs = [];
 
     /**
      * @var string HTML errors list pattern
@@ -67,6 +68,7 @@ class MyMeta
     protected string $html_item = "<li>%s</li>\n";
 
     protected int $sep_max;
+
     protected string $sep_prefix = '__sep__';
 
     /**
@@ -112,7 +114,7 @@ class MyMeta
             $this->mymeta = [];
         }
 
-        if (count($this->mymeta) > 0 && get_class(current($this->mymeta)) === stdClass::class) {
+        if ($this->mymeta !== [] && current($this->mymeta) instanceof \stdClass) {
             // Redirect to admin home to perform upgrade, old settings detected
             $this->mymeta = [];
         } else {
@@ -218,7 +220,7 @@ class MyMeta
         if (!isset($this->mymetaIDs[$id])) {
             // new id => create
             $this->mymeta[]       = $meta;
-            $this->mymetaIDs[$id] = (int) sizeof($this->mymeta);    // @phpstan-ignore-line
+            $this->mymetaIDs[$id] = (int) count($this->mymeta);    // @phpstan-ignore-line
         } else {
             // ID already exists => update
             $this->mymeta[$this->mymetaIDs[$id]] = $meta;
@@ -227,7 +229,7 @@ class MyMeta
 
     public function newSection(): MyMetaSection
     {
-        $this->sep_max++;
+        ++$this->sep_max;
         $sep_id  = $this->sep_prefix . (string) $this->sep_max;
         $sep     = new MyMetaSection();
         $sep->id = $sep_id;
@@ -254,12 +256,14 @@ class MyMeta
                 }
             }
         }
+
         // Just in case, if some items remain, add them
         foreach ($this->mymeta as $m) {
             $m->pos               = $pos++;
             $newmymeta[]          = $m;
             $newmymetaIDs[$m->id] = (int) count($newmymeta) - 1;
         }
+
         $this->mymeta    = $newmymeta;
         $this->mymetaIDs = $newmymetaIDs;   // @phpstan-ignore-line
     }
@@ -274,6 +278,7 @@ class MyMeta
         if (!is_array($ids)) {
             $ids = [$ids];
         }
+
         foreach ($ids as $id) {
             if (isset($this->mymetaIDs[$id])) {
                 $pos = $this->mymetaIDs[$id];
@@ -293,6 +298,7 @@ class MyMeta
         if (!is_array($ids)) {
             $ids = [$ids];
         }
+
         foreach ($ids as $id) {
             if (isset($this->mymetaIDs[$id])) {
                 $pos                         = $this->mymetaIDs[$id];
@@ -321,6 +327,7 @@ class MyMeta
         if (!isset($this->mymetaIDs[$id])) {
             return false;
         }
+
         $pos = $this->mymetaIDs[$id];
         if (!empty($this->mymeta[$pos])) {
             return $this->mymeta[$pos]->enabled;
@@ -364,6 +371,7 @@ class MyMeta
                 $active_sections[$cur_section] = true;
             }
         }
+
         foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 if (isset($active_sections[$meta->id])) {
@@ -383,6 +391,7 @@ class MyMeta
                     } elseif (basename($u[0]) == 'plugin.php') {
                         parse_str($u[1], $p);
                     }
+
                     $display_item = $meta->isEnabledFor($post_type);
                 }
 
@@ -408,16 +417,15 @@ class MyMeta
     {
         $errors = [];
         foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaField && $meta->enabled) {
-                if (!isset($POST['post_type']) || $meta->isEnabledFor($POST['post_type'])) {
-                    try {
-                        $meta->setPostMeta($this->dcmeta, $post_id, $POST, $deleteIfEmpty);
-                    } catch (Exception $e) {
-                        $errors[] = $e->getMessage();
-                    }
+            if ($meta instanceof MyMetaField && $meta->enabled && (!isset($POST['post_type']) || $meta->isEnabledFor($POST['post_type']))) {
+                try {
+                    $meta->setPostMeta($this->dcmeta, $post_id, $POST, $deleteIfEmpty);
+                } catch (Exception $e) {
+                    $errors[] = $e->getMessage();
                 }
             }
         }
+
         if (count($errors) != 0) {
             $res = '';
             foreach ($errors as $msg) {
@@ -434,8 +442,7 @@ class MyMeta
     {
         $table = App::con()->prefix() . App::meta()::META_TABLE_NAME;
 
-        $strReq = 'SELECT meta_type, COUNT(M.post_id) as count ' .
-        'FROM ' . $table . ' M LEFT JOIN ' . App::con()->prefix() . 'post P ' .
+        $strReq = 'SELECT meta_type, COUNT(M.post_id) as count FROM ' . $table . ' M LEFT JOIN ' . App::con()->prefix() . 'post P ' .
         'ON M.post_id = P.post_id ' .
         "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
 
@@ -447,6 +454,7 @@ class MyMeta
             if (App::blog()->withoutPassword()) {
                 $strReq .= 'AND post_password IS NULL ';
             }
+
             $strReq .= ') ';
 
             if (App::auth()->userID()) {
@@ -456,13 +464,11 @@ class MyMeta
             }
         }
 
-        $strReq .= 'GROUP BY meta_type,P.blog_id ' .
-        'ORDER BY count DESC';
+        $strReq .= 'GROUP BY meta_type,P.blog_id ORDER BY count DESC';
 
         $rs = new MetaRecord($this->con->select($strReq));
-        $rs = $rs->toStatic();
 
-        return $rs;
+        return $rs->toStatic();
     }
 
     // Metadata generic requests
@@ -507,6 +513,7 @@ class MyMeta
             if (App::blog()->withoutPassword()) {
                 $strReq .= 'AND post_password IS NULL ';
             }
+
             $strReq .= ') ';
 
             if (App::auth()->userID()) {
@@ -538,15 +545,19 @@ class MyMeta
         if ($type != null) {
             $params['meta_type'] = $type;
         }
+
         if ($limit != null) {
             $params['limit'] = $limit;
         }
+
         if ($meta_id != null) {
             $params['meta_id'] = $meta_id;
         }
+
         if ($meta_id != null) {
             $params['post_id'] = $post_id;
         }
+
         $rs = $this->dcmeta->getMetadata($params, false);
 
         return $this->dcmeta->computeMetaStats($rs);

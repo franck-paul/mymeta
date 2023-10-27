@@ -38,11 +38,13 @@ class Install extends Process
             if ($settings->mymeta_fields == null) {
                 return true;
             }
+
             $backup = $settings->mymeta_fields;
             $fields = unserialize(base64_decode($settings->mymeta_fields));
             if (!is_array($fields) || count($fields) == 0) {
                 return true;
             }
+
             if (get_class(current($fields)) != 'stdClass') {
                 return true;
             }
@@ -50,19 +52,18 @@ class Install extends Process
             $mymeta = new MyMeta(true);
             foreach ($fields as $k => $v) {
                 $newfield = $mymeta->newMyMeta($v->type);
-                if ($newfield) {
+                if ($newfield instanceof \Dotclear\Plugin\mymeta\MyMetaField) {
                     $newfield->id      = (string) $k;
                     $newfield->enabled = $v->enabled;
                     $newfield->prompt  = $v->prompt;
-                    switch ($v->type) {
-                        case 'list':
-                            $newfield->values = $v->values;
-
-                            break;
+                    if ($v->type === 'list') {
+                        $newfield->values = $v->values;
                     }
+
                     $mymeta->update($newfield);
                 }
             }
+
             $mymeta->reorder();
             $mymeta->store();
 
@@ -76,8 +77,8 @@ class Install extends Process
             }
 
             return true;
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         return true;

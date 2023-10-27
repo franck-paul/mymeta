@@ -80,23 +80,22 @@ class Manage extends Process
         if (App::backend()->mymeta->settings->mymeta_fields != null) {
             $backup = App::backend()->mymeta->settings->mymeta_fields;
             $fields = unserialize(base64_decode(App::backend()->mymeta->settings->mymeta_fields));
-            if (is_array($fields) && count($fields) > 0
-                                  && get_class(current($fields)) === stdClass::class) {
+            if (is_array($fields) && $fields !== []
+                                  && current($fields) instanceof \stdClass) {
                 foreach ($fields as $k => $v) {
                     $newfield = App::backend()->mymeta->newMyMeta($v->type);
-                    if ($newfield) {
+                    if ($newfield instanceof \Dotclear\Plugin\mymeta\MyMetaField) {
                         $newfield->id      = (string) $k;
                         $newfield->enabled = $v->enabled;
                         $newfield->prompt  = $v->prompt;
-                        switch ($v->type) {
-                            case 'list':
-                                $newfield->values = $v->values;
-
-                                break;
+                        if ($v->type === 'list') {
+                            $newfield->values = $v->values;
                         }
+
                         App::backend()->mymeta->update($newfield);
                     }
                 }
+
                 App::backend()->mymeta->reorder();
                 App::backend()->mymeta->store();
 
@@ -108,9 +107,11 @@ class Manage extends Process
                         'MyMeta fields backup (0.3.x version)'
                     );
                 }
+
                 My::redirect();
             }
         }
+
         App::backend()->mymeta = new MyMeta();
 
         if (!empty($_POST['action']) && !empty($_POST['entries'])) {
@@ -127,6 +128,7 @@ class Manage extends Process
                     App::backend()->mymeta->delete($entries);
                     $msg = __('Mymeta entries have been successfully deleted');
                 }
+
                 App::backend()->mymeta->store();
 
                 Notices::addSuccessNotice($msg);
@@ -162,11 +164,12 @@ class Manage extends Process
         if (empty($_POST['mymeta_order']) && !empty($_POST['order'])) {
             $postOrder = $_POST['order'];
             asort($postOrder);
-            $order = array_map(fn ($value) => (string) $value, array_keys($postOrder));
+            $order = array_map(static fn($value) => (string) $value, array_keys($postOrder));
         } elseif (!empty($_POST['mymeta_order'])) {
             $metaOrder = explode(',', $_POST['mymeta_order']);
             $order     = $metaOrder;
         }
+
         if (!empty($_POST['saveorder']) && $order !== false && !empty($order)) {
             try {
                 App::backend()->mymeta->reorder($order);
@@ -287,11 +290,13 @@ class Manage extends Process
                 } else {
                     $img_status = sprintf($img, __('unpublished'), 'check-off.png');
                 }
+
                 $st           = $stats[$meta->id] ?? 0;
                 $restrictions = $meta->getRestrictions();
                 if (!$restrictions) {
                     $restrictions = __('All');
                 }
+
                 echo
                 '<tr class="line' . ($meta->enabled ? '' : ' offline') . '" id="l_' . $meta->id . '">' .
                  '<td class="handle minimal">' .
@@ -317,10 +322,7 @@ class Manage extends Process
         }
 
         echo
-        '</tbody>' .
-        '</table>' .
-        '<div class="two-cols">' .
-        '<p class="col">';
+        '</tbody></table><div class="two-cols"><p class="col">';
 
         echo My::parsedHiddenFields([
             'mymeta_order' => '',

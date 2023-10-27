@@ -40,12 +40,14 @@ class MyMetaList extends MyMetaField
         $lines = explode("\n", $values);
         foreach ($lines as $line) {
             $entries = explode(':', $line);
-            if (sizeof($entries) == 1) {
-                $key = $desc = trim((string) $entries[0]);
+            if (count($entries) == 1) {
+                $key = trim((string) $entries[0]);
+                $desc = $key;
             } else {
                 $key  = trim((string) $entries[0]);
                 $desc = trim((string) $entries[1]);
             }
+
             if ($key != '') {
                 $arr[$desc] = $key;
             }
@@ -64,7 +66,7 @@ class MyMetaList extends MyMetaField
         $res = '';
         if (is_array($array)) {
             foreach ($array as $k => $v) {
-                $res .= "$v : $k\n";
+                $res .= sprintf('%s : %s%s', $v, $k, PHP_EOL);
             }
         }
 
@@ -79,10 +81,11 @@ class MyMetaList extends MyMetaField
      */
     public function getValue(string $value, array $attr): string
     {
-        $key = array_search($value, $this->values);
+        $key = array_search($value, $this->values, true);
         if (isset($attr['key']) && $attr['key'] == 1) {
             return $value;
         }
+
         if ($key != null) {
             return $key;
         }

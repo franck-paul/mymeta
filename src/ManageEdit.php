@@ -43,7 +43,7 @@ class ManageEdit extends Process
             return false;
         }
 
-        $filterTplFile = fn ($file) => str_replace(['\\','/'], ['',''], trim((string) $file));
+        $filterTplFile = static fn($file) => str_replace(['\\','/'], ['',''], trim((string) $file));
 
         if (!empty($_POST['mymeta_id'])) {
             try {
@@ -51,13 +51,12 @@ class ManageEdit extends Process
                 $mymetaEntry             = App::backend()->mymeta->newMyMeta($_POST['mymeta_type'], $mymetaid);
                 $mymetaEntry->id         = $mymetaid;
                 $mymetaEntry->post_types = false;
-                if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes') {
-                    if (isset($_POST['mymeta_restricted_types'])) {
-                        $post_types = explode(',', $_POST['mymeta_restricted_types']);
-                        array_walk($post_types, fn ($v) => trim(Html::escapeHTML($v)));
-                        $mymetaEntry->post_types = $post_types;
-                    }
+                if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes' && isset($_POST['mymeta_restricted_types'])) {
+                    $post_types = explode(',', $_POST['mymeta_restricted_types']);
+                    array_walk($post_types, static fn($v) => trim(Html::escapeHTML($v)));
+                    $mymetaEntry->post_types = $post_types;
                 }
+
                 $mymetaEntry->url_list_enabled   = isset($_POST['enable_list']);
                 $mymetaEntry->url_single_enabled = isset($_POST['enable_single']);
                 $mymetaEntry->tpl_single         = $filterTplFile($_POST['single_tpl']) ?: 'mymeta.html';
@@ -103,6 +102,7 @@ class ManageEdit extends Process
                 My::redirect();
                 exit;
             }
+
             $mymeta_type = $mymetaentry->getMetaTypeId();
             $lock_id     = true;
         } elseif (!empty($_REQUEST['mymeta_type'])) {
@@ -112,8 +112,9 @@ class ManageEdit extends Process
             $mymetaid    = '';
             $lock_id     = false;
         }
+
         $types      = App::backend()->mymeta->getTypesAsCombo();
-        $type_label = array_search($mymeta_type, $types);
+        $type_label = array_search($mymeta_type, $types, true);
         if (!$type_label) {
             Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
             My::redirect();
@@ -173,9 +174,7 @@ class ManageEdit extends Process
         '</p>';
 
         echo
-        '</div>' .
-        '<div class="fieldset">' .
-        '<h3>' . __('MyMeta restrictions') . '</h3>' .
+        '</div><div class="fieldset"><h3>' . __('MyMeta restrictions') . '</h3>' .
         '<p>';
 
         echo '<label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'none', $mymetaentry->isRestrictionEnabled()) .
@@ -187,15 +186,13 @@ class ManageEdit extends Process
         echo form::field('mymeta_restricted_types', 40, 255, $restrictions ?: '') . '</label></p>';
 
         echo
-        '</p>' .
-        '</div>' .
-        '<p>' .
-        '<input type="hidden" name="p" value="mymeta" />' .
+        '</p></div><p><input type="hidden" name="p" value="mymeta" />' .
         '<input type="hidden" name="m" value="edit" />';
 
         if ($lock_id) {
             echo form::hidden(['mymeta_id'], $mymetaid);
         }
+
         echo My::parsedHiddenFields([
             'mymeta_enabled' => $mymetaentry->enabled,
             'mymeta_type'    => $mymeta_type,

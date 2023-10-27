@@ -65,7 +65,7 @@ class ManageView extends Process
         }
 
         $nb_per_page = 20;
-        $page        = !empty($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+        $page        = empty($_GET['page']) ? 1 : max(1, (int) $_GET['page']);
 
         $params = [
             'meta_type' => App::backend()->mymetaEntry->id,

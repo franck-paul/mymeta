@@ -129,7 +129,7 @@ class ManageViewPosts extends Process
 
         $this_url = App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($value);
 
-        $page        = !empty($_GET['page']) ? $_GET['page'] : 1;
+        $page        = empty($_GET['page']) ? 1 : $_GET['page'];
         $nb_per_page = 30;
 
         $params               = [];
@@ -149,8 +149,8 @@ class ManageViewPosts extends Process
             $posts     = App::backend()->mymeta->dcmeta->getPostsByMeta($params);
             $counter   = App::backend()->mymeta->dcmeta->getPostsByMeta($params, true);
             $post_list = new ListingPosts($posts, $counter->f(0));
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         # Actions combo box
@@ -166,6 +166,7 @@ class ManageViewPosts extends Process
                 __('Mark as pending') => 'pending',
             ];
         }
+
         $combo_action[__('Mark')] = [
             __('Mark as selected')   => 'selected',
             __('Mark as unselected') => 'unselected',
@@ -179,6 +180,7 @@ class ManageViewPosts extends Process
                 [__('Change author') => 'author']
             );
         }
+
         if (App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_DELETE,
             App::auth()::PERMISSION_CONTENT_ADMIN,
@@ -211,7 +213,7 @@ class ManageViewPosts extends Process
         // Form
         echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
         // Show posts
-        if ($post_list) {
+        if ($post_list instanceof \Dotclear\Core\Backend\Listing\ListingPosts) {
             $post_list->display(
                 $page,
                 $nb_per_page,
@@ -246,6 +248,7 @@ class ManageViewPosts extends Process
             '</p>' .
             '</form>';
         }
+
         if (!$posts->isEmpty()) {
             echo
             '<fieldset><legend>' . __('Change MyMeta value') . '</legend><form action="' . $this_url . '" method="post">' .

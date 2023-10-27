@@ -17,7 +17,9 @@ namespace Dotclear\Plugin\mymeta;
 abstract class MyMetaEntry
 {
     public string $id;
+
     public string $prompt;
+
     public int $pos;
 
     /**

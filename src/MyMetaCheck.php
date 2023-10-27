@@ -48,6 +48,7 @@ class MyMetaCheck extends MyMetaField
         if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
             $dcmeta->delPostMeta($post_id, $this->id);
         }
+
         if (!empty($post['mymeta_' . $this->id])) {
             $dcmeta->setPostMeta($post_id, $this->id, '1');
         }

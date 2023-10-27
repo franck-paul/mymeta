@@ -27,12 +27,11 @@ class BackendList extends Listing
         } else {
             $pager = new Pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page);
 
-            $html_block = '<table class="clear"><tr>' .
-            '<th>' . __('Value') . '</th>' .
+            $html_block = '<table class="clear"><tr><th>' . __('Value') . '</th>' .
             '<th>' . __('Nb Posts') . '</th>' .
             '</tr>%s</table>';
 
-            if ($enclose_block) {
+            if ($enclose_block !== '' && $enclose_block !== '0') {
                 $html_block = sprintf($enclose_block, $html_block);
             }
 
@@ -54,8 +53,7 @@ class BackendList extends Listing
     private function postLine(): string
     {
         return
-        '<tr class="line">' .
-        '<td class="nowrap"><a href="' . App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' . App::backend()->mymetaEntry->displayValue($this->rs->meta_id) . '</a></td>' .
+        '<tr class="line"><td class="nowrap"><a href="' . App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' . App::backend()->mymetaEntry->displayValue($this->rs->meta_id) . '</a></td>' .
         '<td class="nowrap">' . $this->rs->count . ' ' . (($this->rs->count <= 1) ? __('entry') : __('entries')) . '</td>' .
         '</tr>';
     }

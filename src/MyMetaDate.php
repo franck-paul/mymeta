@@ -24,7 +24,7 @@ class MyMetaDate extends MyMetaField
 {
     protected function postShowField(string $id, string $value): string
     {
-        $timestamp = $value ? strtotime($value) : time();
+        $timestamp = $value !== '' && $value !== '0' ? strtotime($value) : time();
 
         return form::datetime($id, ['default' => Html::escapeHTML(Date::str('%Y-%m-%dT%H:%M', $timestamp))]);
     }
@@ -49,7 +49,7 @@ class MyMetaDate extends MyMetaField
      */
     public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
     {
-        $timestamp = !empty($post['mymeta_' . $this->id]) ? strtotime($post['mymeta_' . $this->id]) : 0;
+        $timestamp = empty($post['mymeta_' . $this->id]) ? 0 : strtotime($post['mymeta_' . $this->id]);
         $dcmeta->delPostMeta($post_id, $this->id);
         if ($timestamp) {
             $value = date('Y-m-d H:i:00', $timestamp);

@@ -80,6 +80,7 @@ class BackendBehaviors
                     $mymeta->setMeta($posts->post_id, $_POST, false);
                 }
             }
+
             $ap->redirect(true, ['upd' => 1]);
         } else {
             $mymeta = new MyMeta();

@@ -31,14 +31,16 @@ class FrontendUrl extends Url
             if ($n) {
                 App::frontend()->setPageNumber($n);
             }
+
             $values = explode('/', $args);
             $mymeta = App::frontend()->mymeta->getByID($values[0]);
             if ($mymeta == null || !$mymeta->enabled) {
                 self::p404();
             }
+
             App::frontend()->context()->mymeta = $mymeta;
 
-            if (sizeof($values) == 1) {
+            if (count($values) == 1) {
                 $tpl = ($mymeta->tpl_list == '') ? 'mymetas.html' : $mymeta->tpl_list;
                 if ($mymeta->url_list_enabled && App::frontend()->template()->getFilePath($tpl)) {
                     self::serveDocument($tpl);

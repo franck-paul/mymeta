@@ -26,7 +26,7 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->type)) || ($w->homeonly == 2 && App::url()->isHome(App::url()->type))) {
+        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType())) || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))) {
             return '';
         }
 
@@ -41,6 +41,7 @@ class FrontendWidgets
         } else {
             $display_meta = true;
         }
+
         foreach ($allmeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 if ($meta->id == $section) {
@@ -54,11 +55,12 @@ class FrontendWidgets
                     Html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
             }
         }
+
         if (count($items) == 0) {
             return '';
         }
 
-        $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>' . join('', $items) . '</ul>';
+        $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>' . implode('', $items) . '</ul>';
 
         return $w->renderDiv((bool) $w->content_only, 'mymetalist ' . $w->class, '', $res);
     }
@@ -69,7 +71,7 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->type)) || ($w->homeonly == 2 && App::url()->isHome(App::url()->type))) {
+        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType())) || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))) {
             return '';
         }
 
@@ -107,6 +109,7 @@ class FrontendWidgets
             if ($is_cloud) {
                 $class = 'class="tag' . $rs->roundpercent . '" ';
             }
+
             $res .= '<li><a href="' . $base_url . '/' . rawurlencode($rs->meta_id) . '" ' . $class . 'rel="tag">' .
                 $rs->meta_id . '</a></li>';
         }
