@@ -41,7 +41,7 @@ class MyMetaList extends MyMetaField
         foreach ($lines as $line) {
             $entries = explode(':', $line);
             if (count($entries) == 1) {
-                $key = trim((string) $entries[0]);
+                $key  = trim((string) $entries[0]);
                 $desc = $key;
             } else {
                 $key  = trim((string) $entries[0]);
@@ -64,10 +64,8 @@ class MyMetaList extends MyMetaField
     private function arrayToValues(array $array): string
     {
         $res = '';
-        if (is_array($array)) {
-            foreach ($array as $k => $v) {
-                $res .= sprintf('%s : %s%s', $v, $k, PHP_EOL);
-            }
+        foreach ($array as $k => $v) {
+            $res .= sprintf('%s : %s%s', $v, $k, PHP_EOL);
         }
 
         return $res;

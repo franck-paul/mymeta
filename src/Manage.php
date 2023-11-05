@@ -21,7 +21,6 @@ use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 use Exception;
 use form;
-use stdClass;
 
 class Manage extends Process
 {
@@ -164,13 +163,13 @@ class Manage extends Process
         if (empty($_POST['mymeta_order']) && !empty($_POST['order'])) {
             $postOrder = $_POST['order'];
             asort($postOrder);
-            $order = array_map(static fn($value) => (string) $value, array_keys($postOrder));
+            $order = array_map(static fn ($value) => (string) $value, array_keys($postOrder));
         } elseif (!empty($_POST['mymeta_order'])) {
             $metaOrder = explode(',', $_POST['mymeta_order']);
             $order     = $metaOrder;
         }
 
-        if (!empty($_POST['saveorder']) && $order !== false && !empty($order)) {
+        if (!empty($_POST['saveorder']) && !empty($order)) {
             try {
                 App::backend()->mymeta->reorder($order);
                 App::backend()->mymeta->store();
