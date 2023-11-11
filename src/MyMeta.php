@@ -16,11 +16,11 @@ namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Database\Statement\JoinStatement;
+use Dotclear\Database\Statement\SelectStatement;
 use Dotclear\Interface\Core\BlogWorkspaceInterface;
-use Dotclear\Interface\Core\ConnectionInterface;
 use Dotclear\Interface\Core\MetaInterface;
 use Exception;
-use stdClass;
 
 /**
  * Core myMeta class
@@ -31,8 +31,6 @@ use stdClass;
  */
 class MyMeta
 {
-    private ConnectionInterface $con;
-
     public MetaInterface $dcmeta;
 
     public BlogWorkspaceInterface $settings;
@@ -104,7 +102,6 @@ class MyMeta
         $this->dcmeta   = App::meta();
         $this->settings = My::settings();
 
-        $this->con = App::con();
         if (!$bypass_settings && $this->settings->mymeta_fields) {
             $this->mymeta = @unserialize(base64_decode($this->settings->mymeta_fields));
             if (!is_array($this->mymeta)) {
@@ -442,31 +439,51 @@ class MyMeta
     {
         $table = App::con()->prefix() . App::meta()::META_TABLE_NAME;
 
-        $strReq = 'SELECT meta_type, COUNT(M.post_id) as count FROM ' . $table . ' M LEFT JOIN ' . App::con()->prefix() . 'post P ' .
-        'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
+        $sql = new SelectStatement();
+        $sql
+            ->columns([
+                'meta_type',
+                $sql->count('M.post_id', 'count'),
+            ])
+            ->from($sql->as($table, 'M'))
+            ->join(
+                (new JoinStatement())
+                    ->left()
+                    ->from($sql->as(App::con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
+                    ->on('M.post_id = P.post_id')
+                    ->statement()
+            )
+            ->where('P.blog_id = ' . $sql->quote(App::blog()->id()))
+            ->group([
+                'meta_type',
+                'P.blog_id',
+            ])
+            ->order('count DESC')
+        ;
 
         if (!App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            $strReq .= 'AND ((post_status = ' . App::blog()::POST_PUBLISHED . ' ';
+            // No content admin permission on current blog
+            // Use only published posts restricted to user ID if set
+            $and[] = 'post_status = ' . App::blog()::POST_PUBLISHED;
 
             if (App::blog()->withoutPassword()) {
-                $strReq .= 'AND post_password IS NULL ';
+                // Only without password posts
+                $and[] = $sql->isNull('post_password');
             }
 
-            $strReq .= ') ';
-
             if (App::auth()->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(App::auth()->userID()) . "')";
+                $sql->and($sql->orGroup([
+                    $sql->andGroup($and),
+                    'P.user_id = ' . $sql->quote(App::auth()->userID()),
+                ]));
             } else {
-                $strReq .= ') ';
+                $sql->and($and);
             }
         }
 
-        $strReq .= 'GROUP BY meta_type,P.blog_id ORDER BY count DESC';
-
-        $rs = new MetaRecord($this->con->select($strReq));
+        $rs = $sql->select() ?? MetaRecord::newFromArray([]);
 
         return $rs->toStatic();
     }
@@ -483,59 +500,81 @@ class MyMeta
      */
     public function getMetadata(array $params = [], bool $count_only = false): MetaRecord
     {
+        $sql = new SelectStatement();
+
         if ($count_only) {
-            $strReq = 'SELECT count(distinct M.meta_id) ';
+            $sql->column($sql->count('DISTINCT M.meta_id'));
         } else {
-            $strReq = 'SELECT M.meta_id, M.meta_type, COUNT(M.post_id) as count ';
+            $sql->columns([
+                'M.meta_id',
+                'M.meta_type',
+                $sql->count('M.post_id', 'count'),
+            ]);
         }
 
-        $strReq .= 'FROM ' . App::con()->prefix() . App::meta()::META_TABLE_NAME . ' M LEFT JOIN ' . App::con()->prefix() . App::blog()::POST_TABLE_NAME . ' P ' .
-        'ON M.post_id = P.post_id ' .
-        "WHERE P.blog_id = '" . $this->con->escapeStr(App::blog()->id()) . "' ";
+        $sql
+            ->from($sql->as(App::con()->prefix() . App::meta()::META_TABLE_NAME, 'M'))
+            ->join(
+                (new JoinStatement())
+                    ->left()
+                    ->from($sql->as(App::con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
+                    ->on('M.post_id = P.post_id')
+                    ->statement()
+            )
+            ->where('P.blog_id = ' . $sql->quote(App::blog()->id()))
+        ;
 
         if (isset($params['meta_type'])) {
-            $strReq .= " AND meta_type = '" . $this->con->escapeStr($params['meta_type']) . "' ";
+            $sql->and('meta_type = ' . $sql->quote($params['meta_type']));
         }
 
         if (isset($params['meta_id'])) {
-            $strReq .= " AND meta_id = '" . $this->con->escapeStr($params['meta_id']) . "' ";
+            $sql->and('meta_id = ' . $sql->quote($params['meta_id']));
         }
 
         if (isset($params['post_id'])) {
-            $strReq .= ' AND P.post_id ' . $this->con->in($params['post_id']) . ' ';
+            $sql->and('P.post_id ' . $sql->in($params['post_id']));
         }
 
         if (!App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            $strReq .= 'AND ((post_status = ' . App::blog()::POST_PUBLISHED . ' ';
+            // No content admin permission on current blog
+            // Use only published posts restricted to user ID if set
+            $and[] = 'post_status = ' . App::blog()::POST_PUBLISHED;
 
             if (App::blog()->withoutPassword()) {
-                $strReq .= 'AND post_password IS NULL ';
+                // Only without password posts
+                $and[] = $sql->isNull('post_password');
             }
 
-            $strReq .= ') ';
-
             if (App::auth()->userID()) {
-                $strReq .= "OR P.user_id = '" . $this->con->escapeStr(App::auth()->userID()) . "')";
+                $sql->and($sql->orGroup([
+                    $sql->andGroup($and),
+                    'P.user_id = ' . $sql->quote(App::auth()->userID()),
+                ]));
             } else {
-                $strReq .= ') ';
+                $sql->and($and);
             }
         }
 
         if (!$count_only) {
-            $strReq .= 'GROUP BY meta_id,meta_type,P.blog_id ';
+            $sql->group([
+                'meta_id',
+                'meta_type',
+                'P.blog_id',
+            ]);
         }
 
         if (!$count_only && isset($params['order'])) {
-            $strReq .= 'ORDER BY ' . $params['order'];
+            $sql->order($sql->escape((string) $params['order']));
         }
 
         if (isset($params['limit']) && !$count_only) {
-            $strReq .= $this->con->limit($params['limit']);
+            $sql->limit($params['limit']);
         }
 
-        return new MetaRecord($this->con->select($strReq));
+        return $sql->select() ?? MetaRecord::newFromArray([]);
     }
 
     public function getMeta(?string $type = null, ?string $limit = null, ?string $meta_id = null, ?int $post_id = null): MetaRecord
