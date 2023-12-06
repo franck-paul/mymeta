@@ -43,7 +43,7 @@ class ManageEdit extends Process
             return false;
         }
 
-        $filterTplFile = static fn($file) => str_replace(['\\','/'], ['',''], trim((string) $file));
+        $filterTplFile = static fn ($file) => str_replace(['\\','/'], ['',''], trim((string) $file));
 
         if (!empty($_POST['mymeta_id'])) {
             try {
@@ -53,7 +53,7 @@ class ManageEdit extends Process
                 $mymetaEntry->post_types = false;
                 if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes' && isset($_POST['mymeta_restricted_types'])) {
                     $post_types = explode(',', $_POST['mymeta_restricted_types']);
-                    array_walk($post_types, static fn($v) => trim(Html::escapeHTML($v)));
+                    array_walk($post_types, static fn ($v) => trim(Html::escapeHTML($v)));
                     $mymetaEntry->post_types = $post_types;
                 }
 
@@ -186,8 +186,8 @@ class ManageEdit extends Process
         echo form::field('mymeta_restricted_types', 40, 255, $restrictions ?: '') . '</label></p>';
 
         echo
-        '</p></div><p><input type="hidden" name="p" value="mymeta" />' .
-        '<input type="hidden" name="m" value="edit" />';
+        '</p></div><p><input type="hidden" name="p" value="mymeta">' .
+        '<input type="hidden" name="m" value="edit">';
 
         if ($lock_id) {
             echo form::hidden(['mymeta_id'], $mymetaid);
@@ -199,7 +199,7 @@ class ManageEdit extends Process
         ]);
 
         echo
-        '<input type="submit" name="saveconfig" value="' . __('Save') . '" />' .
+        '<input type="submit" name="saveconfig" value="' . __('Save') . '">' .
         '</p>' .
         '</form>';
 

@@ -278,12 +278,12 @@ class Manage extends Process
                     'm'  => 'editsection',
                     'id' => $meta->id,
                 ], '&') . '">' .
-                '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
+                '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '"></a></td>' .
                 '<td class="nowrap maximal" colspan="6">' .
                 '<strong>' . sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)) . '</strong></td>' .
                 '</tr>';
             } else {
-                $img = '<img alt="%1$s" title="%1$s" src="images/%2$s" />';
+                $img = '<img alt="%1$s" title="%1$s" src="images/%2$s">';
                 if ($meta->enabled) {
                     $img_status = sprintf($img, __('published'), 'check-on.png');
                 } else {
@@ -305,7 +305,7 @@ class Manage extends Process
                     'm'  => 'edit',
                     'id' => $meta->id,
                 ], '&') . '">' .
-                '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '" /></a></td>' .
+                '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '"></a></td>' .
                 '<td class="nowrap"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
                     'm'  => 'view',
                     'id' => $meta->id,
@@ -329,7 +329,7 @@ class Manage extends Process
         ]);
 
         echo
-        '<input type="submit" name="saveorder" value="' . __('Save order') . '" />' .
+        '<input type="submit" name="saveorder" value="' . __('Save order') . '">' .
         '</p>' .
         '<p class="col right">';
 
@@ -338,7 +338,7 @@ class Manage extends Process
         form::combo('action', $combo_action);
 
         echo
-        '<input type="submit" value="' . __('ok') . '" />' .
+        '<input type="submit" value="' . __('ok') . '">' .
         '</p>' .
         '</div>' .
         '</form>' .
@@ -349,7 +349,7 @@ class Manage extends Process
         '<h3 id="new-meta">' . __('New metadata') . '</h3>' .
         '<p>' . __('New MyMeta') . ' : ' .
         form::combo('mymeta_type', $types, '') .
-        '&nbsp;<input type="submit" name="new" value="' . __('Create MyMeta') . '" />' .
+        '&nbsp;<input type="submit" name="new" value="' . __('Create MyMeta') . '">' .
         My::parsedHiddenFields([
             'p' => 'mymeta',
             'm' => 'edit',
@@ -361,7 +361,7 @@ class Manage extends Process
         '<form method="post" action="' . App::backend()->getPageURL() . '">' .
         '<p>' . __('New section') . ' : ' .
         form::field('mymeta_section', 20, 255) .
-        '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '" />' .
+        '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '">' .
         My::parsedHiddenFields([
             'p' => 'mymeta',
         ]) .

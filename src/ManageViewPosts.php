@@ -226,7 +226,7 @@ class ManageViewPosts extends Process
 
                 '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
                 form::combo('action', App::backend()->posts_actions_page->getCombo()) .
-                '<input type="submit" value="' . __('ok') . '" /></p>' .
+                '<input type="submit" value="' . __('ok') . '"></p>' .
                 My::parsedHiddenFields([
                     'post_type' => '',
                     'm'         => 'serie_posts',
@@ -243,7 +243,7 @@ class ManageViewPosts extends Process
         ]), App::blog()->id())) {
             echo
             '<form id="tag_delete" action="' . $this_url . '" method="post">' .
-            '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '" />' .
+            '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '">' .
             My::parsedHiddenFields() .
             '</p>' .
             '</form>';
@@ -254,7 +254,7 @@ class ManageViewPosts extends Process
             '<fieldset><legend>' . __('Change MyMeta value') . '</legend><form action="' . $this_url . '" method="post">' .
             '<p class="info">' . __('This will change the meta value for all entries having this value') . '</p>' .
             App::backend()->mymetaEntry->postShowForm(App::backend()->mymeta->dcmeta, null, Html::escapeHTML($value), true) .
-            '<p><input type="submit" name="rename" value="' . __('save') . '" />' .
+            '<p><input type="submit" name="rename" value="' . __('save') . '">' .
             My::parsedHiddenFields([
                 'value' => Html::escapeHTML($value),
             ]) .

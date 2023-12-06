@@ -21,6 +21,7 @@ use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
+use form;
 
 class BackendBehaviors
 {
@@ -77,7 +78,7 @@ class BackendBehaviors
             $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
-                    $mymeta->setMeta($posts->post_id, $_POST, false);
+                    $mymeta->setMeta((int) $posts->post_id, $_POST, false);
                 }
             }
 
@@ -100,14 +101,14 @@ class BackendBehaviors
             echo
             '<form action="' . $ap->getURI() . '" method="post">' .
             $ap->getCheckboxes() .
+
             $mymeta->postShowForm(null) .
+            App::nonce()->getFormNonce() .
             $ap->getHiddenFields() .
-            My::parsedHiddenFields([
-                'action'    => 'mymeta_set',
-                'mymeta_ok' => '1',
-            ]) .
+            form::hidden(['action'], 'mymeta_set') .
+            form::hidden(['mymeta_ok'], '1') . '</p>' .
             '</p>' .
-            '<p><input type="submit" value="' . __('save') . '" name="set_mymeta" />' .
+            '<p><input type="submit" value="' . __('save') . '" name="set_mymeta">' .
             '</form>';
 
             $ap->endPage();
