@@ -321,16 +321,12 @@ class Manage extends Process
         }
 
         echo
-        '</tbody></table><div class="two-cols"><p class="col">';
-
-        echo My::parsedHiddenFields([
-            'mymeta_order' => '',
-            'p'            => 'mymeta',
-        ]);
+        '</tbody></table><div class="two-cols">';
 
         echo
-        '<input type="submit" name="saveorder" value="' . __('Save order') . '">' .
-        '</p>' .
+        '<p class="col checkboxes-helpers"></p>';
+
+        echo
         '<p class="col right">';
 
         echo
@@ -339,9 +335,25 @@ class Manage extends Process
 
         echo
         '<input type="submit" value="' . __('ok') . '">' .
-        '</p>' .
+        '</p>';
+
+        echo
+        '<p>';
+
+        echo My::parsedHiddenFields([
+            'mymeta_order' => '',
+            'p'            => 'mymeta',
+        ]);
+
+        echo
+        '<input type="submit" name="saveorder" value="' . __('Save order') . '">' .
+        '</p>';
+
+        echo
         '</div>' .
-        '</form>' .
+        '</form>';
+
+        echo
         '<div class="fieldset clear">' .
         '<form method="post" action="' . App::backend()->getPageURL() . '">';
 

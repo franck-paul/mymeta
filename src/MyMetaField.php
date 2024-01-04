@@ -25,11 +25,11 @@ abstract class MyMetaField extends MyMetaEntry
 
     public string $default = '';
 
-    public string $tpl_list         = '';
+    public string $tpl_list = '';
 
-    public bool $url_list_enabled   = true;
+    public bool $url_list_enabled = true;
 
-    public string $tpl_single       = '';
+    public string $tpl_single = '';
 
     public bool $url_single_enabled = true;
 
@@ -45,9 +45,9 @@ abstract class MyMetaField extends MyMetaEntry
 
     public function __construct(string $id = '')
     {
-        $this->prompt     = '';
-        $this->pos        = 1000;
-        $this->id         = $id;
+        $this->prompt = '';
+        $this->pos    = 1000;
+        $this->id     = $id;
     }
 
     /**
