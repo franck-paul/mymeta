@@ -103,7 +103,11 @@ class MyMeta
         $this->settings = My::settings();
 
         if (!$bypass_settings && $this->settings->mymeta_fields) {
-            $value = @unserialize((string) base64_decode($this->settings->mymeta_fields)) ?? [];
+            try {
+                $value = @unserialize((string) base64_decode($this->settings->mymeta_fields)) ?? [];
+            } catch (Exception) {
+                $value = [];
+            }
             if (!$value || !is_array($value)) {
                 $this->mymeta = [];
             } else {
