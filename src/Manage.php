@@ -269,10 +269,11 @@ class Manage extends Process
         $allMeta = App::backend()->mymeta->getAll();
         foreach ($allMeta as $meta) {
             if ($meta instanceof MyMetaSection) {
+                $pos = $meta->pos ?? 0;
                 echo
                 '<tr class="line" id="l_' . $meta->id . '">' .
                  '<td class="handle minimal">' .
-                form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
+                form::field(['order[' . $meta->id . ']'], 2, 5, $pos, 'position') . '</td>' .
                 '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
                 '<td class="nowrap minimal status"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
                     'm'  => 'editsection',
@@ -330,7 +331,7 @@ class Manage extends Process
         '<p class="col right">';
 
         echo
-        __('Selected metas action:') .
+        __('Selected metas action:') . ' ' .
         form::combo('action', $combo_action);
 
         echo
