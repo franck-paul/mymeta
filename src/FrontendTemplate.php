@@ -80,8 +80,8 @@ class FrontendTemplate
     {
         $f = App::frontend()->template()->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, 'App::blog()->url().App::url()->getBase("mymeta").' .
-        '"/".App::frontend()->context()->mymeta->id."/".rawurlencode(App::frontend()->context()->meta->meta_id)') . '; ?>';
+        return '<?= ' . sprintf($f, 'App::blog()->url().App::url()->getBase("mymeta").' .
+        '"/".App::frontend()->context()->mymeta->id."/".rawurlencode(App::frontend()->context()->meta->meta_id)') . ' ?>';
     }
 
     /**
@@ -93,7 +93,7 @@ class FrontendTemplate
     {
         $f = App::frontend()->template()->getFilters($attr);
 
-        return '<?php echo ' . sprintf($f, 'App::frontend()->context()->meta->meta_type') . '; ?>';
+        return '<?= ' . sprintf($f, 'App::frontend()->context()->meta->meta_type') . ' ?>';
     }
 
     /**
@@ -159,7 +159,7 @@ class FrontendTemplate
 
         if (isset($attr['value'])) {
             $value = $attr['value'];
-            $if[] = substr($value, 1, 1) == '!' ? "\$value !='" . substr($value, 1) . "'" : "\$value =='" . $value . "'";
+            $if[]  = substr($value, 1, 1) == '!' ? "\$value !='" . substr($value, 1) . "'" : "\$value =='" . $value . "'";
         }
 
         $res = '<?php' . "\n" .

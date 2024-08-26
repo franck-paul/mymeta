@@ -15,7 +15,7 @@ $this->registerModule(
     'Bruno Hondelatte and contributors',
     '4.4.3',
     [
-        'requires'    => [['core', '2.28']],
+        'requires'    => [['core', '2.30']],
         'priority'    => 1001,
         'permissions' => 'My',
         'type'        => 'plugin',
@@ -25,6 +25,6 @@ $this->registerModule(
 
         'details'    => 'https://open-time.net/?q=mymeta',
         'support'    => 'https://github.com/franck-paul/mymeta',
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/master/dcstore.xml',
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/main/dcstore.xml',
     ]
 );

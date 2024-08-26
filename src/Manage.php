@@ -284,11 +284,11 @@ class Manage extends Process
                 '<strong>' . sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)) . '</strong></td>' .
                 '</tr>';
             } else {
-                $img = '<img alt="%1$s" title="%1$s" src="images/%2$s">';
+                $img = '<img alt="%1$s" title="%1$s" class="mark mark-%3$s" src="images/%2$s">';
                 if ($meta->enabled) {
-                    $img_status = sprintf($img, __('published'), 'check-on.png');
+                    $img_status = sprintf($img, __('published'), 'published.svg', 'published');
                 } else {
-                    $img_status = sprintf($img, __('unpublished'), 'check-off.png');
+                    $img_status = sprintf($img, __('unpublished'), 'unpublished.svg', 'unpublished');
                 }
 
                 $st           = $stats[$meta->id] ?? 0;
