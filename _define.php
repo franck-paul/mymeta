@@ -13,7 +13,7 @@ $this->registerModule(
     'My Meta',
     'User-defined metadata management in posts',
     'Bruno Hondelatte and contributors',
-    '4.4.3',
+    '4.5',
     [
         'requires'    => [['core', '2.30']],
         'priority'    => 1001,
