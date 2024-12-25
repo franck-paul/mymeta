@@ -1,7 +1,7 @@
 /*global $, dotclear */
 'use strict';
 
-$(() => {
+dotclear.ready(() => {
   $('#mymeta-list').sortable({
     cursor: 'move',
     stop(event, ui) {
