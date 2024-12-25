@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -55,7 +56,7 @@ class ManageViewPosts extends Process
             My::redirect();
         }
 
-        $value = rawurldecode($_GET['value']);
+        $value = rawurldecode((string) $_GET['value']);
 
         App::backend()->posts_actions_page = new BackendActions(
             App::backend()->url()->get('admin.plugin'),
@@ -125,7 +126,7 @@ class ManageViewPosts extends Process
             return;
         }
 
-        $value = rawurldecode($_GET['value']);
+        $value = rawurldecode((string) $_GET['value']);
 
         $this_url = App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($value);
 

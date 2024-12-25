@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -165,7 +166,7 @@ class Manage extends Process
             asort($postOrder);
             $order = array_map(static fn ($value) => (string) $value, array_keys($postOrder));
         } elseif (!empty($_POST['mymeta_order'])) {
-            $metaOrder = explode(',', $_POST['mymeta_order']);
+            $metaOrder = explode(',', (string) $_POST['mymeta_order']);
             $order     = $metaOrder;
         }
 

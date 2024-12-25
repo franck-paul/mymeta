@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -45,7 +46,7 @@ class Install extends Process
                 return true;
             }
 
-            if (get_class(current($fields)) != 'stdClass') {
+            if (current($fields)::class != 'stdClass') {
                 return true;
             }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -32,7 +33,7 @@ class FrontendUrl extends Url
                 App::frontend()->setPageNumber($n);
             }
 
-            $values = explode('/', $args);
+            $values = explode('/', (string) $args);
             $mymeta = App::frontend()->mymeta->getByID($values[0]);
             if ($mymeta == null || !$mymeta->enabled) {
                 self::p404();

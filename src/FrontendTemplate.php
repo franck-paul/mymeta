@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -51,7 +52,7 @@ class FrontendTemplate
         $a      = [];
         foreach ($attr as $k => $v) {
             if (!in_array($k, $filter)) {
-                $a[] = "'" . addslashes($k) . "' =>'" . addslashes($v) . "'";
+                $a[] = "'" . addslashes($k) . "' =>'" . addslashes((string) $v) . "'";
             }
         }
 
@@ -60,15 +61,10 @@ class FrontendTemplate
 
     public static function getOperator(string $op): string
     {
-        switch (strtolower($op)) {
-            case 'or':
-            case '||':
-                return '||';
-            case 'and':
-            case '&&':
-            default:
-                return '&&';
-        }
+        return match (strtolower($op)) {
+            'or', '||' => '||',
+            default => '&&',
+        };
     }
 
     /**
@@ -159,7 +155,7 @@ class FrontendTemplate
 
         if (isset($attr['value'])) {
             $value = $attr['value'];
-            $if[]  = substr($value, 1, 1) == '!' ? "\$value !='" . substr($value, 1) . "'" : "\$value =='" . $value . "'";
+            $if[]  = substr((string) $value, 1, 1) == '!' ? "\$value !='" . substr((string) $value, 1) . "'" : "\$value =='" . $value . "'";
         }
 
         $res = '<?php' . "\n" .

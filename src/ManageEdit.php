@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -52,7 +53,7 @@ class ManageEdit extends Process
                 $mymetaEntry->id         = $mymetaid;
                 $mymetaEntry->post_types = false;
                 if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes' && isset($_POST['mymeta_restricted_types'])) {
-                    $post_types = explode(',', $_POST['mymeta_restricted_types']);
+                    $post_types = explode(',', (string) $_POST['mymeta_restricted_types']);
                     array_walk($post_types, static fn ($v) => trim(Html::escapeHTML($v)));
                     $mymetaEntry->post_types = $post_types;
                 }

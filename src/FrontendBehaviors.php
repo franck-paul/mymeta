@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -69,13 +70,13 @@ class FrontendBehaviors
         if (isset($attr['mymetavalue'])) {
             $values  = $attr['mymetavalue'];
             $in_expr = ' in ';
-            if (str_starts_with($values, '!')) {
+            if (str_starts_with((string) $values, '!')) {
                 $in_expr = ' not in ';
-                $values  = substr($values, 1);
+                $values  = substr((string) $values, 1);
             }
 
             $cond = [];
-            foreach (explode(',', $values) as $expr) {
+            foreach (explode(',', (string) $values) as $expr) {
                 $cond[] = "'" . App::con()->escapeStr($expr) . "'";
             }
 
@@ -93,9 +94,9 @@ if (!isset($params)) { $params = array(); }
         }
 
         $in_expr = ' in ';
-        if (str_starts_with($metaid, '!')) {
+        if (str_starts_with((string) $metaid, '!')) {
             $in_expr = ' not in ';
-            $metaid  = substr($metaid, 1);
+            $metaid  = substr((string) $metaid, 1);
         }
 
         return

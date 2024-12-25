@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -386,7 +387,7 @@ class MyMeta
                     $display_item = $meta->isEnabledFor($post->post_type);
                 } else {
                     // try to guess post_type from URI
-                    $u         = explode('?', $_SERVER['REQUEST_URI']);
+                    $u         = explode('?', (string) $_SERVER['REQUEST_URI']);
                     $post_type = '';
                     // TODO !!!
                     if (basename($u[0]) == 'post.php') {
