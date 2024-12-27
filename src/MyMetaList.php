@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -41,14 +42,14 @@ class MyMetaList extends MyMetaField
         foreach ($lines as $line) {
             $entries = explode(':', $line);
             if (count($entries) == 1) {
-                $key  = trim((string) $entries[0]);
+                $key  = trim($entries[0]);
                 $desc = $key;
             } else {
-                $key  = trim((string) $entries[0]);
-                $desc = trim((string) $entries[1]);
+                $key  = trim($entries[0]);
+                $desc = trim($entries[1]);
             }
 
-            if ($key != '') {
+            if ($key !== '') {
                 $arr[$desc] = $key;
             }
         }
@@ -58,8 +59,6 @@ class MyMetaList extends MyMetaField
 
     /**
      * @param      array<string, string>   $array  The array
-     *
-     * @return     string
      */
     private function arrayToValues(array $array): string
     {

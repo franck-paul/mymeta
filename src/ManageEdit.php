@@ -44,7 +44,7 @@ class ManageEdit extends Process
             return false;
         }
 
-        $filterTplFile = static fn ($file) => str_replace(['\\','/'], ['',''], trim((string) $file));
+        $filterTplFile = static fn ($file): string => str_replace(['\\','/'], ['',''], trim((string) $file));
 
         if (!empty($_POST['mymeta_id'])) {
             try {
@@ -54,7 +54,7 @@ class ManageEdit extends Process
                 $mymetaEntry->post_types = false;
                 if (isset($_POST['mymeta_restrict']) && $_POST['mymeta_restrict'] == 'yes' && isset($_POST['mymeta_restricted_types'])) {
                     $post_types = explode(',', (string) $_POST['mymeta_restricted_types']);
-                    array_walk($post_types, static fn ($v) => trim(Html::escapeHTML($v)));
+                    array_walk($post_types, static fn ($v): string => trim(Html::escapeHTML($v)));
                     $mymetaEntry->post_types = $post_types;
                 }
 

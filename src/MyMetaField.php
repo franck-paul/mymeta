@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -41,7 +42,7 @@ abstract class MyMetaField extends MyMetaEntry
     /**
      * @var bool|null|array<string>
      */
-    public $post_types = null;
+    public $post_types;
 
     public function __construct(string $id = '')
     {
@@ -58,8 +59,6 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @param MetaInterface     $dcmeta     dcMeta instance to use
      * @param MetaRecord|null   $post       the post resultset
-     *
-     * @return string
      */
     public function postShowForm(MetaInterface $dcmeta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): string
     {
@@ -88,8 +87,6 @@ abstract class MyMetaField extends MyMetaEntry
      * Displays extra data in post edit page header
      *
      * @param MetaRecord $post the post resultset
-     *
-     * @return string
      */
     public function postHeader($post = null, bool $standalone = false): string
     {
@@ -103,8 +100,6 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * @param string $id mymeta id
      * @param string $value current mymeta value
-     *
-     * @return string
      */
     protected function postShowField(string $id, string $value): string
     {
@@ -119,7 +114,6 @@ abstract class MyMetaField extends MyMetaEntry
      * @param MetaInterface             $dcmeta         current dcMeta instance
      * @param int                       $post_id        post_id to update
      * @param array<string, string>     $post           HTTP POST parameters
-     * @param bool                      $deleteIfEmpty
      */
     public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
     {
@@ -136,8 +130,6 @@ abstract class MyMetaField extends MyMetaEntry
      * Display current value
      *
      * @param      string  $value  The value
-     *
-     * @return     string
      */
     public function displayValue(string $value): string
     {

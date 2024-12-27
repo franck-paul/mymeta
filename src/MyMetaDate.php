@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -59,6 +60,6 @@ class MyMetaDate extends MyMetaField
 
     public function displayValue(string $value): string
     {
-        return (string) date('Y-m-d H:i', (int) strtotime($value)) . ' UTC';
+        return date('Y-m-d H:i', (int) strtotime($value)) . ' UTC';
     }
 }

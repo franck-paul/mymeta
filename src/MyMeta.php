@@ -105,15 +105,11 @@ class MyMeta
 
         if (!$bypass_settings && $this->settings->mymeta_fields) {
             try {
-                $value = @unserialize((string) base64_decode($this->settings->mymeta_fields)) ?? [];
+                $value = @unserialize(base64_decode($this->settings->mymeta_fields)) ?? [];
             } catch (Exception) {
                 $value = [];
             }
-            if (!$value || !is_array($value)) {
-                $this->mymeta = [];
-            } else {
-                $this->mymeta = $value;
-            }
+            $this->mymeta = !$value || !is_array($value) ? [] : $value;
         } else {
             $this->mymeta = [];
         }
@@ -154,8 +150,6 @@ class MyMeta
      * store
      *
      * Stores mymeta settings
-     *
-     * @return void
      */
     public function store(): void
     {
@@ -174,7 +168,7 @@ class MyMeta
      *
      * @return array<int, mixed>
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->mymeta;
     }
@@ -215,8 +209,6 @@ class MyMeta
      * updates mymeta table with a given meta
      *
      * @param mixed $meta the meta to store
-     *
-     * @return void
      */
     public function update($meta): void
     {
@@ -224,7 +216,7 @@ class MyMeta
         if (!isset($this->mymetaIDs[$id])) {
             // new id => create
             $this->mymeta[]       = $meta;
-            $this->mymetaIDs[$id] = (int) count($this->mymeta);    // @phpstan-ignore-line
+            $this->mymetaIDs[$id] = count($this->mymeta);    // @phpstan-ignore-line
         } else {
             // ID already exists => update
             $this->mymeta[$this->mymetaIDs[$id]] = $meta;
@@ -234,7 +226,7 @@ class MyMeta
     public function newSection(): MyMetaSection
     {
         ++$this->sep_max;
-        $sep_id  = $this->sep_prefix . (string) $this->sep_max;
+        $sep_id  = $this->sep_prefix . $this->sep_max;
         $sep     = new MyMetaSection();
         $sep->id = $sep_id;
 
@@ -265,7 +257,7 @@ class MyMeta
         foreach ($this->mymeta as $m) {
             $m->pos               = $pos++;
             $newmymeta[]          = $m;
-            $newmymetaIDs[$m->id] = (int) count($newmymeta) - 1;
+            $newmymetaIDs[$m->id] = count($newmymeta) - 1;
         }
 
         $this->mymeta    = $newmymeta;
@@ -389,10 +381,12 @@ class MyMeta
                     // try to guess post_type from URI
                     $u         = explode('?', (string) $_SERVER['REQUEST_URI']);
                     $post_type = '';
-                    // TODO !!!
-                    if (basename($u[0]) == 'post.php') {
+                    /*
+                     * @todo define a better way to guess post_type from URL
+                     */
+                    if (basename($u[0]) === 'post.php') {
                         $post_type = 'post';
-                    } elseif (basename($u[0]) == 'plugin.php') {
+                    } elseif (basename($u[0]) === 'plugin.php') {
                         parse_str($u[1], $p);
                     }
 
@@ -502,8 +496,6 @@ class MyMeta
      *
      * @param      array<string, mixed>     $params      The parameters
      * @param      bool                     $count_only  The count only
-     *
-     * @return     MetaRecord
      */
     public function getMetadata(array $params = [], bool $count_only = false): MetaRecord
     {

@@ -30,8 +30,6 @@ class FrontendBehaviors
     /**
      * @param      string                                               $b      The block
      * @param      array<string, string>|ArrayObject<string, string>    $attr   The attribute
-     *
-     * @return     string
      */
     public static function templateBeforeBlock(string $b, array|ArrayObject $attr): string
     {
@@ -45,7 +43,7 @@ class FrontendBehaviors
             <tpl:Entries mymetaid="!<id>">
                 selects mymeta entries having mymetaid <id> not set
         */
-        if ($b != 'Entries' && $b != 'Comments') {
+        if ($b !== 'Entries' && $b !== 'Comments') {
             return '';
         }
 

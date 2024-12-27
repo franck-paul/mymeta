@@ -22,8 +22,6 @@ class FrontendTemplate
 {
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     *
-     * @return     string
      */
     public static function getCommonMyMeta(array|ArrayObject $attr): string
     {
@@ -43,8 +41,6 @@ class FrontendTemplate
 
     /**
      * @param      ArrayObject<string, mixed>|array<string, mixed>  $attr   The attribute
-     *
-     * @return     string
      */
     protected static function attr2str(array|ArrayObject $attr): string
     {
@@ -69,8 +65,6 @@ class FrontendTemplate
 
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     *
-     * @return     string
      */
     public static function MyMetaURL(array|ArrayObject $attr): string
     {
@@ -82,8 +76,6 @@ class FrontendTemplate
 
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     *
-     * @return     string
      */
     public static function MetaType(array|ArrayObject $attr): string
     {
@@ -94,8 +86,6 @@ class FrontendTemplate
 
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     *
-     * @return     string
      */
     public static function MyMetaTypePrompt(array|ArrayObject $attr): string
     {
@@ -107,8 +97,6 @@ class FrontendTemplate
 
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     *
-     * @return     string
      */
     public static function EntryMyMetaValue(array|ArrayObject $attr): string
     {
@@ -123,8 +111,6 @@ class FrontendTemplate
 
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     *
-     * @return     string
      */
     public static function MyMetaValue(array|ArrayObject $attr): string
     {
@@ -140,8 +126,6 @@ class FrontendTemplate
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
      * @param      string                                            $content   The content
-     *
-     * @return     string
      */
     public static function EntryMyMetaIf(array|ArrayObject $attr, string $content): string
     {
@@ -155,7 +139,7 @@ class FrontendTemplate
 
         if (isset($attr['value'])) {
             $value = $attr['value'];
-            $if[]  = substr((string) $value, 1, 1) == '!' ? "\$value !='" . substr((string) $value, 1) . "'" : "\$value =='" . $value . "'";
+            $if[]  = substr((string) $value, 1, 1) === '!' ? "\$value !='" . substr((string) $value, 1) . "'" : "\$value =='" . $value . "'";
         }
 
         $res = '<?php' . "\n" .
@@ -172,8 +156,6 @@ class FrontendTemplate
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
      * @param      string                                            $content   The content
-     *
-     * @return     string
      */
     public static function MyMetaData(array|ArrayObject $attr, string $content): string
     {
