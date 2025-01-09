@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -18,6 +19,9 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Listing\Listing;
 use Dotclear\Core\Backend\Listing\Pager;
 
+/**
+ * @todo switch Helper/Html/Form/...
+ */
 class BackendList extends Listing
 {
     public function display(int $page, int $nb_per_page, string $enclose_block = ''): void

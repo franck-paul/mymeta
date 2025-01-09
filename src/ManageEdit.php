@@ -23,6 +23,9 @@ use Dotclear\Helper\Html\Html;
 use Exception;
 use form;
 
+/**
+ * @todo switch Helper/Html/Form/...
+ */
 class ManageEdit extends Process
 {
     /**

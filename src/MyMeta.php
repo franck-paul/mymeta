@@ -467,7 +467,7 @@ class MyMeta
         ]), App::blog()->id())) {
             // No content admin permission on current blog
             // Use only published posts restricted to user ID if set
-            $and[] = 'post_status = ' . App::blog()::POST_PUBLISHED;
+            $and[] = 'post_status > ' . App::status()->post()->threshold();
 
             if (App::blog()->withoutPassword()) {
                 // Only without password posts
@@ -540,7 +540,7 @@ class MyMeta
         ]), App::blog()->id())) {
             // No content admin permission on current blog
             // Use only published posts restricted to user ID if set
-            $and[] = 'post_status = ' . App::blog()::POST_PUBLISHED;
+            $and[] = 'post_status > ' . App::status()->post()->threshold();
 
             if (App::blog()->withoutPassword()) {
                 // Only without password posts

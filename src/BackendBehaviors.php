@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -23,6 +24,9 @@ use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
 use form;
 
+/**
+ * @todo switch Helper/Html/Form/...
+ */
 class BackendBehaviors
 {
     public static function mymetaPostHeader(?MetaRecord $post): string

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -15,7 +16,7 @@ $this->registerModule(
     'Bruno Hondelatte and contributors',
     '4.5',
     [
-        'requires'    => [['core', '2.30']],
+        'requires'    => [['core', '2.33']],
         'priority'    => 1001,
         'permissions' => 'My',
         'type'        => 'plugin',

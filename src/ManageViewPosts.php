@@ -24,6 +24,9 @@ use Dotclear\Helper\Html\Html;
 use Exception;
 use form;
 
+/**
+ * @todo switch Helper/Html/Form/...
+ */
 class ManageViewPosts extends Process
 {
     /**
