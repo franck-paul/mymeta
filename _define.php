@@ -16,6 +16,7 @@ $this->registerModule(
     'Bruno Hondelatte and contributors',
     '5.1',
     [
+        'date'        => '2003-08-13T13:42:00+0100',
         'requires'    => [['core', '2.33']],
         'priority'    => 1001,
         'permissions' => 'My',
