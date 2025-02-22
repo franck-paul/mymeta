@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-22 11:10+0100\n"
+"POT-Creation-Date: 2025-02-22 11:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -472,7 +472,7 @@ msgid "Descending"
 msgstr ""
 
 #: ../git-plugins/mymeta/src/Widgets.php:104
-msgid "Link to all metadat values:"
+msgid "Link to all metadata values:"
 msgstr ""
 
 #: ../git-plugins/mymeta/src/Widgets.php:105

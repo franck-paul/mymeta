@@ -101,7 +101,7 @@ class Widgets
             )
             ->setting(
                 'allvalueslinktitle',
-                __('Link to all metadat values:'),
+                __('Link to all metadata values:'),
                 __('All values')
             )
             ->addHomeOnly()
