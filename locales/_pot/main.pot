@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-15 10:57+0200\n"
+"POT-Creation-Date: 2025-02-22 11:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,461 +20,461 @@ msgstr ""
 msgid "Entries by"
 msgstr ""
 
-#: ../git-plugins/mymeta/__html_tpl_dummy.php:9
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:8
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:66
 msgid "Metadata"
 msgstr ""
 
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:9
+msgid "This metadata's comments Atom feed"
+msgstr ""
+
 #: ../git-plugins/mymeta/__html_tpl_dummy.php:10
-msgid "This metadata's comments RSS feed"
+msgid "This metadata's entries Atom feed"
 msgstr ""
 
-#: ../git-plugins/mymeta/__html_tpl_dummy.php:11
-msgid "This metadata's entries RSS feed"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Backend.php:28
-#: ../git-plugins/mymeta/src/MyMeta.php:336
+#: ../git-plugins/mymeta/src/Backend.php:26
+#: ../git-plugins/mymeta/src/MyMeta.php:411
 msgid "My Meta"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Backend.php:28
+#: ../git-plugins/mymeta/src/Backend.php:27
 msgid "User-defined metadata management in posts"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Backend.php:40
-#: ../git-plugins/mymeta/src/Manage.php:229
-#: ../git-plugins/mymeta/src/Manage.php:234
-#: ../git-plugins/mymeta/src/ManageEdit.php:131
-#: ../git-plugins/mymeta/src/ManageEditSection.php:100
-#: ../git-plugins/mymeta/src/ManageView.php:88
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:177
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:182
-msgid "My Metadata"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:66
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:99
+msgid "Set metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/BackendBehaviors.php:49
-msgid "MyMeta"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:98
+msgid "Entries"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/BackendBehaviors.php:49
-msgid "Set MyMeta"
+#: ../git-plugins/mymeta/src/BackendBehaviors.php:118
+#: ../git-plugins/mymeta/src/ManageEdit.php:264
+#: ../git-plugins/mymeta/src/ManageEditSection.php:133
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:292
+msgid "Save"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/BackendBehaviors.php:77
-msgid "Set Metadata"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/BackendBehaviors.php:80
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:225
-msgid "save"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/BackendList.php:26
+#: ../git-plugins/mymeta/src/BackendList.php:38
 msgid "No entries found"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/BackendList.php:32
+#: ../git-plugins/mymeta/src/BackendList.php:71
 msgid "Nb Posts"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:129
-msgid "Mymeta entries have been successfully enabled"
+#: ../git-plugins/mymeta/src/Manage.php:143
+msgid "Metadata entries have been successfully enabled"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:130
-msgid "Mymeta entries have been successfully disabled"
+#: ../git-plugins/mymeta/src/Manage.php:144
+msgid "Metadata entries have been successfully disabled"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:133
-msgid "Mymeta entries have been successfully deleted"
+#: ../git-plugins/mymeta/src/Manage.php:147
+msgid "Metadata entries have been successfully deleted"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:152
+#: ../git-plugins/mymeta/src/Manage.php:167
 #, php-format
 msgid "Section \"%s\" has been successfully created"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:175
-msgid "Mymeta have been successfully reordered"
+#: ../git-plugins/mymeta/src/Manage.php:196
+msgid "Metadata have been successfully reordered"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:221
+#: ../git-plugins/mymeta/src/Manage.php:242
 msgid "enable"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:222
+#: ../git-plugins/mymeta/src/Manage.php:243
 msgid "disable"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:223
+#: ../git-plugins/mymeta/src/Manage.php:244
 msgid "delete"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:241
-msgid "Add a metadata"
+#: ../git-plugins/mymeta/src/Manage.php:264
+#: ../git-plugins/mymeta/src/ManageEdit.php:144
+#: ../git-plugins/mymeta/src/ManageEditSection.php:107
+#: ../git-plugins/mymeta/src/ManageView.php:91
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:215
+msgid "My Metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:244
-msgid "MyMeta list"
+#: ../git-plugins/mymeta/src/Manage.php:305
+#: ../git-plugins/mymeta/src/Manage.php:360
+msgid "edit metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:251
-#: ../git-plugins/mymeta/src/Widgets.php:38
-msgid "ID"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:252
-msgid "Type"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:253
-#: ../git-plugins/mymeta/src/ManageEdit.php:148
-#: ../git-plugins/mymeta/src/Widgets.php:39
-msgid "Prompt"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:254
-msgid "Posts"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:255
-msgid "Count"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:256
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:140
-msgid "Status"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:276
-#: ../git-plugins/mymeta/src/Manage.php:298
-msgid "edit MyMeta"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/Manage.php:278
+#: ../git-plugins/mymeta/src/Manage.php:312
 #, php-format
 msgid "Section: %s"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:283
+#: ../git-plugins/mymeta/src/Manage.php:322
 msgid "published"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:285
+#: ../git-plugins/mymeta/src/Manage.php:323
 msgid "unpublished"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:290
+#: ../git-plugins/mymeta/src/Manage.php:328
 msgid "All"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:321
-msgid "Save order"
+#: ../git-plugins/mymeta/src/Manage.php:402
+msgid "Add a metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:326
+#: ../git-plugins/mymeta/src/Manage.php:410
+msgid "Metadata list"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:417
+#: ../git-plugins/mymeta/src/Widgets.php:39
+msgid "ID"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:419
+msgid "Type"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:421
+#: ../git-plugins/mymeta/src/ManageEdit.php:196
+#: ../git-plugins/mymeta/src/Widgets.php:40
+msgid "Prompt"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:423
+msgid "Posts"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:425
+msgid "Count"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:428
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:172
+msgid "Status"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:445
 msgid "Selected metas action:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:330
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:201
+#: ../git-plugins/mymeta/src/Manage.php:446
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:246
 msgid "ok"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:338
+#: ../git-plugins/mymeta/src/Manage.php:450
+msgid "Save order"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Manage.php:460
+#: ../git-plugins/mymeta/src/ManageEdit.php:124
 msgid "New metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:339
-#: ../git-plugins/mymeta/src/ManageEdit.php:112
-msgid "New MyMeta"
+#: ../git-plugins/mymeta/src/Manage.php:470
+msgid "New metadata:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:341
-msgid "Create MyMeta"
+#: ../git-plugins/mymeta/src/Manage.php:472
+msgid "Create the metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:349
-msgid "New section"
+#: ../git-plugins/mymeta/src/Manage.php:488
+msgid "New section:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Manage.php:351
-msgid "Create section"
+#: ../git-plugins/mymeta/src/Manage.php:490
+msgid "Create the section"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:72
+#: ../git-plugins/mymeta/src/ManageEdit.php:83
 #, php-format
-msgid "MyMeta \"%s\" has been successfully updated"
+msgid "Metadata \"%s\" has been successfully updated"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:100
-msgid "Edit MyMeta"
+#: ../git-plugins/mymeta/src/ManageEdit.php:114
+#: ../git-plugins/mymeta/src/ManageEdit.php:133
+msgid "Something went wrong while editing metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:104
-#: ../git-plugins/mymeta/src/ManageEdit.php:120
-msgid "Something went wrong while editing mymeta"
+#: ../git-plugins/mymeta/src/ManageEdit.php:119
+msgid "Edit metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:126
-#: ../git-plugins/mymeta/src/ManageEditSection.php:95
-#: ../git-plugins/mymeta/src/ManageView.php:83
-msgid "My metadata"
+#: ../git-plugins/mymeta/src/ManageEdit.php:159
+#: ../git-plugins/mymeta/src/ManageEditSection.php:138
+msgid "Back"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:141
-msgid "MyMeta definition"
+#: ../git-plugins/mymeta/src/ManageEdit.php:162
+msgid "Cancel"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:143
-msgid "Identifier (as stored in meta_type in database):"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:152
+#: ../git-plugins/mymeta/src/ManageEdit.php:176
+#: ../git-plugins/mymeta/src/ManageEditSection.php:120
 #, php-format
-msgid "MyMeta type : %s"
+msgid "Fields preceded by %s are mandatory."
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:157
-msgid "MyMeta URLs"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:166
-msgid "Enable MyMeta values list public page"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:167
-msgid "List template file (leave empty for default mymetas.html)"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:172
-msgid "Enable single mymeta value public page"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:174
-msgid "Single template file (leave empty for default mymeta.html)"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:181
-msgid "MyMeta restrictions"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEdit.php:185
-msgid "Display meta field for any post type"
+#: ../git-plugins/mymeta/src/ManageEdit.php:178
+msgid "Metadata definition"
 msgstr ""
 
 #: ../git-plugins/mymeta/src/ManageEdit.php:187
+msgid "Identifier (as stored in meta_type in database):"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:199
+#, php-format
+msgid "Metadata type : %s"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:203
+msgid "Metadata URLs"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:209
+msgid "Enable metadata values list public page"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:217
+msgid "List template file (leave empty for default mymetas.html)"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:223
+msgid "Enable single metadata value public page"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:231
+msgid "Single template file (leave empty for default mymeta.html)"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:235
+msgid "Metadata restrictions"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:241
+msgid "Display meta field for any post type"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/ManageEdit.php:247
 msgid "Restrict to the following post types :"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEdit.php:207
-#: ../git-plugins/mymeta/src/ManageEditSection.php:123
-msgid "Save"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEditSection.php:59
+#: ../git-plugins/mymeta/src/ManageEditSection.php:66
 msgid "Section has been successfully updated"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEditSection.php:79
-msgid "Edit section"
-msgstr ""
-
-#: ../git-plugins/mymeta/src/ManageEditSection.php:83
-#: ../git-plugins/mymeta/src/ManageEditSection.php:88
+#: ../git-plugins/mymeta/src/ManageEditSection.php:89
+#: ../git-plugins/mymeta/src/ManageEditSection.php:94
 msgid "Something went wrong while editing section"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEditSection.php:110
-msgid "MyMeta section definition"
+#: ../git-plugins/mymeta/src/ManageEditSection.php:99
+msgid "Edit section"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageEditSection.php:112
-#: ../git-plugins/mymeta/src/Widgets.php:31
-#: ../git-plugins/mymeta/src/Widgets.php:58
-msgid "Title"
+#: ../git-plugins/mymeta/src/ManageEditSection.php:127
+msgid "Title:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageView.php:47
-#: ../git-plugins/mymeta/src/ManageView.php:53
-msgid "Something went wrong when editing mymeta"
+#: ../git-plugins/mymeta/src/ManageView.php:48
+#: ../git-plugins/mymeta/src/ManageView.php:54
+msgid "Something went wrong when editing metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageView.php:95
+#: ../git-plugins/mymeta/src/ManageView.php:103
 #, php-format
 msgid "Values of metadata \"%s\""
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:51
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:57
-msgid "Something went wrong while editing mymeta value"
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:58
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:64
+msgid "Something went wrong while editing metadata value"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:70
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:89
 #, php-format
-msgid "Mymeta value successfully updated from \"%s\" to \"%s\""
+msgid "Metadata value successfully updated from \"%s\" to \"%s\""
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:141
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:173
 msgid "Publish"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:142
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:174
 msgid "Unpublish"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:143
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:175
 msgid "Schedule"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:144
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:176
 msgid "Mark as pending"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:147
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:180
 msgid "Mark"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:148
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:181
 msgid "Mark as selected"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:149
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:182
 msgid "Mark as unselected"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:151
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:155
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:156
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:184
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:188
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:189
 msgid "Change"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:151
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:184
 msgid "Change category"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:157
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:190
 msgid "Change author"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:164
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:198
 msgid "Delete"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:172
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:205
 msgid "Are you sure you want to remove this metadata?"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:184
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:217
 #, php-format
 msgid "Value \"%s\""
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:190
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:223
 #, php-format
-msgid "Entries having meta id \"%s\" set to \"%s\""
+msgid "Entries having metadata id \"%s\" set to \"%s\""
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:199
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:245
 msgid "Selected entries action:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:222
-msgid "Change MyMeta value"
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:283
+msgid "Change metadata value"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/ManageViewPosts.php:223
+#: ../git-plugins/mymeta/src/ManageViewPosts.php:287
 msgid "This will change the meta value for all entries having this value"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMeta.php:388
-msgid "Mymeta errors :"
+#: ../git-plugins/mymeta/src/MyMeta.php:457
+msgid "Metadata errors :"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMetaCheck.php:32
+#: ../git-plugins/mymeta/src/MyMetaCheck.php:34
 msgid "Checkbox"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMetaDate.php:39
+#: ../git-plugins/mymeta/src/MyMetaDate.php:54
 msgid "Date"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMetaList.php:31
+#: ../git-plugins/mymeta/src/MyMetaList.php:35
 msgid "Items List"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMetaList.php:90
+#: ../git-plugins/mymeta/src/MyMetaList.php:125
 msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMetaSection.php:31
+#: ../git-plugins/mymeta/src/MyMetaSection.php:28
 msgid "Section"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/MyMetaString.php:27
+#: ../git-plugins/mymeta/src/MyMetaString.php:28
 msgid "String"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:26
+#: ../git-plugins/mymeta/src/Widgets.php:27
 msgid "All sections"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:30
-msgid "MyMeta List"
+#: ../git-plugins/mymeta/src/Widgets.php:31
+msgid "Metadata List"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:34
-msgid "Value to display"
+#: ../git-plugins/mymeta/src/Widgets.php:32
+#: ../git-plugins/mymeta/src/Widgets.php:59
+msgid "Title"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:44
-msgid "Section to display"
+#: ../git-plugins/mymeta/src/Widgets.php:35
+msgid "Value to display:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:57
-msgid "MyMeta Values list"
+#: ../git-plugins/mymeta/src/Widgets.php:45
+msgid "Section to display:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:61
-msgid "MyMeta ID"
+#: ../git-plugins/mymeta/src/Widgets.php:58
+msgid "Metadata Values list"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:68
-msgid "Display mode"
+#: ../git-plugins/mymeta/src/Widgets.php:62
+msgid "Metadata:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:72
-msgid "Cloud"
+#: ../git-plugins/mymeta/src/Widgets.php:69
+msgid "Display mode:"
 msgstr ""
 
 #: ../git-plugins/mymeta/src/Widgets.php:73
+msgid "Cloud"
+msgstr ""
+
+#: ../git-plugins/mymeta/src/Widgets.php:74
 msgid "List"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:79
+#: ../git-plugins/mymeta/src/Widgets.php:84
 msgid "Order by:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:83
+#: ../git-plugins/mymeta/src/Widgets.php:88
 msgid "Meta name"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:89
+#: ../git-plugins/mymeta/src/Widgets.php:94
 msgid "Sort:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:93
+#: ../git-plugins/mymeta/src/Widgets.php:98
 msgid "Ascending"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:94
+#: ../git-plugins/mymeta/src/Widgets.php:99
 msgid "Descending"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:97
-msgid "All values"
+#: ../git-plugins/mymeta/src/Widgets.php:104
+msgid "Link to all metadat values:"
 msgstr ""
 
-#: ../git-plugins/mymeta/src/Widgets.php:97
-msgid "Link to all values:"
+#: ../git-plugins/mymeta/src/Widgets.php:105
+msgid "All values"
 msgstr ""

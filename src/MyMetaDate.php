@@ -16,18 +16,32 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\Helper\Date;
+use Dotclear\Helper\Html\Form\Component;
+use Dotclear\Helper\Html\Form\Datetime;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Interface\Core\MetaInterface;
-use form;
 
 // Datepicker  meta type
 class MyMetaDate extends MyMetaField
 {
-    protected function postShowField(string $id, string $value): string
+    /**
+     * formField
+     *
+     * get inputable mymeta field (usually a textfield, here specialized to datetime)
+     *
+     * @param string    $id     mymeta id
+     * @param string    $value  current mymeta value
+     * @param string    $label  field label
+     */
+    protected function formField(string $id, string $value, string $label): Component
     {
         $timestamp = $value !== '' && $value !== '0' ? strtotime($value) : time();
 
-        return form::datetime($id, ['default' => Html::escapeHTML(Date::str('%Y-%m-%dT%H:%M', $timestamp))]);
+        return (new Datetime($id))
+            ->value(Html::escapeHTML(Date::str('%Y-%m-%dT%H:%M', $timestamp)))
+            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
     }
 
     public function getMetaTypeId(): string
@@ -43,18 +57,18 @@ class MyMetaDate extends MyMetaField
     /**
      * Sets the post meta.
      *
-     * @param      MetaInterface            $dcmeta         current dcMeta instance
+     * @param      MetaInterface            $meta           current Meta instance
      * @param      int                      $post_id        The post identifier
      * @param      array<string, string>    $post           The post
-     * @param      bool                     $deleteIfEmpty  The delete if empty
+     * @param      bool                     $delete_if_empty  The delete if empty
      */
-    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
+    public function setPostMeta(MetaInterface $meta, int $post_id, array $post, bool $delete_if_empty = true): void
     {
         $timestamp = empty($post['mymeta_' . $this->id]) ? 0 : strtotime($post['mymeta_' . $this->id]);
-        $dcmeta->delPostMeta($post_id, $this->id);
+        $meta->delPostMeta($post_id, $this->id);
         if ($timestamp) {
             $value = date('Y-m-d H:i:00', $timestamp);
-            $dcmeta->setPostMeta($post_id, $this->id, $value);
+            $meta->setPostMeta($post_id, $this->id, $value);
         }
     }
 

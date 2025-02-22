@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -21,6 +22,17 @@ class Frontend extends Process
 {
     public static function init(): bool
     {
+        MyMeta::registerType(MyMetaString::class);
+        MyMeta::registerType(MyMetaList::class);
+        MyMeta::registerType(MyMetaCheck::class);
+        MyMeta::registerType(MyMetaDate::class);
+
+        // Cope with legacy
+        class_alias(MyMetaString::class, 'mmString');
+        class_alias(MyMetaList::class, 'mmList');
+        class_alias(MyMetaCheck::class, 'mmCheck');
+        class_alias(MyMetaDate::class, 'mmDate');
+
         return self::status(My::checkContext(My::FRONTEND));
     }
 

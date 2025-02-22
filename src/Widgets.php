@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -27,11 +28,11 @@ class Widgets
 
         // Widget for list of metadata
         $w
-            ->create('mymetalist', __('MyMeta List'), FrontendWidgets::mymetaList(...))
+            ->create('mymetalist', __('Metadata List'), FrontendWidgets::mymetaList(...))
             ->addTitle(__('Title'))
             ->setting(
                 'prompt',
-                __('Value to display'),
+                __('Value to display:'),
                 'prompt',
                 'combo',
                 [
@@ -41,7 +42,7 @@ class Widgets
             )
             ->setting(
                 'section',
-                __('Section to display'),
+                __('Section to display:'),
                 '',
                 'combo',
                 $mymetasections,
@@ -54,18 +55,18 @@ class Widgets
         // Widget for currently displayed post
 
         $w
-            ->create('mymetavalues', __('MyMeta Values list'), FrontendWidgets::mymetaValues(...))
+            ->create('mymetavalues', __('Metadata Values list'), FrontendWidgets::mymetaValues(...))
             ->addTitle(__('Title'))
             ->setting(
                 'mymetaid',
-                __('MyMeta ID'),
+                __('Metadata:'),
                 current($mymetalist),
                 'combo',
                 $mymetalist,
             )
             ->setting(
                 'displaymode',
-                __('Display mode'),
+                __('Display mode:'),
                 'list',
                 'combo',
                 [
@@ -73,7 +74,11 @@ class Widgets
                     __('List')  => 'list',
                 ]
             )
-            ->setting('limit', __('Limit (empty means no limit):'), '20')
+            ->setting(
+                'limit',
+                __('Limit (empty means no limit):'),
+                '20'
+            )
             ->setting(
                 'sortby',
                 __('Order by:'),
@@ -94,7 +99,11 @@ class Widgets
                     __('Descending') => 'desc',
                 ]
             )
-            ->setting('allvalueslinktitle', __('Link to all values:'), __('All values'))
+            ->setting(
+                'allvalueslinktitle',
+                __('Link to all metadat values:'),
+                __('All values')
+            )
             ->addHomeOnly()
             ->addContentOnly()
             ->addClass()

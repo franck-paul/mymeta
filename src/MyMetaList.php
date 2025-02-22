@@ -15,7 +15,12 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
-use form;
+use Dotclear\Helper\Html\Form\Component;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Textarea;
 
 // Items list meta type
 class MyMetaList extends MyMetaField
@@ -90,21 +95,36 @@ class MyMetaList extends MyMetaField
         return $value;
     }
 
-    protected function postShowField(string $id, string $value): string
+    /**
+     * formField
+     *
+     * get inputable mymeta field (usually a textfield, here a select)
+     *
+     * @param string    $id     mymeta id
+     * @param string    $value  current mymeta value
+     * @param string    $label  field label
+     */
+    protected function formField(string $id, string $value, string $label): Component
     {
         $list     = $this->values;
         $list[''] = '';
 
-        return form::combo($id, $list, $value);
+        return (new Select($id))
+            ->items($list)
+            ->default($value)
+            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
     }
 
     public function adminForm(): string
     {
-        return '<p><label>' .
-        __('Values : enter 1 value per line (syntax for each line : ID: description)') .
-        ' </label>' .
-        form::textarea('mymeta_values', 40, 10, $this->arrayToValues($this->values)) .
-        '</p>';
+        return (new Para())
+            ->items([
+                (new Textarea('mymeta_values', $this->arrayToValues($this->values)))
+                    ->cols(40)
+                    ->rows(10)
+                    ->label(new Label(__('Values : enter 1 value per line (syntax for each line : ID: description)'), Label::OL_TF)),
+            ])
+        ->render();
     }
 
     /**

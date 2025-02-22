@@ -174,7 +174,7 @@ class FrontendTemplate
 
         $res = "<?php\n" .
         'App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->dcmeta->getMetadata([' .
-            "'meta_id' => App::frontend()->context()->mymeta->id, " .
+            "'meta_type' => App::frontend()->context()->mymeta->id, " .
             "'limit' => " . $limit .
         '])); ' .
         "App::frontend()->context()->meta->sort('" . $sortby . "','" . $order . "'); " .

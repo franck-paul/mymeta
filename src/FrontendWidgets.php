@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -85,7 +86,7 @@ class FrontendWidgets
             return '<li>not enabled</li>';
         }
 
-        $rs = App::frontend()->mymeta->getMeta($mymetaEntry->id, $limit);
+        $rs = App::frontend()->mymeta->getMeta((string) $mymetaEntry->id, (string) $limit);
 
         if ($rs->isEmpty()) {
             return '<li>empty</li>';

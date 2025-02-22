@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -15,10 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 // Section mymeta type
-/**
- * @psalm-suppress InvalidReturnType
- */
-#[\AllowDynamicProperties]
 class MyMetaSection extends MyMetaEntry
 {
     public function getMetaTypeId(): string

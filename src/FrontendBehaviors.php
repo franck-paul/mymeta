@@ -79,9 +79,7 @@ class FrontendBehaviors
             }
 
             return
-            '<?php
-if (!isset($params)) { $params = array(); }
-' .
+            "<?php if (!isset(\$params)) { \$params = array(); }\n" .
             "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
             "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
             "@\$params['from'] .= ', '.App::con()->prefix().'meta META ';\n" .
@@ -98,9 +96,7 @@ if (!isset($params)) { $params = array(); }
         }
 
         return
-        '<?php
-@$params[\'sql\'] .= "AND P.post_id ' . $in_expr .
-            "(SELECT META.post_id from \".App::con()->prefix().\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
+        '<?php @$params[\'sql\'] .= "AND P.post_id ' . $in_expr . "(SELECT META.post_id from \".App::con()->prefix().\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
         "?>\n";
     }
 }

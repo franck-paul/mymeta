@@ -26,6 +26,17 @@ class Backend extends Process
         __('My Meta');
         __('User-defined metadata management in posts');
 
+        MyMeta::registerType(MyMetaString::class);
+        MyMeta::registerType(MyMetaList::class);
+        MyMeta::registerType(MyMetaCheck::class);
+        MyMeta::registerType(MyMetaDate::class);
+
+        // Cope with legacy
+        class_alias(MyMetaString::class, 'mmString');
+        class_alias(MyMetaList::class, 'mmList');
+        class_alias(MyMetaCheck::class, 'mmCheck');
+        class_alias(MyMetaDate::class, 'mmDate');
+
         return self::status(My::checkContext(My::BACKEND));
     }
 

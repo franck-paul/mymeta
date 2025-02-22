@@ -16,9 +16,14 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\Database\MetaRecord;
+use Dotclear\Helper\Html\Form\Component;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\None;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Interface\Core\MetaInterface;
-use form;
 
 abstract class MyMetaField extends MyMetaEntry
 {
@@ -52,7 +57,7 @@ abstract class MyMetaField extends MyMetaEntry
     }
 
     /**
-     * postShowForm
+     * postForm
      *
      * Displays form input field (when editting a post) including prompt
      * Notice : submitted field name must be prefixed with "mymeta_"
@@ -60,10 +65,9 @@ abstract class MyMetaField extends MyMetaEntry
      * @param MetaInterface     $dcmeta     dcMeta instance to use
      * @param MetaRecord|null   $post       the post resultset
      */
-    public function postShowForm(MetaInterface $dcmeta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): string
+    public function postForm(MetaInterface $dcmeta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): Component
     {
         if ($this->enabled || $bypass_disabled) {
-            $res     = '';
             $this_id = 'mymeta_' . $this->id;
             $value   = '';
             if (isset($_POST[$this_id])) {
@@ -72,13 +76,13 @@ abstract class MyMetaField extends MyMetaEntry
                 $value = $dcmeta->getMetaStr($post->post_meta, $this->id);
             }
 
-            $res .= '<p><label for="' . $this_id . '"><strong>' . $this->prompt . '</strong></label>';
-            $res .= $this->postShowField($this_id, $value);
-
-            return $res . '</p>';
+            return (new Para())
+                ->items([
+                    $this->formField($this_id, $value, $this->prompt),
+                ]);
         }
 
-        return '';
+        return (new None());
     }
 
     /**
@@ -94,16 +98,22 @@ abstract class MyMetaField extends MyMetaEntry
     }
 
     /**
-     * postShowField
+     * formField
      *
-     * displays inputable mymeta field (usually a textfield)
+     * get inputable mymeta field (usually a textfield)
      *
-     * @param string $id mymeta id
-     * @param string $value current mymeta value
+     * @param string    $id     mymeta id
+     * @param string    $value  current mymeta value
+     * @param string    $label  field label
      */
-    protected function postShowField(string $id, string $value): string
+    protected function formField(string $id, string $value, string $label): Component
     {
-        return form::field($id, 40, 255, $value, 'maximal');
+        return (new Input($id))
+            ->size(40)
+            ->maxlength(255)
+            ->value($value)
+            ->class('maximal')
+            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
     }
 
     /**
@@ -115,9 +125,9 @@ abstract class MyMetaField extends MyMetaEntry
      * @param int                       $post_id        post_id to update
      * @param array<string, string>     $post           HTTP POST parameters
      */
-    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
+    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $delete_if_empty = true): void
     {
-        if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
+        if (!empty($post['mymeta_' . $this->id]) || $delete_if_empty) {
             $dcmeta->delPostMeta($post_id, $this->id);
         }
 

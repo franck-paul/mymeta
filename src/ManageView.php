@@ -19,11 +19,10 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class ManageView extends Process
 {
     /**
@@ -46,13 +45,13 @@ class ManageView extends Process
         }
 
         if (empty($_GET['id'])) {
-            Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
+            Notices::addErrorNotice(__('Something went wrong when editing metadata'));
             My::redirect();
         }
 
         App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
         if (App::backend()->mymetaEntry == null) {
-            Notices::addErrorNotice(__('Something went wrong when editing mymeta'));
+            Notices::addErrorNotice(__('Something went wrong when editing metadata'));
             My::redirect();
         }
 
@@ -80,6 +79,8 @@ class ManageView extends Process
         $rs    = App::backend()->mymeta->getMetadata($params, false);
         $count = App::backend()->mymeta->getMetadata($params, true);
 
+        $list = new BackendList($rs, $count->f(0));
+
         $head = Page::jsPageTabs('mymeta');
 
         Page::openModule(My::name() . ' &gt; ' . App::backend()->mymetaEntry->id, $head);
@@ -94,10 +95,16 @@ class ManageView extends Process
         echo Notices::getNotices();
 
         // Form
-        echo '<div class="fieldset"><h3>' . sprintf(__('Values of metadata "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id)) . '</h3>';
-        $list = new BackendList($rs, $count->f(0));
-        $list->display($page, $nb_per_page, '%s');
-        echo '</div>';
+        $list->display(
+            $page,
+            $nb_per_page,
+            (new Div())
+                ->items([
+                    (new Text('h3', sprintf(__('Values of metadata "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id)))),
+                    (new Text(null, '%s')),     // List comes here
+                ])
+            ->render()
+        );
 
         Page::closeModule();
     }

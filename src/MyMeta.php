@@ -19,6 +19,14 @@ use Dotclear\App;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Database\Statement\JoinStatement;
 use Dotclear\Database\Statement\SelectStatement;
+use Dotclear\Helper\Html\Form\Details;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Li;
+use Dotclear\Helper\Html\Form\None;
+use Dotclear\Helper\Html\Form\Summary;
+use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Ul;
 use Dotclear\Interface\Core\BlogWorkspaceInterface;
 use Dotclear\Interface\Core\MetaInterface;
 use Exception;
@@ -56,16 +64,6 @@ class MyMeta
      */
     protected array $mymetaIDs = [];
 
-    /**
-     * @var string HTML errors list pattern
-     */
-    protected string $html_list = "<ul>\n%s</ul>\n";
-
-    /**
-     * @var string HTML error item pattern
-     */
-    protected string $html_item = "<li>%s</li>\n";
-
     protected int $sep_max;
 
     protected string $sep_prefix = '__sep__';
@@ -79,11 +77,16 @@ class MyMeta
      */
     public static function registerType(string $class): void
     {
-        $sample                  = new $class();
-        $desc                    = $sample->getMetaTypeDesc();  // @phpstan-ignore-line
-        $type                    = $sample->getMetaTypeId();    // @phpstan-ignore-line
-        self::$typesCombo[$desc] = $type;                       // @phpstan-ignore-line
-        self::$types[$type]      = [                            // @phpstan-ignore-line
+        /**
+         * @var MyMetaEntry $sample
+         */
+        $sample = new $class();
+
+        $desc = $sample->getMetaTypeDesc();
+        $type = $sample->getMetaTypeId();
+
+        self::$typesCombo[$desc] = $type;
+        self::$types[$type]      = [
             'desc'   => $desc,
             'object' => $class,
         ];
@@ -355,9 +358,9 @@ class MyMeta
         return $res;
     }
 
-    public function postShowForm(?MetaRecord $post): string
+    public function postForm(?MetaRecord $post): None|Div
     {
-        $res             = '';
+        $items           = [];
         $active_sections = ['' => true];
         $cur_section     = '';
         foreach ($this->mymeta as $meta) {
@@ -371,7 +374,7 @@ class MyMeta
         foreach ($this->mymeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 if (isset($active_sections[$meta->id])) {
-                    $res .= '<h4>' . __($meta->prompt) . '</h4>';
+                    $items[] = (new Text('h4', __($meta->prompt)));
                 }
             } elseif ($meta->enabled) {
                 $display_item = true;
@@ -394,12 +397,26 @@ class MyMeta
                 }
 
                 if ($display_item) {
-                    $res .= $meta->postShowForm($this->dcmeta, $post);
+                    $items[] = $meta->postForm($this->dcmeta, $post);
                 }
             }
         }
 
-        return $res !== '' ? '<div class="mymeta"><details open><summary>' . __('My Meta') . '</summary>' . $res . '</details></div>' : '';
+        if ($items !== []) {
+            return (new Div())
+                ->class('mymeta')
+                ->items([
+                    (new Details())
+                        ->open(true)
+                        ->summary(new Summary(__('My Meta')))
+                        ->items([
+                            (new Fieldset())
+                                ->fields($items),
+                        ]),
+                ]);
+        }
+
+        return (new None());
     }
 
     /**
@@ -424,13 +441,20 @@ class MyMeta
             }
         }
 
-        if (count($errors) != 0) {
-            $res = '';
-            foreach ($errors as $msg) {
-                $res .= sprintf($this->html_item, $msg);
-            }
+        if ($errors !== []) {
+            $items = function ($errors) {
+                foreach ($errors as $error) {
+                    yield (new Li())
+                        ->text($error);
+                }
+            };
+            $message = (new Ul())
+                ->items([
+                    ... $items($errors),
+                ])
+            ->render();
 
-            throw new Exception(__('Mymeta errors :') . sprintf($this->html_list, $res));
+            throw new Exception(__('Metadata errors :') . $message);
         }
     }
 

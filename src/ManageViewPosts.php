@@ -20,13 +20,19 @@ use Dotclear\Core\Backend\Listing\ListingPosts;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Exception;
-use form;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class ManageViewPosts extends Process
 {
     /**
@@ -49,13 +55,13 @@ class ManageViewPosts extends Process
         }
 
         if (empty($_GET['id']) || empty($_GET['value'])) {
-            Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
+            Notices::addErrorNotice(__('Something went wrong while editing metadata value'));
             My::redirect();
         }
 
         App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
         if (App::backend()->mymetaEntry == null) {
-            Notices::addErrorNotice(__('Something went wrong while editing mymeta value'));
+            Notices::addErrorNotice(__('Something went wrong while editing metadata value'));
             My::redirect();
         }
 
@@ -80,7 +86,7 @@ class ManageViewPosts extends Process
             try {
                 if (App::backend()->mymeta->dcmeta->updateMeta($value, $new_value, App::backend()->mymetaEntry->id)) {
                     Notices::addSuccessNotice(sprintf(
-                        __('Mymeta value successfully updated from "%s" to "%s"'),
+                        __('Metadata value successfully updated from "%s" to "%s"'),
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
                     ));
@@ -195,8 +201,7 @@ class ManageViewPosts extends Process
         # --BEHAVIOR-- adminPostsActionsCombo
         App::behavior()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
-        $head = My::cssLoad('style.css') .
-        Page::jsLoad('js/_posts_list.js') .
+        $head = Page::jsLoad('js/_posts_list.js') .
         Page::jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
         My::jsLoad('mymeta.js') .
         Page::jsPageTabs('mymeta') .
@@ -215,29 +220,39 @@ class ManageViewPosts extends Process
         echo Notices::getNotices();
 
         // Form
-        echo '<h4>' . sprintf(__('Entries having meta id "%s" set to "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value)) . '</h4>';
+        echo (new Text('h3', sprintf(__('Entries having metadata id "%s" set to "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value))))->render();
+
         // Show posts
-        if ($post_list instanceof \Dotclear\Core\Backend\Listing\ListingPosts) {
+        if ($post_list instanceof ListingPosts) {
             $post_list->display(
                 $page,
                 $nb_per_page,
-                '<form action="' . App::backend()->getPageURL() . '" method="post" id="form-entries">' .
-
-                '%s' .
-
-                '<div class="two-cols">' .
-                '<p class="col checkboxes-helpers"></p>' .
-
-                '<p class="col right"><label for="action" class="classic">' . __('Selected entries action:') . '</label> ' .
-                form::combo('action', App::backend()->posts_actions_page->getCombo()) .
-                '<input type="submit" value="' . __('ok') . '"></p>' .
-                My::parsedHiddenFields([
-                    'post_type' => '',
-                    'm'         => 'serie_posts',
-                    'id'        => App::backend()->mymetaEntry->id,
-                ]) .
-                '</div>' .
-                '</form>'
+                (new Form('form-entries'))
+                    ->method('post')
+                    ->action(App::backend()->getPageURL())
+                    ->fields([
+                        (new Text(null, '%s')),  // Post list comes here
+                        (new Div())
+                            ->class('two-cols')
+                            ->items([
+                                (new Para())
+                                    ->class(['col', 'checkboxes-helpers']),
+                                (new Para())
+                                    ->class(['col', 'right', 'form-buttons'])
+                                    ->items([
+                                        (new Select('action'))
+                                            ->items(App::backend()->posts_actions_page->getCombo())
+                                            ->label(new Label(__('Selected entries action:'), Label::IL_TF)),
+                                        (new Submit('form-entries-submit', __('ok'))),
+                                        ... My::hiddenFields([
+                                            'post_type' => '',
+                                            'm'         => 'serie_posts',
+                                            'id'        => App::backend()->mymetaEntry->id,
+                                        ]),
+                                    ]),
+                            ]),
+                    ])
+                ->render()
             );
         }
 
@@ -245,24 +260,43 @@ class ManageViewPosts extends Process
         if (!$posts->isEmpty() && App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            echo
-            '<form id="tag_delete" action="' . $this_url . '" method="post">' .
-            '<p><input type="submit" name="delete" value="' . __('Delete this tag') . '">' .
-            My::parsedHiddenFields() .
-            '</p>' .
-            '</form>';
+            echo (new Form('tag_delete'))
+                ->method('post')
+                ->action($this_url)
+                ->fields([
+                    (new Para())
+                        ->class('form-buttons')
+                        ->items([
+                            (new Submit('delete', __('Delete this tag'))),
+                            ... My::hiddenFields(),
+                        ]),
+                ])
+            ->render();
         }
 
         if (!$posts->isEmpty()) {
-            echo
-            '<fieldset><legend>' . __('Change MyMeta value') . '</legend><form action="' . $this_url . '" method="post">' .
-            '<p class="info">' . __('This will change the meta value for all entries having this value') . '</p>' .
-            App::backend()->mymetaEntry->postShowForm(App::backend()->mymeta->dcmeta, null, Html::escapeHTML($value), true) .
-            '<p><input type="submit" name="rename" value="' . __('save') . '">' .
-            My::parsedHiddenFields([
-                'value' => Html::escapeHTML($value),
-            ]) .
-            '</p></form></fieldset>';
+            echo (new Form('tag_rename'))
+                ->method('post')
+                ->action($this_url)
+                ->fields([
+                    (new Fieldset())
+                        ->legend(new Legend(__('Change metadata value')))
+                        ->fields([
+                            (new Note())
+                                ->class('info')
+                                ->text(__('This will change the meta value for all entries having this value')),
+                            App::backend()->mymetaEntry->postForm(App::backend()->mymeta->dcmeta, null, Html::escapeHTML($value), true),
+                            (new Para())
+                                ->class('form-buttons')
+                                ->items([
+                                    (new Submit('rename', __('Save'))),
+                                    ... My::hiddenFields([
+                                        'value' => Html::escapeHTML($value),
+                                    ]),
+                                ]),
+                        ]),
+                ])
+            ->render();
         }
 
         Page::closeModule();

@@ -19,13 +19,22 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
+use Dotclear\Helper\Html\Form\Button;
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Radio;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Exception;
-use form;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class ManageEdit extends Process
 {
     /**
@@ -69,8 +78,9 @@ class ManageEdit extends Process
                 $mymetaEntry->adminUpdate($_POST);
                 App::backend()->mymeta->update($mymetaEntry);
                 App::backend()->mymeta->store();
+
                 Notices::addsuccessNotice(sprintf(
-                    __('MyMeta "%s" has been successfully updated'),
+                    __('Metadata "%s" has been successfully updated'),
                     Html::escapeHTML($mymetaid)
                 ));
                 My::redirect();
@@ -98,20 +108,20 @@ class ManageEdit extends Process
         $mymetaentry = null;
 
         if (array_key_exists('id', $_REQUEST)) {
-            $page_title  = __('Edit MyMeta');
             $mymetaid    = $_REQUEST['id'];
             $mymetaentry = App::backend()->mymeta->getByID($_REQUEST['id']);
             if ($mymetaentry == null) {
-                Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
+                Notices::addErrorNotice(__('Something went wrong while editing metadata'));
                 My::redirect();
                 exit;
             }
 
+            $page_title  = __('Edit metadata') . ' "' . $mymetaentry->prompt . '"';
             $mymeta_type = $mymetaentry->getMetaTypeId();
             $lock_id     = true;
         } elseif (!empty($_REQUEST['mymeta_type'])) {
             $mymeta_type = Html::escapeHTML($_REQUEST['mymeta_type']);
-            $page_title  = __('New MyMeta');
+            $page_title  = __('New metadata');
             $mymetaentry = App::backend()->mymeta->newMyMeta($mymeta_type);
             $mymetaid    = '';
             $lock_id     = false;
@@ -120,7 +130,7 @@ class ManageEdit extends Process
         $types      = App::backend()->mymeta->getTypesAsCombo();
         $type_label = array_search($mymeta_type, $types, true);
         if (!$type_label) {
-            Notices::addErrorNotice(__('Something went wrong while editing mymeta'));
+            Notices::addErrorNotice(__('Something went wrong while editing metadata'));
             My::redirect();
         }
 
@@ -135,77 +145,126 @@ class ManageEdit extends Process
                 $page_title                           => '',
             ]
         );
+
         echo Notices::getNotices();
 
         // Form
-        echo
-        '<form method="post" action="' . App::backend()->getPageURL() . '">' .
-        '<div class="fieldset">' .
-        '<h3>' . __('MyMeta definition') . '</h3>' .
-        '<p>' .
-        '<label class="required" for="mymeta_id">' . __('Identifier (as stored in meta_type in database):') . ' ' .
-        '</label>' .
-        form::field(['mymeta_id'], 20, 255, $mymetaid, '', '', $lock_id) .
-        '</p>' .
-        '<p>' .
-        '<label for="mymeta_prompt">' . __('Prompt') . ' : ' . '</label>' .
-        form::field(['mymeta_prompt'], 40, 255, $mymetaentry->prompt) .
-        '</p>' .
-        '<p>' .
-        '<em>' . sprintf(__('MyMeta type : %s'), __($mymeta_type)) . '</em>' .
-        '</p>' .
-        $mymetaentry->adminForm() .
-        '</div>' .
-        '<div class="fieldset">' .
-        '<h3>' . __('MyMeta URLs') . '</h3>';
 
-        $tpl_single = $mymetaentry->tpl_single;
-        $tpl_list   = $mymetaentry->tpl_list;
-
-        echo
-        '<p><label class="classic" for="enable_list">' .
-        form::checkbox(['enable_list'], 1, $mymetaentry->url_list_enabled) .
-        __('Enable MyMeta values list public page') . '</label></p>' .
-        '<p><label class="classic">' . __('List template file (leave empty for default mymetas.html)') . ' : </label>' .
-        form::field(['list_tpl'], 40, 255, empty($tpl_list) ? 'mymetas.html' : $tpl_list) .
-        '</p>' .
-        '<p><label class="classic" for="enable_single">' .
-        form::checkbox(['enable_single'], 1, $mymetaentry->url_single_enabled) .
-        __('Enable single mymeta value public page') .
-        '</label></p>' .
-        '<p><label class="classic">' . __('Single template file (leave empty for default mymeta.html)') . ' : </label>' .
-        form::field(['single_tpl'], 40, 255, empty($tpl_single) ? 'mymeta.html' : $tpl_single) .
-        '</p>';
-
-        echo
-        '</div><div class="fieldset"><h3>' . __('MyMeta restrictions') . '</h3>' .
-        '<p>';
-
-        echo '<label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'none', $mymetaentry->isRestrictionEnabled()) .
-        __('Display meta field for any post type') . '</label></p>';
-        echo '<p><label class="classic" for="mymeta_restrict">' . form::radio(['mymeta_restrict'], 'yes', !$mymetaentry->isRestrictionEnabled()) .
-        __('Restrict to the following post types :') . ' ';
-
-        $restrictions = $mymetaentry->getRestrictions();
-        echo form::field('mymeta_restricted_types', 40, 255, $restrictions ?: '') . '</label></p>';
-
-        echo
-        '</p></div><p><input type="hidden" name="p" value="mymeta">' .
-        '<input type="hidden" name="m" value="edit">';
-
+        $buttons = [];
         if ($lock_id) {
-            echo form::hidden(['mymeta_id'], $mymetaid);
+            // Disabled fields are not included in $_POST[] on submit, so keep their values
+            $buttons[] = (new Hidden(['mymeta_id'], $mymetaid));
+        }
+        if ($mymetaid !== '') {
+            $buttons[] = (new Button(['back'], __('Back')))
+                ->class(['go-back','reset','hidden-if-no-js']);
+        } else {
+            $buttons[] = (new Button(['back'], __('Cancel')))
+                ->class(['go-back','reset','hidden-if-no-js']);
         }
 
-        echo My::parsedHiddenFields([
-            'mymeta_enabled' => $mymetaentry->enabled,
-            'mymeta_type'    => $mymeta_type,
-        ]);
+        $tpl_single   = $mymetaentry->tpl_single ?: 'mymeta.html';
+        $tpl_list     = $mymetaentry->tpl_list ?: 'mymetas.html';
+        $restrictions = $mymetaentry->getRestrictions() ?: '';
 
-        echo
-        '<input type="submit" name="saveconfig" value="' . __('Save') . '">' .
-        '</p>' .
-        '</form>';
+        echo (new Form('meta-edit'))
+            ->method('post')
+            ->action(App::backend()->getPageURL())
+            ->fields([
+                (new Note())
+                    ->class('form-note')
+                    ->text(sprintf(__('Fields preceded by %s are mandatory.'), (new Text('span', '*'))->class('required')->render())),
+                (new Fieldset())
+                    ->legend(new Legend(__('Metadata definition')))
+                    ->fields([
+                        (new Para())
+                            ->items([
+                                (new Input('mymeta_id'))
+                                    ->size(20)
+                                    ->maxlength(255)
+                                    ->value($mymetaid)
+                                    ->disabled($lock_id)
+                                    ->label((new Label((new Text('span', '*'))->render() . __('Identifier (as stored in meta_type in database):'), Label::OL_TF))
+                                        ->class('required')),
+                            ]),
+                        (new Para())
+                            ->items([
+                                (new Input('mymeta_prompt'))
+                                    ->size(40)
+                                    ->maxlength(255)
+                                    ->default($mymetaentry->prompt)
+                                    ->label(new Label(__('Prompt') . ' : ', Label::OL_TF)),
+                            ]),
+                        (new Note())
+                            ->text(sprintf(__('Metadata type : %s'), __($mymeta_type))),
+                        (new Text(null, $mymetaentry->adminForm())),
+                    ]),
+                (new Fieldset())
+                    ->legend(new Legend(__('Metadata URLs')))
+                    ->fields([
+                        (new Para())
+                            ->items([
+                                (new Checkbox('enable_list', $mymetaentry->url_list_enabled))
+                                    ->value(1)
+                                    ->label(new Label(__('Enable metadata values list public page'), Label::IL_FT)),
+                            ]),
+                        (new Para())
+                            ->items([
+                                (new Input('list_tpl'))
+                                    ->size(40)
+                                    ->maxlength(255)
+                                    ->default($tpl_list)
+                                    ->label(new Label(__('List template file (leave empty for default mymetas.html)'), Label::OL_TF)),
+                            ]),
+                        (new Para())
+                            ->items([
+                                (new Checkbox('enable_single', $mymetaentry->url_single_enabled))
+                                    ->value(1)
+                                    ->label(new Label(__('Enable single metadata value public page'), Label::IL_FT)),
+                            ]),
+                        (new Para())
+                            ->items([
+                                (new Input('single_tpl'))
+                                    ->size(40)
+                                    ->maxlength(255)
+                                    ->default($tpl_single)
+                                    ->label(new Label(__('Single template file (leave empty for default mymeta.html)'), Label::OL_TF)),
+                            ]),
+                    ]),
+                (new Fieldset())
+                    ->legend(new Legend(__('Metadata restrictions')))
+                    ->fields([
+                        (new Para())
+                           ->items([
+                               (new Radio(['mymeta_restrict'], $mymetaentry->isRestrictionEnabled()))
+                                   ->value('none')
+                                   ->label(new Label(__('Display meta field for any post type'), Label::IL_FT)),
+                           ]),
+                        (new Para())
+                           ->items([
+                               (new Radio(['mymeta_restrict'], !$mymetaentry->isRestrictionEnabled()))
+                                    ->value('none')
+                                    ->label((new Label(__('Restrict to the following post types :') . ' ', Label::IL_FT))
+                                        ->class('classic')),
+                               (new Input('mymeta_restricted_types'))
+                                    ->size(40)
+                                    ->maxlength(255)
+                                    ->default($restrictions),
+                           ]),
+                    ]),
+                (new Para())
+                    ->class('form-buttons')
+                    ->items([
+                        ... My::hiddenFields([
+                            'mymeta_enabled' => $mymetaentry->enabled,
+                            'mymeta_type'    => $mymeta_type,
+                            'm'              => 'edit',
+                        ]),
+                        ... $buttons,
+                        (new Submit('saveconfig', __('Save'))),
+                    ]),
+            ])
+        ->render();
 
         Page::closeModule();
     }

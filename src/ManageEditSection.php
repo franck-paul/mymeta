@@ -19,13 +19,17 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
+use Dotclear\Helper\Html\Form\Button;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Exception;
-use form;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class ManageEditSection extends Process
 {
     /**
@@ -79,7 +83,6 @@ class ManageEditSection extends Process
         }
 
         if (array_key_exists('id', $_REQUEST)) {
-            $page_title    = __('Edit section');
             $mymetaid      = $_REQUEST['id'];
             $mymetasection = App::backend()->mymeta->getByID($_REQUEST['id']);
             if (!($mymetasection instanceof MyMetaSection)) {
@@ -93,7 +96,8 @@ class ManageEditSection extends Process
             exit;
         }
 
-        $head = Page::jsPageTabs('mymeta');
+        $page_title = __('Edit section') . ' ' . $mymetasection->prompt;
+        $head       = Page::jsPageTabs('mymeta');
 
         Page::openModule(My::name(), $head);
 
@@ -107,25 +111,35 @@ class ManageEditSection extends Process
         echo Notices::getNotices();
 
         // Form
-        echo
-        '<form method="post" action="' . App::backend()->getPageURL() . '">' .
-        '<div class="fieldset">' .
-        '<h3>' . __('MyMeta section definition') . '</h3>' .
-        '<p>' .
-        '<label class="required">' . __('Title') . ' ' .
-        form::field('mymeta_prompt', 20, 255, $mymetasection->prompt, '', '') .
-        '</label>' .
-        '</p>' .
-        '</div>' .
-        '<p>' .
-        '<input type="hidden" name="p" value="mymeta">' .
-        '<input type="hidden" name="m" value="editsection">' .
-        My::parsedHiddenFields([
-            'mymeta_id' => $mymetaid,
-        ]) .
-        '<input type="submit" name="saveconfig" value="' . __('Save') . '">' .
-        '</p>' .
-        '</form>';
+        echo (new Form('section_edit'))
+            ->method('post')
+            ->action(App::backend()->getPageURL())
+            ->fields([
+                (new Note())
+                    ->class('form-note')
+                    ->text(sprintf(__('Fields preceded by %s are mandatory.'), (new Text('span', '*'))->class('required')->render())),
+                (new Para())
+                    ->items([
+                        (new Input('mymeta_prompt'))
+                            ->size(20)
+                            ->maxlength(255)
+                            ->default($mymetasection->prompt)
+                            ->label((new Label((new Text('span', '*'))->render() . __('Title:'), Label::IL_TF))
+                                ->class('required')),
+                    ]),
+                (new Para())
+                    ->class('form-buttons')
+                    ->items([
+                        (new Submit('saveconfig', __('Save'))),
+                        ... My::hiddenFields([
+                            'm'        => 'editsection',
+                            'mymetaid' => $mymetaid,
+                        ]),
+                        (new Button(['back'], __('Back')))
+                            ->class(['go-back','reset','hidden-if-no-js']),
+                    ]),
+            ])
+        ->render();
 
         Page::closeModule();
     }

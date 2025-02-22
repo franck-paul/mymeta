@@ -19,13 +19,28 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Core\Process;
+use Dotclear\Helper\Html\Form\Caption;
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Img;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Set;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Table;
+use Dotclear\Helper\Html\Form\Tbody;
+use Dotclear\Helper\Html\Form\Td;
+use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Th;
+use Dotclear\Helper\Html\Form\Thead;
+use Dotclear\Helper\Html\Form\Tr;
 use Dotclear\Helper\Html\Html;
 use Exception;
-use form;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class Manage extends Process
 {
     /**
@@ -125,11 +140,11 @@ class Manage extends Process
                 if (preg_match('/^(enable|disable)$/', $action)) {
                     App::backend()->mymeta->setEnabled($entries, ($action === 'enable'));
                     $msg = ($action === 'enable') ?
-                        __('Mymeta entries have been successfully enabled')
-                        : __('Mymeta entries have been successfully disabled');
+                        __('Metadata entries have been successfully enabled')
+                        : __('Metadata entries have been successfully disabled');
                 } elseif (preg_match('/^(delete)$/', $action)) {
                     App::backend()->mymeta->delete($entries);
-                    $msg = __('Mymeta entries have been successfully deleted');
+                    $msg = __('Metadata entries have been successfully deleted');
                 }
 
                 App::backend()->mymeta->store();
@@ -178,7 +193,7 @@ class Manage extends Process
                 App::backend()->mymeta->reorder($order);
                 App::backend()->mymeta->store();
 
-                Notices::addSuccessNotice(__('Mymeta have been successfully reordered'));
+                Notices::addSuccessNotice(__('Metadata have been successfully reordered'));
                 My::redirect();
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
@@ -228,6 +243,15 @@ class Manage extends Process
         $combo_action[__('disable')] = 'disable';
         $combo_action[__('delete')]  = 'delete';
 
+        $metaStat = App::backend()->mymeta->getMyMetaStats();
+        $stats    = [];
+        while ($metaStat->fetch()) {
+            $stats[$metaStat->meta_type] = $metaStat->count;
+        }
+        $all_metadata = App::backend()->mymeta->getAll();
+
+        // Head
+
         $head = Page::jsLoad('js/jquery/jquery-ui.custom.js') .
         Page::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
         My::jsLoad('_meta_lists.js');
@@ -243,148 +267,233 @@ class Manage extends Process
         echo Notices::getNotices();
 
         // Form
-        echo
-        '<p class="top-add"><a class="button add" href="#new-meta">' . __('Add a metadata') . '</a></p>';
+        $metadata = function ($metadatas, $stats) {
+            foreach ($metadatas as $meta) {
+                if ($meta instanceof MyMetaSection) {
+                    // Section
+                    $pos = $meta->pos ?? 0;
 
-        echo
-        '<h3>' . __('MyMeta list') . '</h3>';
-
-        echo
-        '<form action="' . App::backend()->getPageURL() . '" method="post" id="mymeta-form">' .
-        '<table class="dragable">' .
-        '<thead>' .
-        '<tr>' .
-        '<th colspan="4">' . __('ID') . '</th>' .
-        '<th>' . __('Type') . '</th>' .
-        '<th>' . __('Prompt') . '</th>' .
-        '<th>' . __('Posts') . '</th>' .
-        '<th>' . __('Count') . '</th>' .
-        '<th colspan="2">' . __('Status') . '</th>' .
-        '</tr>' .
-        '</thead>' .
-        '<tbody id="mymeta-list">';
-
-        $metaStat = App::backend()->mymeta->getMyMetaStats();
-        $stats    = [];
-        while ($metaStat->fetch()) {
-            $stats[$metaStat->meta_type] = $metaStat->count;
-        }
-
-        $allMeta = App::backend()->mymeta->getAll();
-        foreach ($allMeta as $meta) {
-            if ($meta instanceof MyMetaSection) {
-                $pos = $meta->pos ?? 0;
-                echo
-                '<tr class="line" id="l_' . $meta->id . '">' .
-                 '<td class="handle minimal">' .
-                form::field(['order[' . $meta->id . ']'], 2, 5, $pos, 'position') . '</td>' .
-                '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
-                    'm'  => 'editsection',
-                    'id' => $meta->id,
-                ], '&') . '">' .
-                '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '"></a></td>' .
-                '<td class="nowrap maximal" colspan="6">' .
-                '<strong>' . sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)) . '</strong></td>' .
-                '</tr>';
-            } else {
-                $img = '<img alt="%1$s" title="%1$s" class="mark mark-%3$s" src="images/%2$s">';
-                if ($meta->enabled) {
-                    $img_status = sprintf($img, __('published'), 'published.svg', 'published');
+                    yield (new Tr('l_' . $meta->id))
+                        ->class('line')
+                        ->cols([
+                            (new Td())
+                                ->class(['handle', 'minimal'])
+                                ->items([
+                                    (new Input(['order[' . $meta->id . ']']))
+                                        ->class('position')
+                                        ->size(2)
+                                        ->maxlength(255)
+                                        ->value($pos),
+                                ]),
+                            (new Td())
+                                ->class('minimal')
+                                ->items([
+                                    (new Checkbox(['entries[]']))
+                                        ->value($meta->id),
+                                ]),
+                            (new Td())
+                                ->class(['nowrap', 'minimal', 'status'])
+                                ->items([
+                                    (new Link())
+                                        ->href(App::backend()->url()->get('admin.plugin.' . My::id(), [
+                                            'm'  => 'editsection',
+                                            'id' => $meta->id,
+                                        ], '&'))
+                                        ->items([
+                                            (new Img('images/menu/edit.svg'))
+                                                ->class('icon-mini')
+                                                ->alt(__('edit metadata')),
+                                        ]),
+                                ]),
+                            (new Td())
+                                ->class(['nowrap', 'maximal'])
+                                ->colspan(6)
+                                ->items([
+                                    (new Text('strong', sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)))),
+                                ]),
+                        ]);
                 } else {
-                    $img_status = sprintf($img, __('unpublished'), 'unpublished.svg', 'unpublished');
-                }
+                    // Metadata
+                    $image = fn ($src, $label, $class) => (new Img('images/' . $src))
+                        ->class(['mark', 'mark-' . $class])
+                        ->alt($label)
+                        ->title($label);
+                    $image_status = $meta->enabled ?
+                    $image('published.svg', __('published'), 'published') :
+                    $image('unpublished.svg', __('unpublished'), 'unpublished');
 
-                $st           = $stats[$meta->id] ?? 0;
-                $restrictions = $meta->getRestrictions();
-                if (!$restrictions) {
-                    $restrictions = __('All');
-                }
+                    $st           = $stats[$meta->id] ?? 0;
+                    $restrictions = $meta->getRestrictions();
+                    if (!$restrictions) {
+                        $restrictions = __('All');
+                    }
 
-                echo
-                '<tr class="line' . ($meta->enabled ? '' : ' offline') . '" id="l_' . $meta->id . '">' .
-                 '<td class="handle minimal">' .
-                form::field(['order[' . $meta->id . ']'], 2, 5, $meta->pos, 'position') . '</td>' .
-                '<td class="minimal">' . form::checkbox(['entries[]'], $meta->id) . '</td>' .
-                '<td class="nowrap minimal status"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
-                    'm'  => 'edit',
-                    'id' => $meta->id,
-                ], '&') . '">' .
-                '<img src="images/menu/edit.svg" class="icon-mini" alt="' . __('edit MyMeta') . '"></a></td>' .
-                '<td class="nowrap"><a href="' . App::backend()->url()->get('admin.plugin.' . My::id(), [
-                    'm'  => 'view',
-                    'id' => $meta->id,
-                ], '&') . '">' .
-                Html::escapeHTML($meta->id) . '</a></td>' .
-                '<td class="nowrap">' . $meta->getMetaTypeDesc() . '</td>' .
-                '<td class="nowrap maximal">' . $meta->prompt . '</td>' .
-                '<td>' . $restrictions . '</td><td class="nowrap">' .
-                $st . ' ' . (($st <= 1) ? __('entry') : __('entries')) . '</td>' .
-                '<td class="nowrap minimal">' . $img_status . '</td>' .
-                '</tr>';
+                    yield (new Tr('l_' . $meta->id))
+                        ->class(['line', $meta->enabled ? '' : 'offline'])
+                        ->cols([
+                            (new Td())
+                                ->class(['handle', 'minimal'])
+                                ->items([
+                                    (new Input(['order[' . $meta->id . ']']))
+                                        ->class('position')
+                                        ->size(2)
+                                        ->maxlength(255)
+                                        ->value($meta->pos),
+                                ]),
+                            (new Td())
+                                ->class('minimal')
+                                ->items([
+                                    (new Checkbox(['entries[]']))
+                                        ->value($meta->id),
+                                ]),
+                            (new Td())
+                                ->class(['nowrap', 'minimal', 'status'])
+                                ->items([
+                                    (new Link())
+                                        ->href(App::backend()->url()->get('admin.plugin.' . My::id(), [
+                                            'm'  => 'edit',
+                                            'id' => $meta->id,
+                                        ], '&'))
+                                        ->items([
+                                            (new Img('images/menu/edit.svg'))
+                                                ->class('icon-mini')
+                                                ->alt(__('edit metadata')),
+                                        ]),
+                                ]),
+                            (new Td())
+                                ->class('nowrap')
+                                ->items([
+                                    (new Link())
+                                        ->href(App::backend()->url()->get('admin.plugin.' . My::id(), [
+                                            'm'  => 'view',
+                                            'id' => $meta->id,
+                                        ], '&'))
+                                        ->text(Html::escapeHTML($meta->id)),
+                                ]),
+                            (new Td())
+                                ->class('nowrap')
+                                ->text($meta->getMetaTypeDesc()),
+                            (new Td())
+                                ->class(['nowrap', 'maximal'])
+                                ->text($meta->prompt),
+                            (new Td())
+                                ->text($restrictions),
+                            (new Td())
+                                ->class('nowrap')
+                                ->text($st . ' ' . (($st <= 1) ? __('entry') : __('entries'))),
+                            (new Td())
+                                ->class(['nowrap', 'minimal'])
+                                ->items([
+                                    $image_status,
+                                ]),
+                        ]);
+                }
             }
-        }
+        };
 
-        echo
-        '</tbody></table><div class="two-cols">';
-
-        echo
-        '<p class="col checkboxes-helpers"></p>';
-
-        echo
-        '<p class="col right">';
-
-        echo
-        __('Selected metas action:') . ' ' .
-        form::combo('action', $combo_action);
-
-        echo
-        '<input type="submit" value="' . __('ok') . '">' .
-        '</p>';
-
-        echo
-        '<p>';
-
-        echo My::parsedHiddenFields([
-            'mymeta_order' => '',
-            'p'            => 'mymeta',
-        ]);
-
-        echo
-        '<input type="submit" name="saveorder" value="' . __('Save order') . '">' .
-        '</p>';
-
-        echo
-        '</div>' .
-        '</form>';
-
-        echo
-        '<div class="fieldset clear">' .
-        '<form method="post" action="' . App::backend()->getPageURL() . '">';
-
-        echo
-        '<h3 id="new-meta">' . __('New metadata') . '</h3>' .
-        '<p>' . __('New MyMeta') . ' : ' .
-        form::combo('mymeta_type', $types, '') .
-        '&nbsp;<input type="submit" name="new" value="' . __('Create MyMeta') . '">' .
-        My::parsedHiddenFields([
-            'p' => 'mymeta',
-            'm' => 'edit',
-        ]) .
-        '</p>' .
-        '</form>';
-
-        echo
-        '<form method="post" action="' . App::backend()->getPageURL() . '">' .
-        '<p>' . __('New section') . ' : ' .
-        form::field('mymeta_section', 20, 255) .
-        '&nbsp;<input type="submit" name="newsep" value="' . __('Create section') . '">' .
-        My::parsedHiddenFields([
-            'p' => 'mymeta',
-        ]) .
-        '</p>' .
-        '</form>' .
-        '</div>';
+        echo (new Set())
+            ->items([
+                (new Para())
+                    ->class('top-add')
+                    ->items([
+                        (new Link())
+                            ->href('#new-meta')
+                            ->class(['button', 'add'])
+                            ->text(__('Add a metadata')),
+                    ]),
+                (new Form('mymeta-form'))
+                    ->method('post')
+                    ->action(App::backend()->getPageURL())
+                    ->fields([
+                        (new Table())
+                            ->class('dragable')
+                            ->caption(new Caption(__('Metadata list')))
+                            ->thead((new Thead())
+                                ->rows([
+                                    (new Tr())
+                                        ->cols([
+                                            (new Th())
+                                                ->colspan(4)
+                                                ->text(__('ID')),
+                                            (new Th())
+                                                ->text(__('Type')),
+                                            (new Th())
+                                                ->text(__('Prompt')),
+                                            (new Th())
+                                                ->text(__('Posts')),
+                                            (new Th())
+                                                ->text(__('Count')),
+                                            (new Th())
+                                                ->colspan(2)
+                                                ->text(__('Status')),
+                                        ]),
+                                ]))
+                            ->tbody((new Tbody('mymeta-list'))
+                                ->rows([
+                                    ... $metadata($all_metadata, $stats),
+                                ])),
+                        (new Div())
+                            ->class('two-cols')
+                            ->items([
+                                (new Para())
+                                    ->class(['col', 'checkboxes-helpers']),
+                                (new Para())
+                                    ->class(['col', 'right', 'form-buttons'])
+                                    ->items([
+                                        (new Select('action'))
+                                            ->items($combo_action)
+                                            ->label(new Label(__('Selected metas action:'), Label::IL_TF)),
+                                        (new Submit('action_submit', __('ok'))),
+                                    ]),
+                                (new Para())
+                                    ->items([
+                                        (new Submit('saveorder', __('Save order'))),
+                                        ... My::hiddenFields([
+                                            'mymeta_order' => '',
+                                        ]),
+                                    ]),
+                            ]),
+                    ]),
+                (new Div('new-meta'))
+                    ->class(['fieldset', 'clear'])
+                    ->items([
+                        (new Text('h3', __('New metadata'))),
+                        (new Form('new_form'))
+                            ->method('post')
+                            ->action(App::backend()->getPageURL())
+                            ->fields([
+                                (new Para())
+                                    ->class('field')
+                                    ->items([
+                                        (new Select('mymeta_type'))
+                                            ->items($types)
+                                            ->label((new Label(__('New metadata:'), Label::IL_TF))
+                                                ->class('classic')),
+                                        (new Submit('new', __('Create the metadata'))),
+                                        ... My::hiddenFields([
+                                            'm' => 'edit',
+                                        ]),
+                                    ]),
+                            ]),
+                        (new Form('newsep_form'))
+                            ->method('post')
+                            ->action(App::backend()->getPageURL())
+                            ->fields([
+                                (new Para())
+                                    ->class('field')
+                                    ->items([
+                                        (new Input('mymeta_section'))
+                                            ->size(20)
+                                            ->maxlength(255)
+                                            ->label((new Label(__('New section:'), Label::IL_TF))
+                                                ->class('classic')),
+                                        (new Submit('newsep', __('Create the section'))),
+                                        ... My::hiddenFields(),
+                                    ]),
+                            ]),
+                    ]),
+            ])
+        ->render();
 
         Page::closeModule();
     }

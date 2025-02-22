@@ -18,47 +18,68 @@ namespace Dotclear\Plugin\mymeta;
 use Dotclear\App;
 use Dotclear\Core\Backend\Listing\Listing;
 use Dotclear\Core\Backend\Listing\Pager;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Table;
+use Dotclear\Helper\Html\Form\Tbody;
+use Dotclear\Helper\Html\Form\Td;
+use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Th;
+use Dotclear\Helper\Html\Form\Thead;
+use Dotclear\Helper\Html\Form\Tr;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class BackendList extends Listing
 {
-    public function display(int $page, int $nb_per_page, string $enclose_block = ''): void
+    public function display(int $page, int $nb_per_page, string $enclose_block = '%s'): void
     {
         if ($this->rs->isEmpty()) {
-            echo '<p><strong>' . __('No entries found') . '</strong></p>';
-        } else {
-            $pager = new Pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page);
+            echo (new Para())
+                ->items([
+                    (new Text('strong', __('No entries found'))),
+                ])
+            ->render();
 
-            $html_block = '<table class="clear"><tr><th>' . __('Value') . '</th>' .
-            '<th>' . __('Nb Posts') . '</th>' .
-            '</tr>%s</table>';
-
-            if ($enclose_block !== '' && $enclose_block !== '0') {
-                $html_block = sprintf($enclose_block, $html_block);
-            }
-
-            echo $pager->getLinks();
-
-            $blocks = explode('%s', $html_block);
-
-            echo $blocks[0];
-            while ($this->rs->fetch()) {
-                echo $this->postLine();
-            }
-
-            echo $blocks[1];
-
-            echo $pager->getLinks();
+            return;
         }
-    }
 
-    private function postLine(): string
-    {
-        return
-        '<tr class="line"><td class="nowrap"><a href="' . App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($this->rs->meta_id) . '">' . App::backend()->mymetaEntry->displayValue($this->rs->meta_id) . '</a></td>' .
-        '<td class="nowrap">' . $this->rs->count . ' ' . (($this->rs->count <= 1) ? __('entry') : __('entries')) . '</td>' .
-        '</tr>';
+        $pager  = (new Pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page))->getLinks();
+        $values = function ($rs) {
+            while ($rs->fetch()) {
+                yield (new Tr())
+                    ->class('line')
+                    ->cols([
+                        (new Td())
+                            ->class('nowrap')
+                            ->items([
+                                (new Link())
+                                    ->href(App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($rs->meta_id))
+                                    ->text(App::backend()->mymetaEntry->displayValue($rs->meta_id)),
+                            ]),
+                        (new Td())
+                            ->class('nowrap')
+                            ->text($rs->count . ' ' . ($rs->count <= 1 ? __('entry') : __('entries'))),
+                    ]);
+            }
+        };
+        $buffer = (new Table())
+            ->class('clear')
+            ->thead((new Thead())
+                ->rows([
+                    (new Th())
+                        ->text(__('Value')),
+                    (new Th())
+                        ->text(__('Nb Posts')),
+                ]))
+            ->tbody((new Tbody())
+                ->rows([
+                    ... $values($this->rs),
+                ]))
+        ->render();
+
+        if ($enclose_block !== '') {
+            $buffer = sprintf($enclose_block, $buffer);
+        }
+
+        echo $pager . $buffer . $pager;
     }
 }

@@ -21,12 +21,12 @@ use Dotclear\Core\Backend\Action\ActionsPosts;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Submit;
 use Dotclear\Helper\Html\Html;
-use form;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class BackendBehaviors
 {
     public static function mymetaPostHeader(?MetaRecord $post): string
@@ -46,7 +46,7 @@ class BackendBehaviors
     {
         $mymeta = new MyMeta();
         if ($mymeta->hasMeta()) {
-            echo $mymeta->postShowForm($post);
+            echo $mymeta->postForm($post)->render();
         }
 
         return '';
@@ -63,7 +63,7 @@ class BackendBehaviors
     public static function adminPostsActions(ActionsPosts $ap): string
     {
         $ap->addAction(
-            [__('MyMeta') => [__('Set MyMeta') => 'mymeta_set']],
+            [__('Metadata') => [__('Set metadata') => 'mymeta_set']],
             static::adminSetMyMeta(...)
         );
 
@@ -96,24 +96,29 @@ class BackendBehaviors
                     [
                         Html::escapeHTML(App::blog()->name()) => '',
                         __('Entries')                         => $ap->getRedirection(true),
-                        __('Set MyMeta')                      => '',
+                        __('Set metadata')                    => '',
                     ]
                 ),
                 $head
             );
 
-            echo
-            '<form action="' . $ap->getURI() . '" method="post">' .
-            $ap->getCheckboxes() .
-
-            $mymeta->postShowForm(null) .
-            App::nonce()->getFormNonce() .
-            $ap->getHiddenFields() .
-            form::hidden(['action'], 'mymeta_set') .
-            form::hidden(['mymeta_ok'], '1') . '</p>' .
-            '</p>' .
-            '<p><input type="submit" value="' . __('save') . '" name="set_mymeta">' .
-            '</form>';
+            echo (new Form('mymeta_form'))
+                ->method('post')
+                ->action($ap->getURI())
+                ->fields([
+                    $ap->checkboxes(),
+                    $mymeta->postForm(null),
+                    (new Para())
+                        ->class('form-buttons')
+                        ->items([
+                            App::nonce()->formNonce(),
+                            ... $ap->hiddenFields(),
+                            (new Hidden(['action', 'mymeta_set'])),
+                            (new Hidden(['mymeta_ok', '1'])),
+                            (new Submit('set_mymeta', __('Save'))),
+                        ]),
+                ])
+            ->render();
 
             $ap->endPage();
         }

@@ -1,0 +1,27 @@
+{{tpl:extends parent="__layout.html"}}
+<tpl:Block name="head-title">
+  <title>{{tpl:lang Metadata}} - {{tpl:BlogName encode_html="1"}}</title>
+</tpl:Block>
+<tpl:Block name="meta-robots">
+  <meta name="ROBOTS" content="{{tpl:BlogMetaRobots robots="NOINDEX"}}">
+</tpl:Block>
+<tpl:Block name="head-linkrel">
+  <link rel="contents" href="{{tpl:BlogArchiveURL}}" title="{{tpl:lang Archives}}">
+  <link rel="meta" type="application/xbel+xml" title="Blogroll" href="{{tpl:BlogrollXbelLink}}">
+</tpl:Block>
+<tpl:Block name="body-tag">
+
+  <body class="dc-tags">
+</tpl:Block>
+<tpl:Block name="main-content">
+  <div id="content-info">
+    <h2>{{tpl:lang Entries by}} {{tpl:MyMetaTypePrompt}}</h2>
+  </div>
+  <div class="content-inner">
+    <ul class="tags">
+      <tpl:MyMetaData>
+        <li><a href="{{tpl:MyMetaURL}}" class="tag{{tpl:MetaRoundPercent}}">{{tpl:MyMetaValue key="1"}}</a></li>
+      </tpl:MyMetaData>
+    </ul>
+  </div>
+</tpl:Block>

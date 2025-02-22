@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -31,16 +32,6 @@ class Prepend extends Process
         }
 
         App::url()->register('mymeta', 'meta', '^meta/(.+)$', FrontendUrl::tag(...));
-
-        MyMeta::registerType(MyMetaString::class);
-        MyMeta::registerType(MyMetaList::class);
-        MyMeta::registerType(MyMetaCheck::class);
-        MyMeta::registerType(MyMetaDate::class);
-
-        class_alias(MyMetaString::class, 'mmString');
-        class_alias(MyMetaList::class, 'mmList');
-        class_alias(MyMetaCheck::class, 'mmCheck');
-        class_alias(MyMetaDate::class, 'mmDate');
 
         return true;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief mymeta, a plugin for Dotclear 2
  *
@@ -14,8 +15,11 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\mymeta;
 
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Component;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Interface\Core\MetaInterface;
-use form;
 
 // Checkbox meta type
 class MyMetaCheck extends MyMetaField
@@ -30,27 +34,38 @@ class MyMetaCheck extends MyMetaField
         return __('Checkbox');
     }
 
-    protected function postShowField(string $id, string $value): string
+    /**
+     * formField
+     *
+     * get inputable mymeta field (usually a textfield, here a checkbox)
+     *
+     * @param string    $id     mymeta id
+     * @param string    $value  current mymeta value
+     * @param string    $label  field label
+     */
+    protected function formField(string $id, string $value, string $label): Component
     {
-        return form::checkbox($id, 1, $value);
+        return (new Checkbox($id, (bool) $value))
+            ->value(1)
+            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
     }
 
     /**
      * Sets the post meta.
      *
-     * @param      MetaInterface            $dcmeta         The dcmeta
-     * @param      int                      $post_id        The post identifier
-     * @param      array<string, string>    $post           The post
-     * @param      bool                     $deleteIfEmpty  The delete if empty
+     * @param      MetaInterface            $meta             The Meta instance
+     * @param      int                      $post_id          The post identifier
+     * @param      array<string, string>    $post             The post
+     * @param      bool                     $delete_if_empty  The delete if empty
      */
-    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $deleteIfEmpty = true): void
+    public function setPostMeta(MetaInterface $meta, int $post_id, array $post, bool $delete_if_empty = true): void
     {
-        if (!empty($post['mymeta_' . $this->id]) || $deleteIfEmpty) {
-            $dcmeta->delPostMeta($post_id, $this->id);
+        if (!empty($post['mymeta_' . $this->id]) || $delete_if_empty) {
+            $meta->delPostMeta($post_id, $this->id);
         }
 
         if (!empty($post['mymeta_' . $this->id])) {
-            $dcmeta->setPostMeta($post_id, $this->id, '1');
+            $meta->setPostMeta($post_id, $this->id, '1');
         }
     }
 

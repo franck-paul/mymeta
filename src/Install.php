@@ -53,7 +53,7 @@ class Install extends Process
             $mymeta = new MyMeta(true);
             foreach ($fields as $k => $v) {
                 $newfield = $mymeta->newMyMeta($v->type);
-                if ($newfield instanceof \Dotclear\Plugin\mymeta\MyMetaField) {
+                if ($newfield instanceof MyMetaField) {
                     $newfield->id      = (string) $k;
                     $newfield->enabled = $v->enabled;
                     $newfield->prompt  = $v->prompt;
