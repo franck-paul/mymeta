@@ -3,16 +3,16 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Franck Paul <carnet.franck.paul@gmail.com>, 2023
+# Franck Paul <carnet.franck.paul@gmail.com>, 2025
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-15 10:57+0200\n"
+"POT-Creation-Date: 2025-02-22 11:10+0100\n"
 "PO-Revision-Date: 2023-06-15 09:00+0000\n"
-"Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>, 2023\n"
+"Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>, 2025\n"
 "Language-Team: French (https://app.transifex.com/open-time/teams/109573/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,11 +26,11 @@ msgstr "Entrées pour"
 msgid "Metadata"
 msgstr "Métadonnées"
 
-msgid "This metadata's comments RSS feed"
-msgstr "flux RSS des commentaires pour cette valeur de métadonnée"
+msgid "This metadata's comments Atom feed"
+msgstr "Flux Atom des commentaires de cette métadonnée "
 
-msgid "This metadata's entries RSS feed"
-msgstr "flux RSS des billets pour cette valeur de métadonnée"
+msgid "This metadata's entries Atom feed"
+msgstr "Flux Atom des billets de cette métadonnée "
 
 msgid "My Meta"
 msgstr "Métadonnées personnalisées"
@@ -38,20 +38,14 @@ msgstr "Métadonnées personnalisées"
 msgid "User-defined metadata management in posts"
 msgstr "Métadonnées personnalisées pour les billets"
 
-msgid "My Metadata"
-msgstr "Mes métadonnées"
-
-msgid "MyMeta"
-msgstr "Métadonnées"
-
-msgid "Set MyMeta"
-msgstr "Définir les valeurs des métadonnées"
-
-msgid "Set Metadata"
+msgid "Set metadata"
 msgstr "Définir les métadonnées"
 
-msgid "save"
-msgstr "enregistrer"
+msgid "Entries"
+msgstr "Entrées"
+
+msgid "Save"
+msgstr "Enregistrer"
 
 msgid "No entries found"
 msgstr "Pas de billet trouvé"
@@ -59,20 +53,20 @@ msgstr "Pas de billet trouvé"
 msgid "Nb Posts"
 msgstr "Nombre de billets"
 
-msgid "Mymeta entries have been successfully enabled"
-msgstr "Les métadonnées ont été activées"
+msgid "Metadata entries have been successfully enabled"
+msgstr "Les métadonnées sélectionnées ont été activées avec succès"
 
-msgid "Mymeta entries have been successfully disabled"
-msgstr "Les métadonnées ont été désactivées"
+msgid "Metadata entries have been successfully disabled"
+msgstr "Les métadonnées sélectionnées ont été désactivées avec succès"
 
-msgid "Mymeta entries have been successfully deleted"
-msgstr "Les métadonnées ont été supprimées"
+msgid "Metadata entries have been successfully deleted"
+msgstr "Les métadonnées sélectionnées ont été supprimées avec succès"
 
 #, php-format
 msgid "Section \"%s\" has been successfully created"
 msgstr "La section \"%s\" a été mise à jour avec succès"
 
-msgid "Mymeta have been successfully reordered"
+msgid "Metadata have been successfully reordered"
 msgstr "Les métadonnées ont été réordonnées avec succès"
 
 msgid "enable"
@@ -84,11 +78,30 @@ msgstr "désactiver"
 msgid "delete"
 msgstr "supprimer"
 
+msgid "My Metadata"
+msgstr "Mes métadonnées"
+
+msgid "edit metadata"
+msgstr "éditer la métadonnée"
+
+#, php-format
+msgid "Section: %s"
+msgstr "Section : %s"
+
+msgid "published"
+msgstr "publié"
+
+msgid "unpublished"
+msgstr "non publié"
+
+msgid "All"
+msgstr "Tous"
+
 msgid "Add a metadata"
 msgstr "Ajouter une métadonnée"
 
-msgid "MyMeta list"
-msgstr "Liste de métadonnées"
+msgid "Metadata list"
+msgstr "Liste des métadonnées"
 
 msgid "ID"
 msgstr "Identifiant"
@@ -108,60 +121,51 @@ msgstr "Compteur"
 msgid "Status"
 msgstr "Statut"
 
-msgid "edit MyMeta"
-msgstr "Editer la métadonnée"
-
-#, php-format
-msgid "Section: %s"
-msgstr "Section : %s"
-
-msgid "published"
-msgstr "publié"
-
-msgid "unpublished"
-msgstr "non publié"
-
-msgid "All"
-msgstr "Tous"
-
-msgid "Save order"
-msgstr "Enregistrer l'ordre"
-
 msgid "Selected metas action:"
 msgstr "Action sur les métadonnées sélectionnées :"
 
 msgid "ok"
 msgstr "ok"
 
+msgid "Save order"
+msgstr "Enregistrer l'ordre"
+
 msgid "New metadata"
 msgstr "Nouvelle métadonnée"
 
-msgid "New MyMeta"
-msgstr "Nouvelle métadonnée"
+msgid "New metadata:"
+msgstr "Nouvelle métadonnée :"
 
-msgid "Create MyMeta"
-msgstr "Créer une métadonnée"
+msgid "Create the metadata"
+msgstr "Créer la métadonnée"
 
-msgid "New section"
-msgstr "Nouvelle section"
+msgid "New section:"
+msgstr "Nouvelle section :"
 
-msgid "Create section"
+msgid "Create the section"
 msgstr "Créer la section"
 
 #, php-format
-msgid "MyMeta \"%s\" has been successfully updated"
-msgstr "La métadonnée \"%s\" a été mise à jour avec succès"
+msgid "Metadata \"%s\" has been successfully updated"
+msgstr "La métadonnée \"%s\" a été mise à jour avec succès."
 
-msgid "Edit MyMeta"
-msgstr "Editer la métadonnée"
+msgid "Something went wrong while editing metadata"
+msgstr "Un problème s'est produit lors de l'édition de la métadonnée"
 
-msgid "Something went wrong while editing mymeta"
-msgstr "Un problème a été renvontré lors de l'édition de la métadonnée"
+msgid "Edit metadata"
+msgstr "Modifier la métadonnée"
 
-msgid "My metadata"
-msgstr "Mes métadonnées"
+msgid "Back"
+msgstr "Retour"
 
-msgid "MyMeta definition"
+msgid "Cancel"
+msgstr "Annuler"
+
+#, php-format
+msgid "Fields preceded by %s are mandatory."
+msgstr "Les champs précédés de %s sont obligatoires."
+
+msgid "Metadata definition"
 msgstr "Définition de la métadonnée"
 
 msgid "Identifier (as stored in meta_type in database):"
@@ -169,29 +173,31 @@ msgstr ""
 "Identifiant (tel que stocké dans la colonne meta_type en base de données) :"
 
 #, php-format
-msgid "MyMeta type : %s"
-msgstr "Type de métadonnée : %s"
+msgid "Metadata type : %s"
+msgstr "Type de la métadonnée : %s"
 
-msgid "MyMeta URLs"
+msgid "Metadata URLs"
 msgstr "URLs de la métadonnée"
 
-msgid "Enable MyMeta values list public page"
-msgstr "Activer les pages publiques des listes de valeurs de la métadonnée"
+msgid "Enable metadata values list public page"
+msgstr "Activer la liste des valeurs de la métadonnée en page publique"
 
 msgid "List template file (leave empty for default mymetas.html)"
-msgstr "Fichier de template pour les listes (laisser vide pour mymetas.html)"
-
-msgid "Enable single mymeta value public page"
 msgstr ""
-"Activer les pages publiques des billets d'une valeur donnée de la métadonnée"
+"Fichier de template pour les listes de valeurs (laisser vide pour "
+"mymetas.html)"
+
+msgid "Enable single metadata value public page"
+msgstr ""
+"Activer la liste des billets d'une valeur de la métadonnée en page publique"
 
 msgid "Single template file (leave empty for default mymeta.html)"
 msgstr ""
 "Fichier de template pour les listes de billets (laisser vide pour "
 "mymeta.html)"
 
-msgid "MyMeta restrictions"
-msgstr "Restrictions sur la métadonnée"
+msgid "Metadata restrictions"
+msgstr "Restrictions pour la métadonnée"
 
 msgid "Display meta field for any post type"
 msgstr "Afficher le champ pour tous les types de billets"
@@ -199,38 +205,33 @@ msgstr "Afficher le champ pour tous les types de billets"
 msgid "Restrict to the following post types :"
 msgstr "Restreindre l'affichage des champs aux types de billet suivants :"
 
-msgid "Save"
-msgstr "Enregistrer"
-
 msgid "Section has been successfully updated"
 msgstr "La section a été mise à jour avec succès"
-
-msgid "Edit section"
-msgstr "Editer la section"
 
 msgid "Something went wrong while editing section"
 msgstr "Un problème a été rencontré lors de l'édition d'une section"
 
-msgid "MyMeta section definition"
-msgstr "Définition de la section de métadonnées"
+msgid "Edit section"
+msgstr "Editer la section"
 
-msgid "Title"
-msgstr "Titre"
+msgid "Title:"
+msgstr "Titre :"
 
-msgid "Something went wrong when editing mymeta"
-msgstr "Un problème a été rencontré lors de l'édition de la métadonnée"
+msgid "Something went wrong when editing metadata"
+msgstr "Un problème s'est produit lors de la modification de la métadonnée"
 
 #, php-format
 msgid "Values of metadata \"%s\""
 msgstr "Valeurs de la métadonnée \"%s\""
 
-msgid "Something went wrong while editing mymeta value"
+msgid "Something went wrong while editing metadata value"
 msgstr ""
-"Un problème a été rencontré lors de l'édition de la valeur de la métadonnée"
+"Un problème s'est produit lors de la modification de la valeur de la "
+"métadonnée"
 
 #, php-format
-msgid "Mymeta value successfully updated from \"%s\" to \"%s\""
-msgstr "La valeur de la métadonnée a été mise à jour de \"%s\" à \"%s\""
+msgid "Metadata value successfully updated from \"%s\" to \"%s\""
+msgstr "La valeur de la métadonnée a été mise à jour avec succès de \"%s\" à \"%s\""
 
 msgid "Publish"
 msgstr "Publier"
@@ -273,22 +274,22 @@ msgid "Value \"%s\""
 msgstr "Valeur \"%s\""
 
 #, php-format
-msgid "Entries having meta id \"%s\" set to \"%s\""
-msgstr "Entrées ayant la métadonnée \"%s\" définie à \"%s\""
+msgid "Entries having metadata id \"%s\" set to \"%s\""
+msgstr "Les entrées dont la métadonnée est \"%s\" a été remplacé par \"%s\"."
 
 msgid "Selected entries action:"
 msgstr "Action sur les entrées sélectionnées :"
 
-msgid "Change MyMeta value"
-msgstr "Changer la valeur actuelle"
+msgid "Change metadata value"
+msgstr "Modifier la valeur de la métadonnée"
 
 msgid "This will change the meta value for all entries having this value"
 msgstr ""
 "Ceci va changer la valeur de la métadonnée pour toutes les entrées ayant "
 "cette valeur"
 
-msgid "Mymeta errors :"
-msgstr "Erreurs Mymeta :"
+msgid "Metadata errors :"
+msgstr "Erreurs de métadonnées :"
 
 msgid "Checkbox"
 msgstr "Case à cocher"
@@ -314,23 +315,26 @@ msgstr "Chaîne"
 msgid "All sections"
 msgstr "Toutes les sections"
 
-msgid "MyMeta List"
-msgstr "Liste de métadonnées"
+msgid "Metadata List"
+msgstr "Liste des métadonnées"
 
-msgid "Value to display"
-msgstr "Valeur à afficher"
+msgid "Title"
+msgstr "Titre"
 
-msgid "Section to display"
-msgstr "Section à afficher"
+msgid "Value to display:"
+msgstr "Valeur à afficher :"
 
-msgid "MyMeta Values list"
-msgstr "Liste des valeurs d'une métadonnée"
+msgid "Section to display:"
+msgstr "Section à afficher :"
 
-msgid "MyMeta ID"
-msgstr "Métadonnée"
+msgid "Metadata Values list"
+msgstr "Liste des valeurs de la métadonnée"
 
-msgid "Display mode"
-msgstr "Mode d'affichage"
+msgid "Metadata:"
+msgstr "Métadonnée :"
+
+msgid "Display mode:"
+msgstr "Mode d'affichage :"
 
 msgid "Cloud"
 msgstr "Nuage"
@@ -353,8 +357,8 @@ msgstr "Ascendant"
 msgid "Descending"
 msgstr "Descendant"
 
+msgid "Link to all metadat values:"
+msgstr "Lien vers toutes les valeurs de la métadonnée :"
+
 msgid "All values"
 msgstr "Toutes les valeurs"
-
-msgid "Link to all values:"
-msgstr "Lien vers toutes les valeurs :"
