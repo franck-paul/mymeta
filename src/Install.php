@@ -41,7 +41,7 @@ class Install extends Process
             }
 
             $backup = $settings->mymeta_fields;
-            $fields = @unserialize(base64_decode($settings->mymeta_fields));
+            $fields = @unserialize(base64_decode((string) $settings->mymeta_fields));
             if (!is_array($fields) || count($fields) == 0) {
                 return true;
             }

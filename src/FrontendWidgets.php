@@ -52,7 +52,7 @@ class FrontendWidgets
                 }
             } elseif ($display_meta && $meta->enabled
                                     && $meta->url_list_enabled) {
-                $items[] = '<li><a href="' . $base_url . rawurlencode($meta->id) . '">' .
+                $items[] = '<li><a href="' . $base_url . rawurlencode((string) $meta->id) . '">' .
                     Html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
             }
         }
@@ -111,7 +111,7 @@ class FrontendWidgets
                 $class = 'class="tag' . $rs->roundpercent . '" ';
             }
 
-            $res .= '<li><a href="' . $base_url . '/' . rawurlencode($rs->meta_id) . '" ' . $class . 'rel="tag">' .
+            $res .= '<li><a href="' . $base_url . '/' . rawurlencode((string) $rs->meta_id) . '" ' . $class . 'rel="tag">' .
                 $rs->meta_id . '</a></li>';
         }
 

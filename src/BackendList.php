@@ -52,7 +52,7 @@ class BackendList extends Listing
                             ->class('nowrap')
                             ->items([
                                 (new Link())
-                                    ->href(App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($rs->meta_id))
+                                    ->href(App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode((string) $rs->meta_id))
                                     ->text(App::backend()->mymetaEntry->displayValue($rs->meta_id)),
                             ]),
                         (new Td())
