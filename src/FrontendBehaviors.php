@@ -17,6 +17,7 @@ namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
 use Dotclear\App;
+use Dotclear\Plugin\TemplateHelper\Code;
 
 class FrontendBehaviors
 {
@@ -49,16 +50,9 @@ class FrontendBehaviors
 
         if (!isset($attr['mymetaid'])) {
             if (empty($attr['no_context'])) {
-                return
-                '<?php if (App::frontend()->context()->exists("mymeta")) { ' .
-                    "if (!isset(\$params)) { \$params = array(); }\n" .
-                    "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
-                    "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
-                    "\$params['from'] .= ', '.App::con()->prefix().'meta META ';\n" .
-                    "\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
-                    "\$params['sql'] .= \"AND META.meta_type = '\".App::con()->escapeStr(App::frontend()->context()->mymeta->id).\"' \";\n" .
-                    "\$params['sql'] .= \"AND META.meta_id = '\".App::con()->escapeStr(App::frontend()->context()->meta->meta_id).\"' \";\n" .
-                "} ?>\n";
+                return Code::getPHPCode(
+                    self::metaAll(...),
+                );
             }
 
             return '';
@@ -66,11 +60,9 @@ class FrontendBehaviors
 
         $metaid = App::con()->escapeStr($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
-            $values  = $attr['mymetavalue'];
-            $in_expr = ' in ';
+            $values = $attr['mymetavalue'];
             if (str_starts_with((string) $values, '!')) {
-                $in_expr = ' not in ';
-                $values  = substr((string) $values, 1);
+                $values = substr((string) $values, 1);
             }
 
             $cond = [];
@@ -78,25 +70,86 @@ class FrontendBehaviors
                 $cond[] = "'" . App::con()->escapeStr($expr) . "'";
             }
 
-            return
-            "<?php if (!isset(\$params)) { \$params = array(); }\n" .
-            "if (!isset(\$params['from'])) { \$params['from'] = ''; }\n" .
-            "if (!isset(\$params['sql'])) { \$params['sql'] = ''; }\n" .
-            "@\$params['from'] .= ', '.App::con()->prefix().'meta META ';\n" .
-            "@\$params['sql'] .= 'AND META.post_id = P.post_id ';\n" .
-            "\$params['sql'] .= \"AND META.meta_type = '" . $metaid . "' \";\n" .
-            "\$params['sql'] .= \"AND META.meta_id " . $in_expr . ' (' . implode(',', $cond) . ") \";\n" .
-            "?>\n";
+            return Code::getPHPCode(
+                self::metaValue(...),
+                [
+                    !str_starts_with((string) $values, '!'),
+                    $cond,
+                    $metaid,
+                ]
+            );
         }
 
-        $in_expr = ' in ';
         if (str_starts_with((string) $metaid, '!')) {
-            $in_expr = ' not in ';
-            $metaid  = substr((string) $metaid, 1);
+            $metaid = substr((string) $metaid, 1);
         }
 
-        return
-        '<?php @$params[\'sql\'] .= "AND P.post_id ' . $in_expr . "(SELECT META.post_id from \".App::con()->prefix().\"meta META where META.meta_type = '" . $metaid . "') \";\n" .
-        "?>\n";
+        return Code::getPHPCode(
+            self::metaID(...),
+            [
+                !str_starts_with((string) $metaid, '!'),
+                $metaid,
+            ]
+        );
+    }
+
+    // Template code methods
+
+    private static function metaAll(
+    ): void {
+        global $params;
+        if (App::frontend()->context()->exists('mymeta')) {
+            if (!isset($params)) {
+                $params = [];
+            }
+            if (!isset($params['from'])) {
+                $params['from'] = '';
+            }
+            if (!isset($params['sql'])) {
+                $params['sql'] = '';
+            }
+            $params['from'] .= ', ' . App::con()->prefix() . 'meta META ';
+            $params['sql']  .= 'AND META.post_id = P.post_id ';
+            $params['sql']  .= "AND META.meta_type = '" . App::con()->escapeStr(App::frontend()->context()->mymeta->id) . "' ";
+            $params['sql']  .= "AND META.meta_id = '" . App::con()->escapeStr(App::frontend()->context()->meta->meta_id) . "' ";
+        }
+    }
+
+    /**
+     * @param      array<int, string>        $_cond_    The condition
+     */
+    private static function metaValue(
+        bool $_in_,
+        array $_cond_,
+        string $_metaid_
+    ): void {
+        global $params;
+        if (!isset($params)) {
+            $params = [];
+        }
+        if (!isset($params['from'])) {
+            $params['from'] = '';
+        }
+        if (!isset($params['sql'])) {
+            $params['sql'] = '';
+        }
+        $params['from'] .= ', ' . App::con()->prefix() . 'meta META ';
+        $params['sql']  .= 'AND META.post_id = P.post_id ';
+        $params['sql']  .= 'AND META.meta_type = ' . $_metaid_ . ' ';
+        $params['sql']  .= 'AND META.meta_id ' . ($_in_ ? 'in' : 'not in') . ' (' . implode(',', $_cond_) . ')';
+    }
+
+    private static function metaID(
+        bool $_in_,
+        string $_metaid_
+    ): void {
+        global $params;
+        if (!isset($params)) {
+            $params = [];
+        }
+        if (!isset($params['sql'])) {
+            $params['sql'] = '';
+        }
+        $params['sql'] .= 'AND P.post_id ' . ($_in_ ? 'in' : 'not in') . ' (SELECT META.post_id from ' . App::con()->prefix() . 'meta META WHERE META.meta_type = ' . $_metaid_ . ')';
     }
 }

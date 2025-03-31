@@ -16,6 +16,12 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Li;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\None;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Ul;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsElement;
 
@@ -32,17 +38,17 @@ class FrontendWidgets
         }
 
         $allmeta  = App::frontend()->mymeta->getAll();
-        $prompt   = ($w->get('prompt') == 'prompt');
-        $items    = [];
+        $prompt   = ($w->get('prompt') === 'prompt');
         $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/';
         $section  = '';
-        if ($w->get('section') != '') {
+        if ($w->get('section') !== '') {
             $section      = $w->get('section');
             $display_meta = false;
         } else {
             $display_meta = true;
         }
 
+        $items = [];
         foreach ($allmeta as $meta) {
             if ($meta instanceof MyMetaSection) {
                 if ($meta->id == $section) {
@@ -52,8 +58,12 @@ class FrontendWidgets
                 }
             } elseif ($display_meta && $meta->enabled
                                     && $meta->url_list_enabled) {
-                $items[] = '<li><a href="' . $base_url . rawurlencode((string) $meta->id) . '">' .
-                    Html::escapeHTML($prompt ? $meta->prompt : $meta->id) . '</a></li>';
+                $items[] = (new Li())
+                    ->items([
+                        (new Link())
+                            ->href($base_url . rawurlencode((string) $meta->id))
+                            ->text(Html::escapeHTML($prompt ? $meta->prompt : $meta->id)),
+                    ]);
             }
         }
 
@@ -61,9 +71,15 @@ class FrontendWidgets
             return '';
         }
 
-        $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>' . implode('', $items) . '</ul>';
+        $list = (new Ul())
+            ->items($items);
 
-        return $w->renderDiv((bool) $w->content_only, 'mymetalist ' . $w->class, '', $res);
+        return $w->renderDiv(
+            (bool) $w->content_only,
+            'mymetalist ' . $w->class,
+            '',
+            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . $list->render()
+        );
     }
 
     public static function mymetaValues(WidgetsElement $w): string
@@ -76,20 +92,18 @@ class FrontendWidgets
             return '';
         }
 
-        $res = ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . '<ul>';
-
         $limit       = abs((int) $w->get('limit'));
-        $is_cloud    = ($w->get('displaymode') == 'cloud');
+        $is_cloud    = ($w->get('displaymode') === 'cloud');
         $mymetaEntry = App::frontend()->mymeta->getByID($w->get('mymetaid'));
 
-        if ($mymetaEntry == null || !$mymetaEntry->enabled) {
-            return '<li>not enabled</li>';
+        if (!$mymetaEntry || !$mymetaEntry->enabled) {
+            return '';
         }
 
         $rs = App::frontend()->mymeta->getMeta((string) $mymetaEntry->id, (string) $limit);
 
         if ($rs->isEmpty()) {
-            return '<li>empty</li>';
+            return '';
         }
 
         $sort = $w->get('sortby');
@@ -98,30 +112,52 @@ class FrontendWidgets
         }
 
         $order = $w->get('orderby');
-        if ($order != 'asc') {
+        if ($order !== 'asc') {
             $order = 'desc';
         }
 
         $rs->sort($sort, $order);
 
         $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/' . $mymetaEntry->id;
+
+        $items = [];
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {
-                $class = 'class="tag' . $rs->roundpercent . '" ';
+                $class = 'tag' . $rs->roundpercent;
             }
 
-            $res .= '<li><a href="' . $base_url . '/' . rawurlencode((string) $rs->meta_id) . '" ' . $class . 'rel="tag">' .
-                $rs->meta_id . '</a></li>';
+            $items[] = (new Li())
+                ->items([
+                    (new Link())
+                        ->href($base_url . '/' . rawurlencode((string) $rs->meta_id))
+                        ->class($class)
+                        ->text($rs->meta_id)
+                        ->extra('rel="tag"'),
+                ]);
         }
 
-        $res .= '</ul>';
+        $list = (new Ul())
+            ->items($items);
 
+        $all = (new None());
         if ($mymetaEntry->url_list_enabled && !is_null($w->get('allvalueslinktitle')) && $w->get('allvalueslinktitle') !== '') {
-            $res .= '<p><strong><a href="' . $base_url . '">' .
-            Html::escapeHTML($w->get('allvalueslinktitle')) . '</a></strong></p>';
+            $all = (new Para())
+                ->items([
+                    (new Div(null, 'strong'))
+                        ->items([
+                            (new Link())
+                                ->href($base_url)
+                                ->text(Html::escapeHTML($w->get('allvalueslinktitle'))),
+                        ]),
+                ]);
         }
 
-        return $w->renderDiv((bool) $w->content_only, 'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class, '', $res);
+        return $w->renderDiv(
+            (bool) $w->content_only,
+            'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class,
+            '',
+            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . $list->render() . $all->render()
+        );
     }
 }

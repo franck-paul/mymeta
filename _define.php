@@ -16,8 +16,11 @@ $this->registerModule(
     'Bruno Hondelatte and contributors',
     '6.1',
     [
-        'date'        => '2025-02-26T16:05:52+0100',
-        'requires'    => [['core', '2.33']],
+        'date'     => '2025-02-26T16:05:52+0100',
+        'requires' => [
+            ['core', '2.33'],
+            ['TemplateHelper'],
+        ],
         'priority'    => 1001,
         'permissions' => 'My',
         'type'        => 'plugin',
@@ -28,5 +31,6 @@ $this->registerModule(
         'details'    => 'https://open-time.net/?q=mymeta',
         'support'    => 'https://github.com/franck-paul/mymeta',
         'repository' => 'https://raw.githubusercontent.com/franck-paul/mymeta/main/dcstore.xml',
+        'license'    => 'gpl2',
     ]
 );

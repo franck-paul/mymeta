@@ -16,62 +16,19 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use ArrayObject;
-use Dotclear\App;
+use Dotclear\Plugin\TemplateHelper\Code;
 
 class FrontendTemplate
 {
     /**
      * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
      */
-    public static function getCommonMyMeta(array|ArrayObject $attr): string
-    {
-        if (isset($attr['type'])) {
-            $attr['id'] = $attr['type'];
-        }
-
-        if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', (string) $attr['id'])) {
-            return '<?php' . "\n" .
-            'App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID(\'' . $attr['id'] . '\'); ?>' . "\n" .
-            '%s' . "\n" .
-            '<?php App::frontend()->context()->mymeta = null;' . "\n" . '?>';
-        }
-
-        return '%s';
-    }
-
-    /**
-     * @param      ArrayObject<string, mixed>|array<string, mixed>  $attr   The attribute
-     */
-    protected static function attr2str(array|ArrayObject $attr): string
-    {
-        $filter = ['id','type'];
-        $a      = [];
-        foreach ($attr as $k => $v) {
-            if (!in_array($k, $filter)) {
-                $a[] = "'" . addslashes($k) . "' =>'" . addslashes((string) $v) . "'";
-            }
-        }
-
-        return 'array(' . implode(',', $a) . ')';
-    }
-
-    public static function getOperator(string $op): string
-    {
-        return match (strtolower($op)) {
-            'or', '||' => '||',
-            default => '&&',
-        };
-    }
-
-    /**
-     * @param      array<string, mixed>|\ArrayObject<string, mixed>  $attr      The attribute
-     */
     public static function MyMetaURL(array|ArrayObject $attr): string
     {
-        $f = App::frontend()->template()->getFilters($attr);
-
-        return '<?= ' . sprintf($f, 'App::blog()->url().App::url()->getBase("mymeta").' .
-        '"/".App::frontend()->context()->mymeta->id."/".rawurlencode(App::frontend()->context()->meta->meta_id)') . ' ?>';
+        return Code::getPHPTemplateValueCode(
+            FrontendTemplateCode::MyMetaURL(...),
+            attr: $attr,
+        );
     }
 
     /**
@@ -79,9 +36,10 @@ class FrontendTemplate
      */
     public static function MetaType(array|ArrayObject $attr): string
     {
-        $f = App::frontend()->template()->getFilters($attr);
-
-        return '<?= ' . sprintf($f, 'App::frontend()->context()->meta->meta_type') . ' ?>';
+        return Code::getPHPTemplateValueCode(
+            FrontendTemplateCode::MetaType(...),
+            attr: $attr,
+        );
     }
 
     /**
@@ -89,10 +47,15 @@ class FrontendTemplate
      */
     public static function MyMetaTypePrompt(array|ArrayObject $attr): string
     {
-        $f   = FrontendTemplate::getCommonMyMeta($attr);
-        $res = '<?php if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) echo App::frontend()->context()->mymeta->prompt; ?>' . "\n";
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
 
-        return sprintf($f, $res);
+        return Code::getPHPTemplateValueCode(
+            FrontendTemplateCode::MyMetaTypePrompt(...),
+            [
+                self::metaID($attr),
+            ],
+            attr: $attr,
+        );
     }
 
     /**
@@ -100,13 +63,16 @@ class FrontendTemplate
      */
     public static function EntryMyMetaValue(array|ArrayObject $attr): string
     {
-        $f = FrontendTemplate::getCommonMyMeta($attr);
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
 
-        $res = '<?php if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled)' . "\n" .
-        'echo App::frontend()->context()->mymeta->getValue(App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta,App::frontend()->context()->mymeta->id),' .
-        FrontendTemplate::attr2str($attr) . '); ?>';
-
-        return sprintf($f, $res);
+        return Code::getPHPTemplateValueCode(
+            FrontendTemplateCode::EntryMyMetaValue(...),
+            [
+                self::metaID($attr),
+                array_filter($attr->getArrayCopy(), fn ($key): bool => !in_array($key, ['id', 'type']), ARRAY_FILTER_USE_KEY),
+            ],
+            attr: $attr,
+        );
     }
 
     /**
@@ -114,13 +80,16 @@ class FrontendTemplate
      */
     public static function MyMetaValue(array|ArrayObject $attr): string
     {
-        $f = FrontendTemplate::getCommonMyMeta($attr);
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
 
-        $res = '<?php if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) {' . "\n" .
-        'echo App::frontend()->context()->mymeta->getValue(App::frontend()->context()->meta->meta_id,' . FrontendTemplate::attr2str($attr) . '); ' . "\n" .
-        '} ?>';
-
-        return sprintf($f, $res);
+        return Code::getPHPTemplateValueCode(
+            FrontendTemplateCode::MyMetaValue(...),
+            [
+                self::metaID($attr),
+                array_filter($attr->getArrayCopy(), fn ($key): bool => !in_array($key, ['id', 'type']), ARRAY_FILTER_USE_KEY),
+            ],
+            attr: $attr,
+        );
     }
 
     /**
@@ -129,28 +98,40 @@ class FrontendTemplate
      */
     public static function EntryMyMetaIf(array|ArrayObject $attr, string $content): string
     {
-        $f        = FrontendTemplate::getCommonMyMeta($attr);
-        $if       = [];
-        $operator = isset($attr['operator']) ? FrontendTemplate::getOperator($attr['operator']) : '&&';
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
+
+        $operator = isset($attr['operator']) ? self::getOperator($attr['operator']) : '&&';
+
+        /**
+         * Warning: Take care of $mymeta_value variable used in template code
+         * Should be renamed here if renamed in FrontendTemplateCode::EntryMyMetaIf() code.
+         */
+        $if = [];
         if (isset($attr['defined'])) {
             $sign = ($attr['defined'] == 'true' || $attr['defined'] == '1') ? '!' : '';
-            $if[] = $sign . 'empty($value)';
+            $if[] = $sign . 'empty($mymeta_value)';
         }
-
         if (isset($attr['value'])) {
             $value = $attr['value'];
-            $if[]  = substr((string) $value, 1, 1) === '!' ? "\$value !='" . substr((string) $value, 1) . "'" : "\$value =='" . $value . "'";
+            $if[]  = substr((string) $value, 1, 1) === '!' ?
+                '$mymeta_value !=' . var_export(substr((string) $value, 1), true) :
+                '$mymeta_value ==' . var_export($value, true);
+        }
+        $test = implode(' ' . $operator . ' ', $if);
+
+        if ($if === []) {
+            return '';
         }
 
-        $res = '<?php' . "\n" .
-        'if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) :' . "\n" .
-        '  $value=App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta,App::frontend()->context()->mymeta->id); ' . "\n" .
-        '  if(' . implode(' ' . $operator . ' ', $if) . ') : ?>' .
-        $content .
-        '  <?php endif; ' . "\n" .
-        'endif; ?>';
-
-        return sprintf($f, $res);
+        return Code::getPHPTemplateBlockCode(
+            FrontendTemplateCode::EntryMyMetaIf(...),
+            [
+                self::metaID($attr),
+                $test,
+            ],
+            $content,
+            $attr,
+        );
     }
 
     /**
@@ -159,12 +140,14 @@ class FrontendTemplate
      */
     public static function MyMetaData(array|ArrayObject $attr, string $content): string
     {
-        $f     = FrontendTemplate::getCommonMyMeta($attr);
-        $limit = isset($attr['limit']) ? (int) $attr['limit'] : 'null';
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
+
+        $limit = isset($attr['limit']) ? (int) $attr['limit'] : null;
+        $combo = ['meta_id_lower', 'count', 'latest', 'oldest'];
 
         $sortby = 'meta_id_lower';
-        if (isset($attr['sortby']) && $attr['sortby'] == 'count') {
-            $sortby = 'count';
+        if (isset($attr['sortby']) && in_array($attr['sortby'], $combo)) {
+            $sortby = mb_strtolower((string) $attr['sortby']);
         }
 
         $order = 'asc';
@@ -172,19 +155,49 @@ class FrontendTemplate
             $order = 'desc';
         }
 
-        $res = "<?php\n" .
-        'App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->dcmeta->getMetadata([' .
-            "'meta_type' => App::frontend()->context()->mymeta->id, " .
-            "'limit' => " . $limit .
-        '])); ' .
-        "App::frontend()->context()->meta->sort('" . $sortby . "','" . $order . "'); " .
-        '?>';
+        return Code::getPHPTemplateBlockCode(
+            FrontendTemplateCode::MyMetaData(...),
+            [
+                self::metaID($attr),
+                $limit,
+                $sortby,
+                $order,
+            ],
+            $content,
+            $attr,
+        );
+    }
 
-        $res .= '<?php while (App::frontend()->context()->meta->fetch()) : ' . "\n" .
-        'App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID(App::frontend()->context()->meta->meta_type); ?>' . "\n" .
-        $content . '<?php App::frontend()->context()->mymeta = null; endwhile; ' .
-        'App::frontend()->context()->meta = null; ?>';
+    // Helpers
 
-        return sprintf($f, $res);
+    /**
+     * Gets the operator.
+     *
+     * @param      string  $op     The operator
+     */
+    protected static function getOperator(string $op): string
+    {
+        return match (strtolower($op)) {
+            'or', '||' => '||',
+            default => '&&',
+        };
+    }
+
+    /**
+     * Gets meta ID from attributes, if present
+     *
+     * @param      ArrayObject<string, mixed>         $attr   The attributes
+     */
+    protected static function metaID(ArrayObject $attr): string
+    {
+        if (isset($attr['type'])) {
+            $attr['id'] = $attr['type'];
+        }
+
+        if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', (string) $attr['id'])) {
+            return (string) $attr['id'];
+        }
+
+        return '';
     }
 }
