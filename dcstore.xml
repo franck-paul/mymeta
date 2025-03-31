@@ -1,11 +1,11 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="mymeta">
     <name>My Meta</name>
-    <version>6.1</version>
+    <version>7.0</version>
     <author>Bruno Hondelatte and contributors</author>
     <desc>User-defined metadata management in posts</desc>
-    <date>2025-02-26T16:05:52+0100</date>
-    <file>https://github.com/franck-paul/mymeta/releases/download/6.1/plugin-mymeta-6.1.zip</file>
+    <date>2025-03-31T09:15:34+0200</date>
+    <file>https://github.com/franck-paul/mymeta/releases/download/7.0/plugin-mymeta-7.0.zip</file>
     <da:dcmin>2.33</da:dcmin>
     <da:details>https://open-time.net/?q=mymeta</da:details>
     <da:support>https://github.com/franck-paul/mymeta</da:support>
