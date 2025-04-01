@@ -132,8 +132,8 @@ class ManageEditSection extends Process
                     ->items([
                         (new Submit('saveconfig', __('Save'))),
                         ... My::hiddenFields([
-                            'm'        => 'editsection',
-                            'mymetaid' => $mymetaid,
+                            'm'         => 'editsection',
+                            'mymeta_id' => $mymetaid,
                         ]),
                         (new Button(['back'], __('Back')))
                             ->class(['go-back','reset','hidden-if-no-js']),
