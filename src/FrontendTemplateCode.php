@@ -144,7 +144,7 @@ class FrontendTemplateCode
      */
     public static function EntryMyMetaIf(
         string $_id_,
-        string $_test_,
+        string $_test_HTML,
         string $_content_HTML,
     ): void {
         if ($_id_ !== '') {
@@ -153,7 +153,7 @@ class FrontendTemplateCode
         if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) {
             $mymeta_value = App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta, App::frontend()->context()->mymeta->id);
             /* @phpstan-ignore-next-line */
-            if (($_test_) === true) : ?>
+            if (($_test_HTML) === true) : ?>
                 $_content_HTML
             <?php endif;
             unset($mymeta_value);
