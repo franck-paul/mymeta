@@ -97,6 +97,7 @@ class FrontendBehaviors
 
     private static function metaAll(
     ): void {
+        global $params; // @phpcode-remove
         if (App::frontend()->context()->exists('mymeta')) {
             if (!isset($params)) {
                 $params = [];
@@ -122,6 +123,7 @@ class FrontendBehaviors
         array $_cond_,
         string $_metaid_
     ): void {
+        global $params; // @phpcode-remove
         if (!isset($params)) {
             $params = [];
         }
@@ -141,6 +143,7 @@ class FrontendBehaviors
         bool $_in_,
         string $_metaid_
     ): void {
+        global $params; // @phpcode-remove
         if (!isset($params)) {
             $params = [];
         }
