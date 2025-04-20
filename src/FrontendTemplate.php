@@ -25,6 +25,8 @@ class FrontendTemplate
      */
     public static function MyMetaURL(array|ArrayObject $attr): string
     {
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
+
         return Code::getPHPTemplateValueCode(
             FrontendTemplateCode::MyMetaURL(...),
             attr: $attr,
@@ -36,6 +38,8 @@ class FrontendTemplate
      */
     public static function MetaType(array|ArrayObject $attr): string
     {
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
+
         return Code::getPHPTemplateValueCode(
             FrontendTemplateCode::MetaType(...),
             attr: $attr,

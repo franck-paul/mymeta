@@ -34,6 +34,8 @@ class FrontendBehaviors
      */
     public static function templateBeforeBlock(string $b, array|ArrayObject $attr): string
     {
+        $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
+
         /* tpl:Entries extra attributes :
             <tpl:Entries mymetaid="<id>" mymetavalue="value1,value2,value3">
                 selects mymeta entries having mymetaid <id> with values value1, value2 or value3
