@@ -86,7 +86,7 @@ class ManageViewPosts extends Process
             try {
                 if (App::backend()->mymeta->dcmeta->updateMeta($value, $new_value, App::backend()->mymetaEntry->id)) {
                     Notices::addSuccessNotice(sprintf(
-                        __('Metadata value successfully updated from "%s" to "%s"'),
+                        __('Metadata value successfully updated from "%1$s" to "%2$s"'),
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
                     ));
@@ -220,7 +220,7 @@ class ManageViewPosts extends Process
         echo Notices::getNotices();
 
         // Form
-        echo (new Text('h3', sprintf(__('Entries having metadata id "%s" set to "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value))))->render();
+        echo (new Text('h3', sprintf(__('Entries having metadata id "%1$s" set to "%2$s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value))))->render();
 
         // Show posts
         if ($post_list instanceof ListingPosts) {

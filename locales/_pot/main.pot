@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-22 11:29+0100\n"
+"POT-Creation-Date: 2025-04-27 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-#: ../git-plugins/mymeta/__html_tpl_dummy.php:9
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:14
 msgid "This metadata's comments Atom feed"
 msgstr ""
 
-#: ../git-plugins/mymeta/__html_tpl_dummy.php:10
+#: ../git-plugins/mymeta/__html_tpl_dummy.php:15
 msgid "This metadata's entries Atom feed"
 msgstr ""
 
@@ -307,7 +307,7 @@ msgstr ""
 
 #: ../git-plugins/mymeta/src/ManageViewPosts.php:89
 #, php-format
-msgid "Metadata value successfully updated from \"%s\" to \"%s\""
+msgid "Metadata value successfully updated from \"%1$s\" to \"%2$s\""
 msgstr ""
 
 #: ../git-plugins/mymeta/src/ManageViewPosts.php:173
@@ -367,7 +367,7 @@ msgstr ""
 
 #: ../git-plugins/mymeta/src/ManageViewPosts.php:223
 #, php-format
-msgid "Entries having metadata id \"%s\" set to \"%s\""
+msgid "Entries having metadata id \"%1$s\" set to \"%2$s\""
 msgstr ""
 
 #: ../git-plugins/mymeta/src/ManageViewPosts.php:245

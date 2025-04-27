@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-22 11:29+0100\n"
+"POT-Creation-Date: 2025-04-27 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -218,7 +218,7 @@ msgid "Something went wrong while editing metadata value"
 msgstr ""
 
 #, php-format
-msgid "Metadata value successfully updated from \"%s\" to \"%s\""
+msgid "Metadata value successfully updated from \"%1$s\" to \"%2$s\""
 msgstr ""
 
 msgid "Publish"
@@ -262,7 +262,7 @@ msgid "Value \"%s\""
 msgstr ""
 
 #, php-format
-msgid "Entries having metadata id \"%s\" set to \"%s\""
+msgid "Entries having metadata id \"%1$s\" set to \"%2$s\""
 msgstr ""
 
 msgid "Selected entries action:"

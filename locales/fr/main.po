@@ -1,23 +1,23 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Franck Paul <carnet.franck.paul@gmail.com>, 2025
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 mymeta module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-22 11:29+0100\n"
+"POT-Creation-Date: 2025-04-27 16:23+0200\n"
 "PO-Revision-Date: 2023-06-15 09:00+0000\n"
 "Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>, 2025\n"
 "Language-Team: French (https://app.transifex.com/open-time/teams/109573/fr/)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fr\n"
 "Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 msgid "Entries by"
@@ -169,8 +169,7 @@ msgid "Metadata definition"
 msgstr "Définition de la métadonnée"
 
 msgid "Identifier (as stored in meta_type in database):"
-msgstr ""
-"Identifiant (tel que stocké dans la colonne meta_type en base de données) :"
+msgstr "Identifiant (tel que stocké dans la colonne meta_type en base de données) :"
 
 #, php-format
 msgid "Metadata type : %s"
@@ -183,18 +182,13 @@ msgid "Enable metadata values list public page"
 msgstr "Activer la liste des valeurs de la métadonnée en page publique"
 
 msgid "List template file (leave empty for default mymetas.html)"
-msgstr ""
-"Fichier de template pour les listes de valeurs (laisser vide pour "
-"mymetas.html)"
+msgstr "Fichier de template pour les listes de valeurs (laisser vide pour mymetas.html)"
 
 msgid "Enable single metadata value public page"
-msgstr ""
-"Activer la liste des billets d'une valeur de la métadonnée en page publique"
+msgstr "Activer la liste des billets d'une valeur de la métadonnée en page publique"
 
 msgid "Single template file (leave empty for default mymeta.html)"
-msgstr ""
-"Fichier de template pour les listes de billets (laisser vide pour "
-"mymeta.html)"
+msgstr "Fichier de template pour les listes de billets (laisser vide pour mymeta.html)"
 
 msgid "Metadata restrictions"
 msgstr "Restrictions pour la métadonnée"
@@ -225,12 +219,10 @@ msgid "Values of metadata \"%s\""
 msgstr "Valeurs de la métadonnée \"%s\""
 
 msgid "Something went wrong while editing metadata value"
-msgstr ""
-"Un problème s'est produit lors de la modification de la valeur de la "
-"métadonnée"
+msgstr "Un problème s'est produit lors de la modification de la valeur de la métadonnée"
 
-#, php-format
-msgid "Metadata value successfully updated from \"%s\" to \"%s\""
+#, fuzzy, php-format
+msgid "Metadata value successfully updated from \"%1$s\" to \"%2$s\""
 msgstr "La valeur de la métadonnée a été mise à jour avec succès de \"%s\" à \"%s\""
 
 msgid "Publish"
@@ -273,8 +265,8 @@ msgstr "Êtes-vous sûr de vouloir retirer cette métadonnée ?"
 msgid "Value \"%s\""
 msgstr "Valeur \"%s\""
 
-#, php-format
-msgid "Entries having metadata id \"%s\" set to \"%s\""
+#, fuzzy, php-format
+msgid "Entries having metadata id \"%1$s\" set to \"%2$s\""
 msgstr "Les entrées dont la métadonnée est \"%s\" a été remplacé par \"%s\"."
 
 msgid "Selected entries action:"
@@ -284,9 +276,7 @@ msgid "Change metadata value"
 msgstr "Modifier la valeur de la métadonnée"
 
 msgid "This will change the meta value for all entries having this value"
-msgstr ""
-"Ceci va changer la valeur de la métadonnée pour toutes les entrées ayant "
-"cette valeur"
+msgstr "Ceci va changer la valeur de la métadonnée pour toutes les entrées ayant cette valeur"
 
 msgid "Metadata errors :"
 msgstr "Erreurs de métadonnées :"
@@ -300,11 +290,8 @@ msgstr "Date"
 msgid "Items List"
 msgstr "Liste d'éléments"
 
-msgid ""
-"Values : enter 1 value per line (syntax for each line : ID: description)"
-msgstr ""
-"Valeurs : entrer une valeur par ligne (syntaxe de la ligne : ID: "
-"description)"
+msgid "Values : enter 1 value per line (syntax for each line : ID: description)"
+msgstr "Valeurs : entrer une valeur par ligne (syntaxe de la ligne : ID: description)"
 
 msgid "Section"
 msgstr "Section"
