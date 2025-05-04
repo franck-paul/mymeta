@@ -30,6 +30,7 @@ use Dotclear\Helper\Html\Form\Legend;
 use Dotclear\Helper\Html\Form\Note;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Radio;
+use Dotclear\Helper\Html\Form\Span;
 use Dotclear\Helper\Html\Form\Submit;
 use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
@@ -173,7 +174,7 @@ class ManageEdit extends Process
             ->fields([
                 (new Note())
                     ->class('form-note')
-                    ->text(sprintf(__('Fields preceded by %s are mandatory.'), (new Text('span', '*'))->class('required')->render())),
+                    ->text(sprintf(__('Fields preceded by %s are mandatory.'), (new Span('*'))->class('required')->render())),
                 (new Fieldset())
                     ->legend(new Legend(__('Metadata definition')))
                     ->fields([
@@ -184,7 +185,7 @@ class ManageEdit extends Process
                                     ->maxlength(255)
                                     ->value($mymetaid)
                                     ->disabled($lock_id)
-                                    ->label((new Label((new Text('span', '*'))->render() . __('Identifier (as stored in meta_type in database):'), Label::OL_TF))
+                                    ->label((new Label((new Span('*'))->render() . __('Identifier (as stored in meta_type in database):'), Label::OL_TF))
                                         ->class('required')),
                             ]),
                         (new Para())

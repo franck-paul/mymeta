@@ -25,8 +25,8 @@ use Dotclear\Helper\Html\Form\Input;
 use Dotclear\Helper\Html\Form\Label;
 use Dotclear\Helper\Html\Form\Note;
 use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Span;
 use Dotclear\Helper\Html\Form\Submit;
-use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Exception;
 
@@ -117,14 +117,14 @@ class ManageEditSection extends Process
             ->fields([
                 (new Note())
                     ->class('form-note')
-                    ->text(sprintf(__('Fields preceded by %s are mandatory.'), (new Text('span', '*'))->class('required')->render())),
+                    ->text(sprintf(__('Fields preceded by %s are mandatory.'), (new Span('*'))->class('required')->render())),
                 (new Para())
                     ->items([
                         (new Input('mymeta_prompt'))
                             ->size(20)
                             ->maxlength(255)
                             ->default($mymetasection->prompt)
-                            ->label((new Label((new Text('span', '*'))->render() . __('Title:'), Label::IL_TF))
+                            ->label((new Label((new Span('*'))->render() . __('Title:'), Label::IL_TF))
                                 ->class('required')),
                     ]),
                 (new Para())
