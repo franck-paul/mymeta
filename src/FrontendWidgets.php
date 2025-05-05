@@ -16,11 +16,11 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Li;
 use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Form\None;
 use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Helper\Html\Form\Ul;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsElement;
@@ -144,11 +144,10 @@ class FrontendWidgets
         if ($mymetaEntry->url_list_enabled && !is_null($w->get('allvalueslinktitle')) && $w->get('allvalueslinktitle') !== '') {
             $all = (new Para())
                 ->items([
-                    (new Div(null, 'strong'))
+                    (new Link())
+                        ->href($base_url)
                         ->items([
-                            (new Link())
-                                ->href($base_url)
-                                ->text(Html::escapeHTML($w->get('allvalueslinktitle'))),
+                            (new Strong(Html::escapeHTML($w->get('allvalueslinktitle')))),
                         ]),
                 ]);
         }

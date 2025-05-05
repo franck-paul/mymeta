@@ -21,7 +21,7 @@ use Dotclear\Helper\Html\Form\Input;
 use Dotclear\Helper\Html\Form\Label;
 use Dotclear\Helper\Html\Form\None;
 use Dotclear\Helper\Html\Form\Para;
-use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Interface\Core\MetaInterface;
 
@@ -113,7 +113,7 @@ abstract class MyMetaField extends MyMetaEntry
             ->maxlength(255)
             ->value($value)
             ->class('maximal')
-            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
+            ->label(new Label((new Strong($label))->render(), Label::IL_TF));
     }
 
     /**

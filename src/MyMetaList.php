@@ -19,7 +19,7 @@ use Dotclear\Helper\Html\Form\Component;
 use Dotclear\Helper\Html\Form\Label;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Select;
-use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Helper\Html\Form\Textarea;
 
 // Items list meta type
@@ -112,7 +112,7 @@ class MyMetaList extends MyMetaField
         return (new Select($id))
             ->items($list)
             ->default($value)
-            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
+            ->label(new Label((new Strong($label))->render(), Label::IL_TF));
     }
 
     public function adminForm(): string

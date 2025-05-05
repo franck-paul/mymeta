@@ -30,6 +30,7 @@ use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Select;
 use Dotclear\Helper\Html\Form\Set;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Helper\Html\Form\Submit;
 use Dotclear\Helper\Html\Form\Table;
 use Dotclear\Helper\Html\Form\Tbody;
@@ -309,7 +310,7 @@ class Manage extends Process
                                 ->class(['nowrap', 'maximal'])
                                 ->colspan(6)
                                 ->items([
-                                    (new Text('strong', sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)))),
+                                    (new Strong(sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)))),
                                 ]),
                         ]);
                 } else {

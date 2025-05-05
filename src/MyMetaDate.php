@@ -19,7 +19,7 @@ use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Component;
 use Dotclear\Helper\Html\Form\Datetime;
 use Dotclear\Helper\Html\Form\Label;
-use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Interface\Core\MetaInterface;
 
@@ -41,7 +41,7 @@ class MyMetaDate extends MyMetaField
 
         return (new Datetime($id))
             ->value(Html::escapeHTML(Date::str('%Y-%m-%dT%H:%M', $timestamp)))
-            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
+            ->label(new Label((new Strong($label))->render(), Label::IL_TF));
     }
 
     public function getMetaTypeId(): string

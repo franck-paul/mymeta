@@ -18,7 +18,7 @@ namespace Dotclear\Plugin\mymeta;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Form\Component;
 use Dotclear\Helper\Html\Form\Label;
-use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Interface\Core\MetaInterface;
 
 // Checkbox meta type
@@ -47,7 +47,7 @@ class MyMetaCheck extends MyMetaField
     {
         return (new Checkbox($id, (bool) $value))
             ->value(1)
-            ->label(new Label((new Text('strong', $label))->render(), Label::IL_TF));
+            ->label(new Label((new Strong($label))->render(), Label::IL_TF));
     }
 
     /**
