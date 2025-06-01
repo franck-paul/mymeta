@@ -28,7 +28,7 @@ class Widgets
 
         // Widget for list of metadata
         $w
-            ->create('mymetalist', __('Metadata List'), FrontendWidgets::mymetaList(...))
+            ->create('mymetalist', __('Metadata List'), FrontendWidgets::mymetaList(...), null, '', My::id())
             ->addTitle(__('Title'))
             ->setting(
                 'prompt',
@@ -55,7 +55,7 @@ class Widgets
         // Widget for currently displayed post
 
         $w
-            ->create('mymetavalues', __('Metadata Values list'), FrontendWidgets::mymetaValues(...))
+            ->create('mymetavalues', __('Metadata Values list'), FrontendWidgets::mymetaValues(...), My::id())
             ->addTitle(__('Title'))
             ->setting(
                 'mymetaid',
