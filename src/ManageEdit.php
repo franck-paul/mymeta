@@ -80,7 +80,7 @@ class ManageEdit extends Process
                 App::backend()->mymeta->update($mymetaEntry);
                 App::backend()->mymeta->store();
 
-                Notices::addsuccessNotice(sprintf(
+                Notices::addSuccessNotice(sprintf(
                     __('Metadata "%s" has been successfully updated'),
                     Html::escapeHTML($mymetaid)
                 ));
