@@ -55,7 +55,7 @@ class Widgets
         // Widget for currently displayed post
 
         $w
-            ->create('mymetavalues', __('Metadata Values list'), FrontendWidgets::mymetaValues(...), My::id())
+            ->create('mymetavalues', __('Metadata Values list'), FrontendWidgets::mymetaValues(...), null, '', My::id())
             ->addTitle(__('Title'))
             ->setting(
                 'mymetaid',
