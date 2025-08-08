@@ -183,7 +183,7 @@ class Manage extends Process
         if (empty($_POST['mymeta_order']) && !empty($_POST['order'])) {
             $postOrder = $_POST['order'];
             asort($postOrder);
-            $order = array_map(static fn ($value): string => (string) $value, array_keys($postOrder));
+            $order = array_map(static fn (int|string $value): string => (string) $value, array_keys($postOrder));
         } elseif (!empty($_POST['mymeta_order'])) {
             $metaOrder = explode(',', (string) $_POST['mymeta_order']);
             $order     = $metaOrder;
