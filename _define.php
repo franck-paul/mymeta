@@ -18,7 +18,7 @@ $this->registerModule(
     [
         'date'     => '2025-08-08T10:49:04+0200',
         'requires' => [
-            ['core', '2.34'],
+            ['core', '2.35'],
             ['TemplateHelper'],
         ],
         'priority'    => 1001,

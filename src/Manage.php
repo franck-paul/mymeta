@@ -395,7 +395,7 @@ class Manage extends Process
         echo (new Set())
             ->items([
                 (new Para())
-                    ->class(['top-add', 'new-stuff'])   // 'top-add' should be removed when 2.35 were released
+                    ->class('new-stuff')
                     ->items([
                         (new Link())
                             ->href('#new-meta')
