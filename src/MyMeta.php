@@ -462,7 +462,7 @@ class MyMeta
 
     public function getMyMetaStats(): MetaRecord
     {
-        $table = App::con()->prefix() . App::meta()::META_TABLE_NAME;
+        $table = App::db()->con()->prefix() . App::meta()::META_TABLE_NAME;
 
         $sql = new SelectStatement();
         $sql
@@ -474,7 +474,7 @@ class MyMeta
             ->join(
                 (new JoinStatement())
                     ->left()
-                    ->from($sql->as(App::con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
+                    ->from($sql->as(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
                     ->on('M.post_id = P.post_id')
                     ->statement()
             )
@@ -536,11 +536,11 @@ class MyMeta
         }
 
         $sql
-            ->from($sql->as(App::con()->prefix() . App::meta()::META_TABLE_NAME, 'M'))
+            ->from($sql->as(App::db()->con()->prefix() . App::meta()::META_TABLE_NAME, 'M'))
             ->join(
                 (new JoinStatement())
                     ->left()
-                    ->from($sql->as(App::con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
+                    ->from($sql->as(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
                     ->on('M.post_id = P.post_id')
                     ->statement()
             )

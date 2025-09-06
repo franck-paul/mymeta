@@ -60,7 +60,7 @@ class FrontendBehaviors
             return '';
         }
 
-        $metaid = App::con()->escapeStr($attr['mymetaid']);
+        $metaid = App::db()->con()->escapeStr($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
             $values = $attr['mymetavalue'];
             if (str_starts_with((string) $values, '!')) {
@@ -69,7 +69,7 @@ class FrontendBehaviors
 
             $cond = [];
             foreach (explode(',', (string) $values) as $expr) {
-                $cond[] = "'" . App::con()->escapeStr($expr) . "'";
+                $cond[] = "'" . App::db()->con()->escapeStr($expr) . "'";
             }
 
             return Code::getPHPCode(
@@ -110,10 +110,10 @@ class FrontendBehaviors
             if (!isset($params['sql'])) {
                 $params['sql'] = '';
             }
-            $params['from'] .= ', ' . App::con()->prefix() . 'meta META ';
+            $params['from'] .= ', ' . App::db()->con()->prefix() . 'meta META ';
             $params['sql']  .= 'AND META.post_id = P.post_id ';
-            $params['sql']  .= "AND META.meta_type = '" . App::con()->escapeStr(App::frontend()->context()->mymeta->id) . "' ";
-            $params['sql']  .= "AND META.meta_id = '" . App::con()->escapeStr(App::frontend()->context()->meta->meta_id) . "' ";
+            $params['sql']  .= "AND META.meta_type = '" . App::db()->con()->escapeStr(App::frontend()->context()->mymeta->id) . "' ";
+            $params['sql']  .= "AND META.meta_id = '" . App::db()->con()->escapeStr(App::frontend()->context()->meta->meta_id) . "' ";
         }
     }
 
@@ -135,7 +135,7 @@ class FrontendBehaviors
         if (!isset($params['sql'])) {
             $params['sql'] = '';
         }
-        $params['from'] .= ', ' . App::con()->prefix() . 'meta META ';
+        $params['from'] .= ', ' . App::db()->con()->prefix() . 'meta META ';
         $params['sql']  .= 'AND META.post_id = P.post_id ';
         $params['sql']  .= 'AND META.meta_type = ' . $_metaid_ . ' ';
         $params['sql']  .= 'AND META.meta_id ' . ($_in_ ? 'in' : 'not in') . ' (' . implode(',', $_cond_) . ')';
@@ -152,6 +152,6 @@ class FrontendBehaviors
         if (!isset($params['sql'])) {
             $params['sql'] = '';
         }
-        $params['sql'] .= 'AND P.post_id ' . ($_in_ ? 'in' : 'not in') . ' (SELECT META.post_id from ' . App::con()->prefix() . 'meta META WHERE META.meta_type = ' . $_metaid_ . ')';
+        $params['sql'] .= 'AND P.post_id ' . ($_in_ ? 'in' : 'not in') . ' (SELECT META.post_id from ' . App::db()->con()->prefix() . 'meta META WHERE META.meta_type = ' . $_metaid_ . ')';
     }
 }
