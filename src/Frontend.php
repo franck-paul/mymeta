@@ -16,10 +16,12 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Process;
+use Dotclear\Helper\Process\TraitProcess;
 
-class Frontend extends Process
+class Frontend
 {
+    use TraitProcess;
+
     public static function init(): bool
     {
         MyMeta::registerType(MyMetaString::class);

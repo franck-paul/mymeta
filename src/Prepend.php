@@ -16,10 +16,12 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Process;
+use Dotclear\Helper\Process\TraitProcess;
 
-class Prepend extends Process
+class Prepend
 {
+    use TraitProcess;
+
     public static function init(): bool
     {
         return self::status(My::checkContext(My::PREPEND));
