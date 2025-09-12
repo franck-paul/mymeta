@@ -28,7 +28,7 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        echo \Dotclear\Core\Frontend\Ctx::global_filters(
+        echo App::frontend()->context()::global_filters(
             App::blog()->url() . App::url()->getBase('mymeta') . '/' . App::frontend()->context()->mymeta->id . '/' . rawurlencode((string) App::frontend()->context()->meta->meta_id),
             $_params_,
             $_tag_
@@ -44,7 +44,7 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        echo \Dotclear\Core\Frontend\Ctx::global_filters(
+        echo App::frontend()->context()::global_filters(
             App::frontend()->context()->meta->meta_type,
             $_params_,
             $_tag_
@@ -65,7 +65,7 @@ class FrontendTemplateCode
             App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
         }
         if (App::frontend()->context()->mymeta !== null && App::frontend()->context()->mymeta->enabled) {
-            echo \Dotclear\Core\Frontend\Ctx::global_filters(
+            echo App::frontend()->context()::global_filters(
                 App::frontend()->context()->mymeta->prompt,
                 $_params_,
                 $_tag_
@@ -92,7 +92,7 @@ class FrontendTemplateCode
             App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
         }
         if (App::frontend()->context()->mymeta !== null && App::frontend()->context()->mymeta->enabled) {
-            echo \Dotclear\Core\Frontend\Ctx::global_filters(
+            echo App::frontend()->context()::global_filters(
                 App::frontend()->context()->mymeta->getValue(
                     App::frontend()->mymeta->dcmeta->getMetaStr(
                         App::frontend()->context()->posts->post_meta,
@@ -125,7 +125,7 @@ class FrontendTemplateCode
             App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
         }
         if (App::frontend()->context()->mymeta !== null && App::frontend()->context()->mymeta->enabled) {
-            echo \Dotclear\Core\Frontend\Ctx::global_filters(
+            echo App::frontend()->context()::global_filters(
                 App::frontend()->context()->mymeta->getValue(
                     App::frontend()->context()->meta->meta_id,
                     $_attr_
