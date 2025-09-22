@@ -16,9 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\Listing\ListingPosts;
-use Dotclear\Core\Backend\Notices;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Fieldset;
 use Dotclear\Helper\Html\Form\Form;
@@ -57,13 +54,13 @@ class ManageViewPosts
         }
 
         if (empty($_GET['id']) || empty($_GET['value'])) {
-            Notices::addErrorNotice(__('Something went wrong while editing metadata value'));
+            App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata value'));
             My::redirect();
         }
 
         App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
         if (App::backend()->mymetaEntry == null) {
-            Notices::addErrorNotice(__('Something went wrong while editing metadata value'));
+            App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata value'));
             My::redirect();
         }
 
@@ -87,7 +84,7 @@ class ManageViewPosts
 
             try {
                 if (App::backend()->mymeta->dcmeta->updateMeta($value, $new_value, App::backend()->mymetaEntry->id)) {
-                    Notices::addSuccessNotice(sprintf(
+                    App::backend()->notices()->addSuccessNotice(sprintf(
                         __('Metadata value successfully updated from "%1$s" to "%2$s"'),
                         Html::escapeHTML($value),
                         Html::escapeHTML($new_value)
@@ -160,7 +157,7 @@ class ManageViewPosts
         try {
             $posts     = App::backend()->mymeta->dcmeta->getPostsByMeta($params);
             $counter   = App::backend()->mymeta->dcmeta->getPostsByMeta($params, true);
-            $post_list = new ListingPosts($posts, $counter->f(0));
+            $post_list = App::backend()->listing()->posts($posts, $counter->f(0));
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
@@ -203,15 +200,15 @@ class ManageViewPosts
         # --BEHAVIOR-- adminPostsActionsCombo
         App::behavior()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
-        $head = Page::jsLoad('js/_posts_list.js') .
-        Page::jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
+        $head = App::backend()->page()->jsLoad('js/_posts_list.js') .
+        App::backend()->page()->jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
         My::jsLoad('mymeta.js') .
-        Page::jsPageTabs('mymeta') .
+        App::backend()->page()->jsPageTabs('mymeta') .
         App::backend()->mymetaEntry->postHeader(null, true);
 
-        Page::openModule(My::name(), $head);
+        App::backend()->page()->openModule(My::name(), $head);
 
-        echo Page::breadcrumb(
+        echo App::backend()->page()->breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name())               => '',
                 __('My Metadata')                                   => App::backend()->getPageURL(),
@@ -219,13 +216,13 @@ class ManageViewPosts
                 sprintf(__('Value "%s"'), Html::escapeHTML($value)) => '',
             ]
         );
-        echo Notices::getNotices();
+        echo App::backend()->notices()->getNotices();
 
         // Form
         echo (new Text('h3', sprintf(__('Entries having metadata id "%1$s" set to "%2$s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value))))->render();
 
         // Show posts
-        if ($post_list instanceof ListingPosts) {
+        if ($post_list) {
             $post_list->display(
                 $page,
                 $nb_per_page,
@@ -301,6 +298,6 @@ class ManageViewPosts
             ->render();
         }
 
-        Page::closeModule();
+        App::backend()->page()->closeModule();
     }
 }

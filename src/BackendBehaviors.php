@@ -18,7 +18,6 @@ namespace Dotclear\Plugin\mymeta;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Action\ActionsPosts;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Form\Form;
@@ -92,7 +91,7 @@ class BackendBehaviors
             $head   = $mymeta->postShowHeader(null, true);
 
             $ap->beginPage(
-                Page::breadcrumb(
+                App::backend()->page()->breadcrumb(
                     [
                         Html::escapeHTML(App::blog()->name()) => '',
                         __('Entries')                         => $ap->getRedirection(true),

@@ -17,7 +17,6 @@ namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
 use Dotclear\Core\Backend\Listing\Listing;
-use Dotclear\Core\Backend\Listing\Pager;
 use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Strong;
@@ -42,7 +41,7 @@ class BackendList extends Listing
             return;
         }
 
-        $pager  = (new Pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page))->getLinks();
+        $pager  = App::backend()->listing()->pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page)->getLinks();
         $values = function ($rs) {
             while ($rs->fetch()) {
                 yield (new Tr())

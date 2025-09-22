@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\Notices;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Form\Button;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Form\Fieldset;
@@ -82,7 +80,7 @@ class ManageEdit
                 App::backend()->mymeta->update($mymetaEntry);
                 App::backend()->mymeta->store();
 
-                Notices::addSuccessNotice(sprintf(
+                App::backend()->notices()->addSuccessNotice(sprintf(
                     __('Metadata "%s" has been successfully updated'),
                     Html::escapeHTML($mymetaid)
                 ));
@@ -114,7 +112,7 @@ class ManageEdit
             $mymetaid    = $_REQUEST['id'];
             $mymetaentry = App::backend()->mymeta->getByID($_REQUEST['id']);
             if ($mymetaentry == null) {
-                Notices::addErrorNotice(__('Something went wrong while editing metadata'));
+                App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata'));
                 My::redirect();
                 exit;
             }
@@ -133,15 +131,15 @@ class ManageEdit
         $types      = App::backend()->mymeta->getTypesAsCombo();
         $type_label = array_search($mymeta_type, $types, true);
         if (!$type_label) {
-            Notices::addErrorNotice(__('Something went wrong while editing metadata'));
+            App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata'));
             My::redirect();
         }
 
-        $head = Page::jsPageTabs('mymeta');
+        $head = App::backend()->page()->jsPageTabs('mymeta');
 
-        Page::openModule(My::name(), $head);
+        App::backend()->page()->openModule(My::name(), $head);
 
-        echo Page::breadcrumb(
+        echo App::backend()->page()->breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name()) => '',
                 __('My Metadata')                     => App::backend()->getPageURL(),
@@ -149,7 +147,7 @@ class ManageEdit
             ]
         );
 
-        echo Notices::getNotices();
+        echo App::backend()->notices()->getNotices();
 
         // Form
 
@@ -269,6 +267,6 @@ class ManageEdit
             ])
         ->render();
 
-        Page::closeModule();
+        App::backend()->page()->closeModule();
     }
 }

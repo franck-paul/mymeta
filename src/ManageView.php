@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\Notices;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
@@ -47,13 +45,13 @@ class ManageView
         }
 
         if (empty($_GET['id'])) {
-            Notices::addErrorNotice(__('Something went wrong when editing metadata'));
+            App::backend()->notices()->addErrorNotice(__('Something went wrong when editing metadata'));
             My::redirect();
         }
 
         App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
         if (App::backend()->mymetaEntry == null) {
-            Notices::addErrorNotice(__('Something went wrong when editing metadata'));
+            App::backend()->notices()->addErrorNotice(__('Something went wrong when editing metadata'));
             My::redirect();
         }
 
@@ -83,18 +81,18 @@ class ManageView
 
         $list = new BackendList($rs, $count->f(0));
 
-        $head = Page::jsPageTabs('mymeta');
+        $head = App::backend()->page()->jsPageTabs('mymeta');
 
-        Page::openModule(My::name() . ' &gt; ' . App::backend()->mymetaEntry->id, $head);
+        App::backend()->page()->openModule(My::name() . ' &gt; ' . App::backend()->mymetaEntry->id, $head);
 
-        echo Page::breadcrumb(
+        echo App::backend()->page()->breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name())             => '',
                 __('My Metadata')                                 => App::backend()->getPageURL(),
                 Html::escapeHTML(App::backend()->mymetaEntry->id) => '',
             ]
         );
-        echo Notices::getNotices();
+        echo App::backend()->notices()->getNotices();
 
         // Form
         $list->display(
@@ -108,6 +106,6 @@ class ManageView
             ->render()
         );
 
-        Page::closeModule();
+        App::backend()->page()->closeModule();
     }
 }

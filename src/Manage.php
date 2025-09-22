@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\Notices;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Form\Caption;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Form\Div;
@@ -152,7 +150,7 @@ class Manage
 
                 App::backend()->mymeta->store();
 
-                Notices::addSuccessNotice($msg);
+                App::backend()->notices()->addSuccessNotice($msg);
                 My::redirect();
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
@@ -166,7 +164,7 @@ class Manage
                 App::backend()->mymeta->update($section);
                 App::backend()->mymeta->store();
 
-                Notices::addSuccessNotice(sprintf(
+                App::backend()->notices()->addSuccessNotice(sprintf(
                     __('Section "%s" has been successfully created'),
                     Html::escapeHTML($_POST['mymeta_section'])
                 ));
@@ -196,7 +194,7 @@ class Manage
                 App::backend()->mymeta->reorder($order);
                 App::backend()->mymeta->store();
 
-                Notices::addSuccessNotice(__('Metadata have been successfully reordered'));
+                App::backend()->notices()->addSuccessNotice(__('Metadata have been successfully reordered'));
                 My::redirect();
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
@@ -255,19 +253,19 @@ class Manage
 
         // Head
 
-        $head = Page::jsLoad('js/jquery/jquery-ui.custom.js') .
-        Page::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
+        $head = App::backend()->page()->jsLoad('js/jquery/jquery-ui.custom.js') .
+        App::backend()->page()->jsLoad('js/jquery/jquery.ui.touch-punch.js') .
         My::jsLoad('_meta_lists.js');
 
-        Page::openModule(My::name(), $head);
+        App::backend()->page()->openModule(My::name(), $head);
 
-        echo Page::breadcrumb(
+        echo App::backend()->page()->breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name()) => '',
                 __('My Metadata')                     => '',
             ]
         );
-        echo Notices::getNotices();
+        echo App::backend()->notices()->getNotices();
 
         // Form
         $metadata = function ($metadatas, $stats) {
@@ -498,6 +496,6 @@ class Manage
             ])
         ->render();
 
-        Page::closeModule();
+        App::backend()->page()->closeModule();
     }
 }

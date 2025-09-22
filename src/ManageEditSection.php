@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\Notices;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Html\Form\Button;
 use Dotclear\Helper\Html\Form\Form;
 use Dotclear\Helper\Html\Form\Input;
@@ -65,7 +63,7 @@ class ManageEditSection
                     App::backend()->mymeta->store();
                 }
 
-                Notices::addSuccessNotice(__('Section has been successfully updated'));
+                App::backend()->notices()->addSuccessNotice(__('Section has been successfully updated'));
                 My::redirect();
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
@@ -88,29 +86,29 @@ class ManageEditSection
             $mymetaid      = $_REQUEST['id'];
             $mymetasection = App::backend()->mymeta->getByID($_REQUEST['id']);
             if (!($mymetasection instanceof MyMetaSection)) {
-                Notices::addErrorNotice(__('Something went wrong while editing section'));
+                App::backend()->notices()->addErrorNotice(__('Something went wrong while editing section'));
                 My::redirect();
                 exit;
             }
         } else {
-            Notices::addErrorNotice(__('Something went wrong while editing section'));
+            App::backend()->notices()->addErrorNotice(__('Something went wrong while editing section'));
             My::redirect();
             exit;
         }
 
         $page_title = __('Edit section') . ' ' . $mymetasection->prompt;
-        $head       = Page::jsPageTabs('mymeta');
+        $head       = App::backend()->page()->jsPageTabs('mymeta');
 
-        Page::openModule(My::name(), $head);
+        App::backend()->page()->openModule(My::name(), $head);
 
-        echo Page::breadcrumb(
+        echo App::backend()->page()->breadcrumb(
             [
                 Html::escapeHTML(App::blog()->name()) => '',
                 __('My Metadata')                     => App::backend()->getPageURL(),
                 $page_title                           => '',
             ]
         );
-        echo Notices::getNotices();
+        echo App::backend()->notices()->getNotices();
 
         // Form
         echo (new Form('section_edit'))
@@ -143,6 +141,6 @@ class ManageEditSection
             ])
         ->render();
 
-        Page::closeModule();
+        App::backend()->page()->closeModule();
     }
 }
