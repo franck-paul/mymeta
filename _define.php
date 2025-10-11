@@ -14,9 +14,9 @@ $this->registerModule(
     'My Meta',
     'User-defined metadata management in posts',
     'Bruno Hondelatte and contributors',
-    '9.3',
+    '9.4',
     [
-        'date'     => '2025-09-22T10:28:50+0200',
+        'date'     => '2025-10-11T10:43:32+0200',
         'requires' => [
             ['core', '2.36'],
             ['TemplateHelper'],
