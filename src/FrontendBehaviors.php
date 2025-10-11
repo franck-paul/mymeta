@@ -19,6 +19,9 @@ use ArrayObject;
 use Dotclear\App;
 use Dotclear\Plugin\TemplateHelper\Code;
 
+/**
+ * @todo switch to SqlStatement
+ */
 class FrontendBehaviors
 {
     public static function addTplPath(): string

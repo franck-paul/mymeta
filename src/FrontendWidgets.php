@@ -67,7 +67,7 @@ class FrontendWidgets
             }
         }
 
-        if (count($items) == 0) {
+        if (count($items) === 0) {
             return '';
         }
 

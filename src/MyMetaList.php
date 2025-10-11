@@ -46,7 +46,7 @@ class MyMetaList extends MyMetaField
         $lines = explode("\n", $values);
         foreach ($lines as $line) {
             $entries = explode(':', $line);
-            if (count($entries) == 1) {
+            if (count($entries) === 1) {
                 $key  = trim($entries[0]);
                 $desc = $key;
             } else {

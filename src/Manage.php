@@ -268,7 +268,7 @@ class Manage
         echo App::backend()->notices()->getNotices();
 
         // Form
-        $metadata = function ($metadatas, $stats) {
+        $metadata = function ($metadatas, array $stats) {
             foreach ($metadatas as $meta) {
                 if ($meta instanceof MyMetaSection) {
                     // Section
