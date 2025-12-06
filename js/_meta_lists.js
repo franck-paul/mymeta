@@ -4,6 +4,7 @@
 dotclear.ready(() => {
   $('#mymeta-list').sortable({
     cursor: 'move',
+    handle: '.handle',
     stop(event, ui) {
       $('#mymeta-list tr td input.position').each(function (i) {
         $(this).val(i + 1);
