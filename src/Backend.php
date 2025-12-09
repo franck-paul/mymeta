@@ -64,10 +64,11 @@ class Backend
 
             'adminAfterPageCreate' => BackendBehaviors::setMymeta(...),
             'adminAfterPageUpdate' => BackendBehaviors::setMymeta(...),
-        ]);
 
-        App::behavior()->addBehaviors([
             'adminPostForm' => BackendBehaviors::mymetaPostHeader(...),
+
+            // Register favorite
+            'adminDashboardFavoritesV2' => BackendBehaviors::adminDashboardFavorites(...),
         ]);
 
         if (My::checkContext(My::WIDGETS)) {

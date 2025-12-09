@@ -18,6 +18,7 @@ namespace Dotclear\Plugin\mymeta;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Action\ActionsPosts;
+use Dotclear\Core\Backend\Favorites;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Form\Form;
@@ -28,6 +29,19 @@ use Dotclear\Helper\Html\Html;
 
 class BackendBehaviors
 {
+    public static function adminDashboardFavorites(Favorites $favs): string
+    {
+        $favs->register('mymeta', [
+            'title'       => __('My Meta'),
+            'url'         => My::manageUrl(),
+            'small-icon'  => My::icons(),
+            'large-icon'  => My::icons(),
+            'permissions' => My::checkContext(My::MENU),
+        ]);
+
+        return '';
+    }
+
     public static function mymetaPostHeader(?MetaRecord $post): string
     {
         $mymeta = new MyMeta();
