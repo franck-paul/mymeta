@@ -64,7 +64,9 @@ class Backend
 
             'adminAfterPageCreate' => BackendBehaviors::setMymeta(...),
             'adminAfterPageUpdate' => BackendBehaviors::setMymeta(...),
+        ]);
 
+        App::behavior()->addBehaviors([
             'adminPostForm' => BackendBehaviors::mymetaPostHeader(...),
 
             // Register favorite
