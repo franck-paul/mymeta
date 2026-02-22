@@ -98,8 +98,6 @@ class MyMeta
      * Mymeta settings are retrieved from dc settings
      *
      * @param bool $bypass_settings  Get or not settings
-     *
-     * @return void
      */
     public function __construct(bool $bypass_settings = false)
     {
