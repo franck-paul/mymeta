@@ -18,6 +18,7 @@ namespace Dotclear\Plugin\mymeta;
 use Dotclear\App;
 use Dotclear\Helper\Process\TraitProcess;
 use Exception;
+use stdClass;
 
 class Install
 {
@@ -38,39 +39,61 @@ class Install
             // Init
             $settings = My::settings();
 
-            if ($settings->mymeta_fields == null) {
+            $fields = is_string($fields = $settings->mymeta_fields) ? $fields : '';
+
+            if ($fields === '') {
                 return true;
             }
 
-            $backup = $settings->mymeta_fields;
-            $fields = @unserialize(base64_decode((string) $settings->mymeta_fields));
+            $backup = $fields;
+
+            try {
+                $fields = unserialize(base64_decode($fields));
+            } catch (Exception $exception) {
+                App::error()->add($exception->getMessage());
+            }
+
             if (!is_array($fields) || count($fields) === 0) {
                 return true;
             }
 
-            if (current($fields)::class != 'stdClass') {
+            $item = current($fields);
+            if (is_object($item) && !$item instanceof stdClass) {
+                // Not in old format
                 return true;
             }
 
             $mymeta = new MyMeta(true);
-            foreach ($fields as $k => $v) {
-                $newfield = $mymeta->newMyMeta($v->type);
-                if ($newfield instanceof MyMetaField) {
-                    $newfield->id      = (string) $k;
-                    $newfield->enabled = $v->enabled;
-                    $newfield->prompt  = $v->prompt;
-                    if ($v->type === 'list') {
-                        $newfield->values = $v->values;
-                    }
+            foreach ($fields as $key => $value) {
+                if ($value instanceof stdClass) {
+                    $type = is_string($type = $value->type) ? $type : '';
+                    if ($type !== '') {
+                        $newfield = $mymeta->newMyMeta($type);
+                        if ($newfield instanceof MyMetaField) {
+                            $enabled = is_bool($enabled = $value->enabled) && $enabled;
+                            $prompt  = is_string($prompt = $value->prompt) ? $prompt : '';
 
-                    $mymeta->update($newfield);
+                            $newfield->id      = (string) $key;
+                            $newfield->enabled = $enabled;
+                            $newfield->prompt  = $prompt;
+                            if ($type === 'list' && is_array($value->values)) {
+                                $values = [];
+                                foreach ($value->values as $k => $v) {
+                                    $values[(string) $k] = is_string($v) ? $v : '';
+                                }
+                                $newfield->values = $values;
+                            }
+
+                            $mymeta->update($newfield);
+                        }
+                    }
                 }
             }
 
             $mymeta->reorder();
             $mymeta->store();
 
-            if ($settings->mymeta_fields_backup == null) {
+            if ($settings->mymeta_fields_backup === null) {
                 $settings->put(
                     'mymeta_fields_backup',
                     $backup,

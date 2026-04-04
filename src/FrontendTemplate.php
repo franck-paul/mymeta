@@ -104,7 +104,7 @@ class FrontendTemplate
     {
         $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
 
-        $operator = isset($attr['operator']) ? self::getOperator($attr['operator']) : '&&';
+        $operator = isset($attr['operator']) && is_string($operator = $attr['operator']) ? self::getOperator($operator) : '&&';
 
         /**
          * Warning: Take care of $mymeta_value variable used in template code
@@ -116,10 +116,12 @@ class FrontendTemplate
             $if[] = $sign . 'empty($mymeta_value)';
         }
         if (isset($attr['value'])) {
-            $value = $attr['value'];
-            $if[]  = substr((string) $value, 1, 1) === '!' ?
-                '$mymeta_value !=' . var_export(substr((string) $value, 1), true) :
-                '$mymeta_value ==' . var_export($value, true);
+            $value = is_string($value = $attr['value']) ? $value : '';
+            if ($value !== '') {
+                $if[] = substr($value, 1, 1) === '!' ?
+                    '$mymeta_value !=' . var_export(substr($value, 1), true) :
+                    '$mymeta_value ==' . var_export($value, true);
+            }
         }
         $test = implode(' ' . $operator . ' ', $if);
 
@@ -146,17 +148,18 @@ class FrontendTemplate
     {
         $attr = $attr instanceof ArrayObject ? $attr : new ArrayObject($attr);
 
-        $limit = isset($attr['limit']) ? (int) $attr['limit'] : null;
-        $combo = ['meta_id_lower', 'count', 'latest', 'oldest'];
+        $combo_sortby = ['meta_id_lower', 'count', 'latest', 'oldest'];
+        $combo_order  = ['asc', 'desc'];
 
-        $sortby = 'meta_id_lower';
-        if (isset($attr['sortby']) && in_array($attr['sortby'], $combo)) {
-            $sortby = mb_strtolower((string) $attr['sortby']);
+        $limit  = isset($attr['limit'])  && is_numeric($limit = $attr['limit']) ? (int) $limit : null;
+        $sortby = isset($attr['sortby']) && is_string($sortby = $attr['sortby']) ? mb_strtolower($sortby) : 'meta_id_lower';
+        $order  = isset($attr['order'])  && is_string($order = $attr['order']) ? $order : 'asc';
+
+        if (!in_array($sortby, $combo_sortby)) {
+            $sortby = 'meta_id_lower';
         }
-
-        $order = 'asc';
-        if (isset($attr['order']) && $attr['order'] == 'desc') {
-            $order = 'desc';
+        if (!in_array($order, $combo_order)) {
+            $order = 'asc';
         }
 
         return Code::getPHPTemplateBlockCode(
@@ -198,10 +201,6 @@ class FrontendTemplate
             $attr['id'] = $attr['type'];
         }
 
-        if (isset($attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', (string) $attr['id'])) {
-            return (string) $attr['id'];
-        }
-
-        return '';
+        return isset($attr['id']) && is_string($id = $attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', $id) ? $id : '';
     }
 }

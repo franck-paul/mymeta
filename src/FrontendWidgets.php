@@ -37,7 +37,13 @@ class FrontendWidgets
             return '';
         }
 
-        $allmeta  = App::frontend()->mymeta->getAll();
+        if (!App::frontend()->mymeta instanceof MyMeta) {
+            return '';
+        }
+
+        $mymeta = App::frontend()->mymeta;
+
+        $allmeta  = $mymeta->getAll();
         $prompt   = ($w->get('prompt') === 'prompt');
         $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/';
         $section  = '';
@@ -92,64 +98,84 @@ class FrontendWidgets
             return '';
         }
 
-        $limit       = abs((int) $w->get('limit'));
-        $is_cloud    = ($w->get('displaymode') === 'cloud');
-        $mymetaEntry = App::frontend()->mymeta->getByID($w->get('mymetaid'));
-
-        if (!$mymetaEntry || !$mymetaEntry->enabled) {
+        if (!App::frontend()->mymeta instanceof MyMeta) {
             return '';
         }
 
-        $rs = App::frontend()->mymeta->getMeta((string) $mymetaEntry->id, (string) $limit);
+        $mymeta = App::frontend()->mymeta;
+
+        $limit    = is_numeric($limit = $w->get('limit')) ? abs((int) $limit) : 0;
+        $is_cloud = ($w->get('displaymode') === 'cloud');
+
+        $id = is_string($id = $w->get('mymetaid')) ? $id : '';
+        if ($id === '') {
+            return '';
+        }
+
+        $entry = $mymeta->getByID($id);
+
+        if ($entry === null || !$entry instanceof MyMetaField || !$entry->enabled) {
+            return '';
+        }
+
+        $rs = $mymeta->getMeta($entry->id, (string) $limit);
 
         if ($rs->isEmpty()) {
             return '';
         }
 
-        $sort = $w->get('sortby');
-        if (!in_array($sort, ['meta_id_lower','count'])) {
+        $sort = is_string($sort = $w->get('sortby')) ? $sort : '';
+        if (!in_array($sort, ['meta_id_lower', 'count'])) {
             $sort = 'meta_id_lower';
         }
 
-        $order = $w->get('orderby');
+        $order = is_string($order = $w->get('orderby')) ? $order : '';
         if ($order !== 'asc') {
             $order = 'desc';
         }
 
         $rs->sort($sort, $order);
 
-        $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/' . $mymetaEntry->id;
+        $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/' . $entry->id;
 
         $items = [];
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {
-                $class = 'tag' . $rs->roundpercent;
+                $decile = is_numeric($decile = $rs->roundpercent) ? (int) $decile : 0;
+                $class  = 'tag' . $decile;
             }
 
-            $items[] = (new Li())
-                ->items([
-                    (new Link())
-                        ->href($base_url . '/' . rawurlencode((string) $rs->meta_id))
-                        ->class($class)
-                        ->text($rs->meta_id)
-                        ->extra('rel="tag"'),
-                ]);
+            $id = is_string($id = $rs->meta_id) ? $id : '';
+            if ($id !== '') {
+                $items[] = (new Li())
+                    ->items([
+                        (new Link())
+                            ->href($base_url . '/' . rawurlencode($id))
+                            ->class($class)
+                            ->text($id)
+                            ->extra('rel="tag"'),
+                    ]);
+            }
         }
 
         $list = (new Ul())
             ->items($items);
 
         $all = (new None());
-        if ($mymetaEntry->url_list_enabled && !is_null($w->get('allvalueslinktitle')) && $w->get('allvalueslinktitle') !== '') {
-            $all = (new Para())
-                ->items([
-                    (new Link())
-                        ->href($base_url)
-                        ->items([
-                            (new Strong(Html::escapeHTML($w->get('allvalueslinktitle')))),
-                        ]),
-                ]);
+        if ($entry->url_list_enabled && !is_null($w->get('allvalueslinktitle')) && $w->get('allvalueslinktitle') !== '') {
+            $title = is_string($title = $w->get('allvalueslinktitle')) ? $title : '';
+
+            if ($title !== '') {
+                $all = (new Para())
+                    ->items([
+                        (new Link())
+                            ->href($base_url)
+                            ->items([
+                                (new Strong(Html::escapeHTML($title))),
+                            ]),
+                    ]);
+            }
         }
 
         return $w->renderDiv(

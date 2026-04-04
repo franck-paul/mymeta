@@ -68,7 +68,7 @@ class BackendBehaviors
     public static function setMymeta(Cursor $cur, int $post_id): string
     {
         $mymeta = new MyMeta();
-        $mymeta->setMeta($post_id, $_POST);
+        $mymeta->setMeta($post_id);
 
         return '';
     }
@@ -95,7 +95,10 @@ class BackendBehaviors
             $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
-                    $mymeta->setMeta((int) $posts->post_id, $_POST, false);
+                    $post_id = is_numeric($post_id = $posts->post_id) ? (int) $post_id : 0;
+                    if ($post_id !== 0) {
+                        $mymeta->setMeta($post_id, false);
+                    }
                 }
             }
 

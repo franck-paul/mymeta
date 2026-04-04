@@ -59,12 +59,16 @@ class MyMetaDate extends MyMetaField
      *
      * @param      MetaInterface            $meta           current Meta instance
      * @param      int                      $post_id        The post identifier
-     * @param      array<string, string>    $post           The post
      * @param      bool                     $delete_if_empty  The delete if empty
      */
-    public function setPostMeta(MetaInterface $meta, int $post_id, array $post, bool $delete_if_empty = true): void
+    public function setPostMeta(MetaInterface $meta, int $post_id, bool $delete_if_empty = true): void
     {
-        $timestamp = empty($post['mymeta_' . $this->id]) ? 0 : strtotime($post['mymeta_' . $this->id]);
+        $timestamp    = 0;
+        $mymeta_value = isset($_POST['mymeta_' . $this->id]) && is_string($mymeta_value = $_POST['mymeta_' . $this->id]) ? $mymeta_value : '';
+        if ($mymeta_value !== '') {
+            $timestamp = strtotime($mymeta_value);
+        }
+
         $meta->delPostMeta($post_id, $this->id);
         if ($timestamp) {
             $value = date('Y-m-d H:i:00', $timestamp);

@@ -20,7 +20,7 @@ use Dotclear\App;
 class FrontendTemplateCode
 {
     /**
-     * PHP code for tpl:MyMetaTypePrompt value
+     * PHP code for tpl:MyMetaURL value
      *
      * @param      array<int|string, mixed>     $_params_  The parameters
      */
@@ -28,15 +28,20 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        echo App::frontend()->context()::global_filters(
-            App::blog()->url() . App::url()->getBase('mymeta') . '/' . App::frontend()->context()->mymeta->id . '/' . rawurlencode((string) App::frontend()->context()->meta->meta_id),
-            $_params_,
-            $_tag_
-        );
+        $mymeta_id      = App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaEntry ? App::frontend()->context()->mymeta->id : '';
+        $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_meta_id = App::frontend()->context()->meta->meta_id) ? $mymeta_meta_id : '';
+        if ($mymeta_id !== '' && $mymeta_meta_id !== '') {
+            echo App::frontend()->context()::global_filters(
+                App::blog()->url() . App::url()->getBase('mymeta') . '/' . $mymeta_id . '/' . rawurlencode($mymeta_meta_id),
+                $_params_,
+                $_tag_
+            );
+        }
+        unset($mymeta_id, $mymeta_meta_id);
     }
 
     /**
-     * PHP code for tpl:MyMetaTypePrompt value
+     * PHP code for tpl:MetaType value
      *
      * @param      array<int|string, mixed>     $_params_  The parameters
      */
@@ -44,11 +49,13 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
+        $mymeta_type = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_type = App::frontend()->context()->meta->meta_type) ? $mymeta_type : '';
         echo App::frontend()->context()::global_filters(
-            App::frontend()->context()->meta->meta_type,
+            $mymeta_type,
             $_params_,
             $_tag_
         );
+        unset($mymeta_type);
     }
 
     /**
@@ -61,25 +68,27 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
-        }
-        if (App::frontend()->context()->mymeta !== null && App::frontend()->context()->mymeta->enabled) {
-            echo App::frontend()->context()::global_filters(
-                App::frontend()->context()->mymeta->prompt,
-                $_params_,
-                $_tag_
-            );
-        }
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = null;
+        if (App::frontend()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMeta) {
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
+            }
+            if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
+                echo App::frontend()->context()::global_filters(
+                    App::frontend()->context()->mymeta->prompt,
+                    $_params_,
+                    $_tag_
+                );
+            }
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = null;
+            }
         }
     }
 
     /**
      * PHP code for tpl:EntryMyMetaValue value
      *
-     * @param      array<int|string, mixed>     $_attr_    The parameters
+     * @param      array<string, string>        $_attr_    The parameters
      * @param      array<int|string, mixed>     $_params_  The parameters
      */
     public static function EntryMyMetaValue(
@@ -88,31 +97,35 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
-        }
-        if (App::frontend()->context()->mymeta !== null && App::frontend()->context()->mymeta->enabled) {
-            echo App::frontend()->context()::global_filters(
-                App::frontend()->context()->mymeta->getValue(
-                    App::frontend()->mymeta->dcmeta->getMetaStr(
-                        App::frontend()->context()->posts->post_meta,
-                        App::frontend()->context()->mymeta->id
+        if (App::frontend()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMeta && App::frontend()->context()->posts instanceof \Dotclear\Database\MetaRecord) {
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
+            }
+            if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
+                $mymeta_post_meta = is_string($mymeta_post_meta = App::frontend()->context()->posts->post_meta) ? $mymeta_post_meta : '';
+                echo App::frontend()->context()::global_filters(
+                    App::frontend()->context()->mymeta->getValue(
+                        App::frontend()->mymeta->meta->getMetaStr(
+                            $mymeta_post_meta,
+                            App::frontend()->context()->mymeta->id
+                        ),
+                        $_attr_
                     ),
-                    $_attr_
-                ),
-                $_params_,
-                $_tag_
-            );
-        }
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = null;
+                    $_params_,
+                    $_tag_
+                );
+                unset($mymeta_post_meta);
+            }
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = null;
+            }
         }
     }
 
     /**
      * PHP code for tpl:MyMetaValue value
      *
-     * @param      array<int|string, mixed>     $_attr_    The parameters
+     * @param      array<string, mixed>         $_attr_    The parameters
      * @param      array<int|string, mixed>     $_params_  The parameters
      */
     public static function MyMetaValue(
@@ -121,21 +134,27 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
-        }
-        if (App::frontend()->context()->mymeta !== null && App::frontend()->context()->mymeta->enabled) {
-            echo App::frontend()->context()::global_filters(
-                App::frontend()->context()->mymeta->getValue(
-                    App::frontend()->context()->meta->meta_id,
-                    $_attr_
-                ),
-                $_params_,
-                $_tag_
-            );
-        }
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = null;
+        if (App::frontend()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMeta) {
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
+            }
+            if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
+                $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_meta_id = App::frontend()->context()->meta->meta_id) ? $mymeta_meta_id : '';
+                if ($mymeta_meta_id !== '') {
+                    echo App::frontend()->context()::global_filters(
+                        App::frontend()->context()->mymeta->getValue(
+                            $mymeta_meta_id,
+                            $_attr_
+                        ),
+                        $_params_,
+                        $_tag_
+                    );
+                }
+                unset($mymeta_meta_id);
+            }
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = null;
+            }
         }
     }
 
@@ -147,24 +166,30 @@ class FrontendTemplateCode
         string $_test_HTML,
         string $_content_HTML,
     ): void {
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
-        }
-        if (App::frontend()->context()->mymeta != null && App::frontend()->context()->mymeta->enabled) {
-            $mymeta_value = App::frontend()->mymeta->dcmeta->getMetaStr(App::frontend()->context()->posts->post_meta, App::frontend()->context()->mymeta->id);
-            /* @phpstan-ignore-next-line */
-            if (($_test_HTML) === true) : ?>
+        if (App::frontend()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMeta && App::frontend()->context()->posts instanceof \Dotclear\Database\MetaRecord) {
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
+            }
+            if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
+                $mymeta_post_meta = is_string($mymeta_post_meta = App::frontend()->context()->posts->post_meta) ? $mymeta_post_meta : '';
+                $mymeta_value     = App::frontend()->mymeta->meta->getMetaStr(
+                    $mymeta_post_meta,
+                    App::frontend()->context()->mymeta->id
+                );
+                /* @phpstan-ignore-next-line */
+                if (($_test_HTML) === true) : ?>
                 $_content_HTML
             <?php endif;
-            unset($mymeta_value);
-        }
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = null;
+                unset($mymeta_value, $mymeta_post_meta);
+            }
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = null;
+            }
         }
     }
 
     /**
-     * PHP code for tpl:EntryMyMetaIf block
+     * PHP code for tpl:MyMetaData block
      */
     public static function MyMetaData(
         string $_id_,
@@ -173,22 +198,35 @@ class FrontendTemplateCode
         string $_order_,
         string $_content_HTML,
     ): void {
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
-        }
-        App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->dcmeta->getMetadata([
-            'meta_type' => App::frontend()->context()->mymeta->id,
-            'limit'     => $_limit_,
-        ]));
-        App::frontend()->context()->meta->sort($_sortby_, $_order_);
-        while (App::frontend()->context()->meta->fetch()) {
-            App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID(App::frontend()->context()->meta->meta_type); ?>
+        if (App::frontend()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMeta) {
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
+            }
+            $mymeta_id = App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaEntry ? App::frontend()->context()->mymeta->id : '';
+            if ($_limit_) {
+                App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->meta->getMetadata([
+                    'meta_type' => $mymeta_id,
+                    'limit'     => $_limit_,
+                ]));
+            } else {
+                App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->meta->getMetadata([
+                    'meta_type' => $mymeta_id,
+                ]));
+            }
+            unset($mymeta_id);
+            App::frontend()->context()->meta->sort($_sortby_, $_order_);
+            while (App::frontend()->context()->meta->fetch()) {
+                $mymeta_type = is_string($mymeta_type = App::frontend()->context()->meta->meta_type) ? $mymeta_type : '';
+
+                App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($mymeta_type); ?>
             $_content_HTML
             <?php App::frontend()->context()->mymeta = null;
-        }
-        App::frontend()->context()->meta = null;
-        if ($_id_ !== '') {
-            App::frontend()->context()->mymeta = null;
+            }
+            App::frontend()->context()->meta = null;
+            unset($mymeta_type);
+            if ($_id_ !== '') {
+                App::frontend()->context()->mymeta = null;
+            }
         }
     }
 }

@@ -55,16 +55,15 @@ class MyMetaCheck extends MyMetaField
      *
      * @param      MetaInterface            $meta             The Meta instance
      * @param      int                      $post_id          The post identifier
-     * @param      array<string, string>    $post             The post
      * @param      bool                     $delete_if_empty  The delete if empty
      */
-    public function setPostMeta(MetaInterface $meta, int $post_id, array $post, bool $delete_if_empty = true): void
+    public function setPostMeta(MetaInterface $meta, int $post_id, bool $delete_if_empty = true): void
     {
-        if (!empty($post['mymeta_' . $this->id]) || $delete_if_empty) {
+        if (!empty($_POST['mymeta_' . $this->id]) || $delete_if_empty) {
             $meta->delPostMeta($post_id, $this->id);
         }
 
-        if (!empty($post['mymeta_' . $this->id])) {
+        if (!empty($_POST['mymeta_' . $this->id])) {
             $meta->setPostMeta($post_id, $this->id, '1');
         }
     }

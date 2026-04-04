@@ -95,60 +95,31 @@ class Manage
             }
         }
 
-        App::backend()->mymeta = new MyMeta(true);
-        if (App::backend()->mymeta->settings->mymeta_fields != null) {
-            $backup = App::backend()->mymeta->settings->mymeta_fields;
-            $fields = unserialize(base64_decode(App::backend()->mymeta->settings->mymeta_fields));
-            if (is_array($fields) && $fields !== []
-                                  && current($fields) instanceof \stdClass) {
-                foreach ($fields as $k => $v) {
-                    $newfield = App::backend()->mymeta->newMyMeta($v->type);
-                    if ($newfield instanceof \Dotclear\Plugin\mymeta\MyMetaField) {
-                        $newfield->id      = (string) $k;
-                        $newfield->enabled = $v->enabled;
-                        $newfield->prompt  = $v->prompt;
-                        if ($v->type === 'list') {
-                            $newfield->values = $v->values;
-                        }
-
-                        App::backend()->mymeta->update($newfield);
-                    }
-                }
-
-                App::backend()->mymeta->reorder();
-                App::backend()->mymeta->store();
-
-                if (App::backend()->mymeta->settings->mymeta_fields_backup == null) {
-                    App::backend()->mymeta->settings->put(
-                        'mymeta_fields_backup',
-                        $backup,
-                        'string',
-                        'MyMeta fields backup (0.3.x version)'
-                    );
-                }
-
-                My::redirect();
-            }
-        }
-
         App::backend()->mymeta = new MyMeta();
+
+        $mymeta = App::backend()->mymeta;
 
         if (!empty($_POST['action']) && !empty($_POST['entries'])) {
             try {
-                $entries = $_POST['entries'];
-                $action  = (string) $_POST['action'];
-                $msg     = '';
+                $action = is_string($action = $_POST['action']) ? $action : '';
+
+                /**
+                 * @var array<string>
+                 */
+                $entries = is_array($entries = $_POST['entries']) ? $entries : [];
+
+                $msg = '';
                 if (preg_match('/^(enable|disable)$/', $action)) {
-                    App::backend()->mymeta->setEnabled($entries, ($action === 'enable'));
-                    $msg = ($action === 'enable') ?
-                        __('Metadata entries have been successfully enabled')
-                        : __('Metadata entries have been successfully disabled');
+                    $mymeta->setEnabled($entries, $action === 'enable');
+                    $msg = $action === 'enable' ?
+                        __('Metadata entries have been successfully enabled') :
+                        __('Metadata entries have been successfully disabled');
                 } elseif (preg_match('/^(delete)$/', $action)) {
-                    App::backend()->mymeta->delete($entries);
+                    $mymeta->delete($entries);
                     $msg = __('Metadata entries have been successfully deleted');
                 }
 
-                App::backend()->mymeta->store();
+                $mymeta->store();
 
                 App::backend()->notices()->addSuccessNotice($msg);
                 My::redirect();
@@ -159,15 +130,14 @@ class Manage
 
         if (!empty($_POST['newsep']) && !empty($_POST['mymeta_section'])) {
             try {
-                $section         = App::backend()->mymeta->newSection();
-                $section->prompt = Html::escapeHTML($_POST['mymeta_section']);
-                App::backend()->mymeta->update($section);
-                App::backend()->mymeta->store();
+                $prompt = is_string($prompt = $_POST['mymeta_section']) ? Html::escapeHTML($prompt) : '';
 
-                App::backend()->notices()->addSuccessNotice(sprintf(
-                    __('Section "%s" has been successfully created'),
-                    Html::escapeHTML($_POST['mymeta_section'])
-                ));
+                $section         = $mymeta->newSection();
+                $section->prompt = $prompt;
+                $mymeta->update($section);
+                $mymeta->store();
+
+                App::backend()->notices()->addSuccessNotice(sprintf(__('Section "%s" has been successfully created'), $prompt));
                 My::redirect();
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
@@ -180,19 +150,20 @@ class Manage
          * @var        array<string>
          */
         $order = [];
-        if (empty($_POST['mymeta_order']) && !empty($_POST['order'])) {
-            $postOrder = $_POST['order'];
-            asort($postOrder);
-            $order = array_map(static fn (int|string $value): string => (string) $value, array_keys($postOrder));
+        if (empty($_POST['mymeta_order']) && !empty($_POST['order']) && is_array($_POST['order'])) {
+            $post_order = $_POST['order'];
+            asort($post_order);
+            $order = array_map(static fn (int|string $value): string => (string) $value, array_keys($post_order));
         } elseif (!empty($_POST['mymeta_order'])) {
-            $metaOrder = explode(',', (string) $_POST['mymeta_order']);
-            $order     = $metaOrder;
+            $meta_order = is_string($meta_order = $_POST['mymeta_order']) ? explode(',', $meta_order) : [];
+            $order      = $meta_order;
         }
+        $order = array_filter($order);
 
-        if (!empty($_POST['saveorder']) && !empty($order)) {
+        if (!empty($_POST['saveorder']) && $order !== []) {
             try {
-                App::backend()->mymeta->reorder($order);
-                App::backend()->mymeta->store();
+                $mymeta->reorder($order);
+                $mymeta->store();
 
                 App::backend()->notices()->addSuccessNotice(__('Metadata have been successfully reordered'));
                 My::redirect();
@@ -237,19 +208,27 @@ class Manage
             }
         }
 
-        $types = App::backend()->mymeta->getTypesAsCombo();
+        /**
+         * @var MyMeta
+         */
+        $mymeta = App::backend()->mymeta;
+
+        $types = $mymeta->getTypesAsCombo() ?? [];
 
         $combo_action                = [];
         $combo_action[__('enable')]  = 'enable';
         $combo_action[__('disable')] = 'disable';
         $combo_action[__('delete')]  = 'delete';
 
-        $metaStat = App::backend()->mymeta->getMyMetaStats();
-        $stats    = [];
-        while ($metaStat->fetch()) {
-            $stats[$metaStat->meta_type] = $metaStat->count;
+        $meta_stat = $mymeta->getMyMetaStats();
+        $stats     = [];
+        while ($meta_stat->fetch()) {
+            $meta_type = is_string($meta_type = $meta_stat->meta_type) ? $meta_type : '';
+            if ($meta_type !== '') {
+                $stats[$meta_type] = $meta_stat->count;
+            }
         }
-        $all_metadata = App::backend()->mymeta->getAll();
+        $all_metadata = $mymeta->getAll();
 
         // Head
 
@@ -268,7 +247,7 @@ class Manage
         echo App::backend()->notices()->getNotices();
 
         // Form
-        $metadata = function ($metadatas, array $stats) {
+        $metadata = function (array $metadatas, array $stats) {
             foreach ($metadatas as $meta) {
                 if ($meta instanceof MyMetaSection) {
                     // Section
@@ -313,17 +292,19 @@ class Manage
                                     (new Strong(sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)))),
                                 ]),
                         ]);
-                } else {
+                } elseif ($meta instanceof MyMetaField) {
                     // Metadata
-                    $image = fn ($src, $label, $class) => (new Img('images/' . $src))
+                    $image = fn (string $src, string $label, string $class): Img => (new Img('images/' . $src))
                         ->class(['mark', 'mark-' . $class])
                         ->alt($label)
                         ->title($label);
-                    $image_status = $meta->enabled ?
-                    $image('published.svg', __('published'), 'published') :
-                    $image('unpublished.svg', __('unpublished'), 'unpublished');
 
-                    $st           = $stats[$meta->id] ?? 0;
+                    $image_status = $meta->enabled ?
+                        $image('published.svg', __('published'), 'published') :
+                        $image('unpublished.svg', __('unpublished'), 'unpublished');
+
+                    $st = is_numeric($st = $stats[$meta->id] ?? 0) ? (int) $st : 0;
+
                     $restrictions = $meta->getRestrictions();
                     if (!$restrictions) {
                         $restrictions = __('All');
@@ -381,7 +362,7 @@ class Manage
                                 ->text($restrictions),
                             (new Td())
                                 ->class('nowrap')
-                                ->text($st . ' ' . (($st <= 1) ? __('entry') : __('entries'))),
+                                ->text($st . ' ' . ($st <= 1 ? __('entry') : __('entries'))),
                             (new Td())
                                 ->class(['nowrap', 'minimal'])
                                 ->items([

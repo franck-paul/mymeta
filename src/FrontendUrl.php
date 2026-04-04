@@ -26,27 +26,41 @@ class FrontendUrl extends Url
     public static function tag(?string $args): void
     {
         $n = self::getPageNumber($args);
-        if ($args == '' && !$n) {
+        if ($args === '' && !$n) {
             self::p404();
         } else {
+            $args = is_string($args) ? $args : '';
+            if ($args === '') {
+                self::p404();
+            }
+
             if ($n) {
                 App::frontend()->setPageNumber($n);
             }
 
-            $values = explode('/', (string) $args);
-            $mymeta = App::frontend()->mymeta->getByID($values[0]);
-
-            if ($mymeta == null || !$mymeta->enabled) {
+            if (!App::frontend()->mymeta instanceof MyMeta) {
                 self::p404();
             }
 
-            App::frontend()->context()->mymeta = $mymeta;
+            /**
+             * @var MyMeta
+             */
+            $mymeta = App::frontend()->mymeta;
+
+            $values = explode('/', $args);
+            $field  = $mymeta->getByID($values[0]);
+
+            if ($field === null || !$field instanceof MyMetaField || !$field->enabled) {
+                self::p404();
+            }
+
+            App::frontend()->context()->mymeta = $field;
 
             if (count($values) === 1) {
                 // Meta list
-                $tpl = $mymeta->tpl_list ?: 'mymetas.html';
+                $tpl = $field->tpl_list ?: 'mymetas.html';
 
-                if ($mymeta->url_list_enabled && App::frontend()->template()->getFilePath($tpl)) {
+                if ($field->url_list_enabled && App::frontend()->template()->getFilePath($tpl)) {
                     self::serveDocument($tpl);
                 } else {
                     self::p404();
@@ -55,15 +69,15 @@ class FrontendUrl extends Url
                 // Meta value
                 $mymeta_value = $values[1];
 
-                $rs = App::frontend()->mymeta->dcmeta->getMetadata([
-                    'meta_type' => $mymeta->id,
+                $rs = $mymeta->meta->getMetadata([
+                    'meta_type' => $field->id,
                     'meta_id'   => $mymeta_value,
                 ]);
                 App::frontend()->context()->meta = App::meta()->computeMetaStats($rs);
 
-                $tpl = $mymeta->tpl_single ?: 'mymeta.html';
+                $tpl = $field->tpl_single ?: 'mymeta.html';
 
-                if (!App::frontend()->context()->meta->isEmpty() && $mymeta->url_single_enabled && App::frontend()->template()->getFilePath($tpl)) {
+                if (!App::frontend()->context()->meta->isEmpty() && $field->url_single_enabled && App::frontend()->template()->getFilePath($tpl)) {
                     self::serveDocument($tpl);
                 } else {
                     self::p404();

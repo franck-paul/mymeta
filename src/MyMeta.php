@@ -40,12 +40,12 @@ use Exception;
  */
 class MyMeta
 {
-    public MetaInterface $dcmeta;
+    public MetaInterface $meta;
 
     public BlogWorkspaceInterface $settings;
 
     /**
-     * @var null|array<string, array<string, string>>
+     * @var null|array<string, array{desc: string, object: class-string}>
      */
     private static ?array $types = null;
 
@@ -55,7 +55,7 @@ class MyMeta
     private static ?array $typesCombo = null;
 
     /**
-     * @var array<int, mixed> mymeta list of mymeta entries, indexed by meta position
+     * @var array<int, MyMetaSection|MyMetaField>  $mymeta     list of mymeta entries, indexed by meta position
      */
     protected array $mymeta = [];
 
@@ -73,7 +73,7 @@ class MyMeta
      *
      * Registers a new meta type. Must extend myMetaEntry class
      *
-     * @param string $class class to register
+     * @param class-string $class class to register
      */
     public static function registerType(string $class): void
     {
@@ -101,35 +101,39 @@ class MyMeta
      */
     public function __construct(bool $bypass_settings = false)
     {
-        $this->dcmeta   = App::meta();
+        $this->meta     = App::meta();
         $this->settings = My::settings();
 
+        $fields = [];
         if (!$bypass_settings && $this->settings->mymeta_fields) {
             try {
-                $value = @unserialize(base64_decode($this->settings->mymeta_fields)) ?? [];
-            } catch (Exception) {
-                $value = [];
-            }
-            $this->mymeta = !$value || !is_array($value) ? [] : $value;
-        } else {
-            $this->mymeta = [];
-        }
-
-        if ($this->mymeta !== [] && current($this->mymeta) instanceof \stdClass) {
-            // Redirect to admin home to perform upgrade, old settings detected
-            $this->mymeta = [];
-        } else {
-            $this->mymetaIDs = [];
-            $this->sep_max   = 0;
-            foreach ($this->mymeta as $k => $v) {
-                $this->mymetaIDs[$v->id] = (int) $k;    // @phpstan-ignore-line
-                if ($v instanceof MyMetaSection) {
-                    // Compute max section id, to anticipate
-                    // future section ids
-                    $sep_id = substr($v->id, strlen($this->sep_prefix));
-                    if ($this->sep_max < (int) $sep_id) {
-                        $this->sep_max = (int) $sep_id;
+                $mymeta_fields = is_string($mymeta_fields = $this->settings->mymeta_fields) ? $mymeta_fields : '';
+                if ($mymeta_fields !== '') {
+                    $mymeta_fields = base64_decode($mymeta_fields);
+                    /**
+                     * @var false|array<int, MyMetaSection|MyMetaField>  $fields
+                     */
+                    $fields = unserialize($mymeta_fields);
+                    if ($fields === false) {
+                        $fields = [];
                     }
+                }
+            } catch (Exception) {
+                $fields = [];
+            }
+        }
+        $this->mymeta = $fields;
+
+        $this->mymetaIDs = [];
+        $this->sep_max   = 0;
+        foreach ($this->mymeta as $k => $v) {
+            $this->mymetaIDs[$v->id] = (int) $k;
+            if ($v instanceof MyMetaSection) {
+                // Compute max section id, to anticipate
+                // future section ids
+                $sep_id = substr($v->id, strlen($this->sep_prefix));
+                if ($this->sep_max < (int) $sep_id) {
+                    $this->sep_max = (int) $sep_id;
                 }
             }
         }
@@ -167,7 +171,7 @@ class MyMeta
      *
      * Retrieves all mymeta, indexed by position
      *
-     * @return array<int, mixed>
+     * @return array<int, MyMetaSection|MyMetaField>
      */
     public function getAll(): array
     {
@@ -181,9 +185,9 @@ class MyMeta
      *
      * @param int $pos  the position
      *
-     * @return MyMetaEntry the mymeta
+     * @return MyMetaSection|MyMetaField the mymeta
      */
-    public function getByPos(int $pos): MyMetaEntry
+    public function getByPos(int $pos): MyMetaSection|MyMetaField
     {
         return $this->mymeta[$pos];
     }
@@ -195,9 +199,9 @@ class MyMeta
      *
      * @param String $id  the ID
      *
-     * @return MyMetaEntry|null the mymeta
+     * @return MyMetaSection|MyMetaField|null the mymeta
      */
-    public function getByID(string $id): ?MyMetaEntry
+    public function getByID(string $id): null|MyMetaSection|MyMetaField
     {
         if (isset($this->mymetaIDs[$id])) {
             return $this->mymeta[$this->mymetaIDs[$id]];
@@ -209,9 +213,9 @@ class MyMeta
     /**
      * updates mymeta table with a given meta
      *
-     * @param mixed $meta the meta to store
+     * @param MyMetaSection|MyMetaField $meta the meta to store
      */
-    public function update($meta): void
+    public function update(MyMetaSection|MyMetaField $meta): void
     {
         $id = $meta->id;
         if (!isset($this->mymetaIDs[$id])) {
@@ -242,7 +246,7 @@ class MyMeta
         $pos          = 0;
         $newmymeta    = [];
         $newmymetaIDs = [];
-        if ($order != null) {
+        if ($order !== null) {
             foreach ($order as $id) {
                 if (isset($this->mymetaIDs[$id])) {
                     $m                 = $this->mymeta[$this->mymetaIDs[$id]];
@@ -298,8 +302,10 @@ class MyMeta
 
         foreach ($ids as $id) {
             if (isset($this->mymetaIDs[$id])) {
-                $pos                         = $this->mymetaIDs[$id];
-                $this->mymeta[$pos]->enabled = $enabled;
+                $pos = $this->mymetaIDs[$id];
+                if ($this->mymeta[$pos] instanceof MyMetaField) {
+                    $this->mymeta[$pos]->enabled = $enabled;
+                }
             }
         }
     }
@@ -313,7 +319,13 @@ class MyMeta
     public function newMyMeta(string $type = 'string', string $id = ''): ?MyMetaField
     {
         if (!empty(MyMeta::$types[$type])) {
-            return new MyMeta::$types[$type]['object']($id);    // @phpstan-ignore-line
+            $mymeta_class = MyMeta::$types[$type]['object'];
+            /**
+             * @var MyMetaField
+             */
+            $instance = new $mymeta_class($id);
+
+            return $instance;
         }
 
         return null;
@@ -326,7 +338,7 @@ class MyMeta
         }
 
         $pos = $this->mymetaIDs[$id];
-        if (!empty($this->mymeta[$pos])) {
+        if (!empty($this->mymeta[$pos]) && $this->mymeta[$pos] instanceof MyMetaField) {
             return $this->mymeta[$pos]->enabled;
         }
 
@@ -376,26 +388,31 @@ class MyMeta
                 }
             } elseif ($meta->enabled) {
                 $display_item = true;
-                if (!is_null($post) && $post->exists('post_type')) {
-                    $display_item = $meta->isEnabledFor($post->post_type);
-                } else {
-                    // try to guess post_type from URI
-                    $u         = explode('?', (string) $_SERVER['REQUEST_URI']);
-                    $post_type = '';
-                    /*
-                     * @todo define a better way to guess post_type from URL
-                     */
-                    if (basename($u[0]) === 'post.php') {
-                        $post_type = 'post';
-                    } elseif (basename($u[0]) === 'plugin.php') {
-                        parse_str($u[1], $p);
+                $post_type    = $post instanceof MetaRecord && is_string($post_type = $post->post_type) ? $post_type : '';
+                if ($post_type === '') {
+                    // Try to guess post_type from URI (only post and page are currently looked for)
+                    $uri = is_string($uri = $_SERVER['REQUEST_URI']) ? $uri : '';
+                    if ($uri !== '') {
+                        $query = parse_url($uri, PHP_URL_QUERY);
+                        $args  = [];
+                        if (is_string($query)) {
+                            parse_str($query, $args);
+                        }
+                        $post_type = '';
+                        if (isset($args['Process']) && $args['Process'] === 'Post') {
+                            $post_type = 'post';
+                        } elseif (isset($args['Process']) && $args['Process'] === 'Plugin' && isset($args['p']) && $args['p'] === 'pages') {
+                            $post_type = 'page';
+                        }
                     }
+                }
 
+                if ($post_type !== '') {
                     $display_item = $meta->isEnabledFor($post_type);
                 }
 
                 if ($display_item) {
-                    $items[] = $meta->postForm($this->dcmeta, $post);
+                    $items[] = $meta->postForm($this->meta, $post);
                 }
             }
         }
@@ -421,18 +438,21 @@ class MyMeta
      * Sets the meta.
      *
      * @param      int                      $post_id        The post identifier
-     * @param      array<string, string>    $POST           The post
      * @param      bool                     $deleteIfEmpty  The delete if empty
      *
      * @throws     Exception
      */
-    public function setMeta(int $post_id, array $POST, bool $deleteIfEmpty = true): void
+    public function setMeta(int $post_id, bool $deleteIfEmpty = true): void
     {
+        /**
+         * @var array<array-key, string>
+         */
         $errors = [];
         foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaField && $meta->enabled && (!isset($POST['post_type']) || $meta->isEnabledFor($POST['post_type']))) {
+            $post_type = isset($_POST['post_type']) && is_string($post_type = $_POST['post_type']) ? $post_type : '';
+            if ($meta instanceof MyMetaField && $meta->enabled && ($post_type === '' || $meta->isEnabledFor($post_type))) {
                 try {
-                    $meta->setPostMeta($this->dcmeta, $post_id, $POST, $deleteIfEmpty);
+                    $meta->setPostMeta($this->meta, $post_id, $deleteIfEmpty);
                 } catch (Exception $e) {
                     $errors[] = $e->getMessage();
                 }
@@ -440,10 +460,12 @@ class MyMeta
         }
 
         if ($errors !== []) {
-            $items = function ($errors) {
+            $items = function (array $errors) {
                 foreach ($errors as $error) {
-                    yield (new Li())
-                        ->text($error);
+                    if (is_string($error)) {
+                        yield (new Li())
+                            ->text($error);
+                    }
                 }
             };
             $message = (new Ul())
@@ -545,16 +567,22 @@ class MyMeta
             ->where('P.blog_id = ' . $sql->quote(App::blog()->id()))
         ;
 
-        if (isset($params['meta_type'])) {
+        if (isset($params['meta_type']) && is_string($params['meta_type'])) {
             $sql->and('meta_type = ' . $sql->quote($params['meta_type']));
         }
 
-        if (isset($params['meta_id'])) {
+        if (isset($params['meta_id']) && is_string($params['meta_id'])) {
             $sql->and('meta_id = ' . $sql->quote($params['meta_id']));
         }
 
-        if (isset($params['post_id'])) {
-            $sql->and('P.post_id ' . $sql->in($params['post_id']));
+        if (isset($params['post_id']) && (is_numeric($params['post_id']) || is_array($params['post_id']))) {
+            /**
+             * @var array<array-key, string|int|null>
+             */
+            $params_ids = is_array($params['post_id']) ? $params['post_id'] : [$params['post_id']];
+            // Make $params_ids an array of integer non null values
+            $params_ids = array_filter(array_map(fn (int|string|null $v): int => (int) $v, $params_ids));
+            $sql->and('P.post_id ' . $sql->in($params_ids));
         }
 
         if (!App::auth()->check(App::auth()->makePermissions([
@@ -587,12 +615,28 @@ class MyMeta
             ]);
         }
 
-        if (!$count_only && isset($params['order'])) {
-            $sql->order($sql->escape((string) $params['order']));
+        if (!$count_only && isset($params['order']) && is_string($params['order'])) {
+            $sql->order($sql->escape($params['order']));
         }
 
         if (isset($params['limit']) && !$count_only) {
-            $sql->limit($params['limit']);
+            /**
+             * @var list<string|int|null>   $values
+             */
+            $values = is_array($params['limit']) ? array_values($params['limit']) : [$params['limit']];
+            // Make $values an array of integer values
+            $values = array_map(fn (int|string|null $v): int => (int) $v, $values);
+
+            /**
+             * @var array{0: int, 1?: int}  $limit
+             */
+            $limit = [
+                $values[0],
+            ];
+            if (isset($values[1])) {
+                $limit[1] = $values[1];
+            }
+            $sql->limit($limit);
         }
 
         return $sql->select() ?? MetaRecord::newFromArray([]);
@@ -618,9 +662,9 @@ class MyMeta
             $params['post_id'] = $post_id;
         }
 
-        $rs = $this->dcmeta->getMetadata($params, false);
+        $rs = $this->meta->getMetadata($params, false);
 
-        return $this->dcmeta->computeMetaStats($rs);
+        return $this->meta->computeMetaStats($rs);
     }
 
     /**

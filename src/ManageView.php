@@ -44,13 +44,19 @@ class ManageView
             return false;
         }
 
-        if (empty($_GET['id'])) {
+        $id = isset($_GET['id']) && is_string($id = $_GET['id']) ? $id : '';
+        if ($id === '') {
             App::backend()->notices()->addErrorNotice(__('Something went wrong when editing metadata'));
             My::redirect();
         }
 
-        App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
-        if (App::backend()->mymetaEntry == null) {
+        /**
+         * @var MyMeta
+         */
+        $mymeta = App::backend()->mymeta;
+
+        App::backend()->mymetaEntry = $mymeta->getByID($id);
+        if (App::backend()->mymetaEntry === null) {
             App::backend()->notices()->addErrorNotice(__('Something went wrong when editing metadata'));
             My::redirect();
         }
@@ -67,29 +73,42 @@ class ManageView
             return;
         }
 
+        /**
+         * @var MyMeta
+         */
+        $mymeta = App::backend()->mymeta;
+
+        /**
+         * @var MyMetaField $mymetaEntry
+         */
+        $mymetaEntry = App::backend()->mymetaEntry;
+
         $nb_per_page = 20;
-        $page        = empty($_GET['page']) ? 1 : max(1, (int) $_GET['page']);
+        $page        = isset($_GET['page']) && is_numeric($page = $_GET['page']) ? (int) $page : 1;
 
         $params = [
-            'meta_type' => App::backend()->mymetaEntry->id,
+            'meta_type' => $mymetaEntry->id,
             'order'     => 'count DESC',
-            'limit'     => [(($page - 1) * $nb_per_page),$nb_per_page],
+            'limit'     => [
+                ($page - 1) * $nb_per_page, // Offset
+                $nb_per_page,               // Limit
+            ],
         ];
 
-        $rs    = App::backend()->mymeta->getMetadata($params, false);
-        $count = App::backend()->mymeta->getMetadata($params, true);
+        $rs    = $mymeta->getMetadata($params, false);
+        $count = $mymeta->getMetadata($params, true);
 
         $list = new BackendList($rs, $count->f(0));
 
         $head = App::backend()->page()->jsPageTabs('mymeta');
 
-        App::backend()->page()->openModule(My::name() . ' &gt; ' . App::backend()->mymetaEntry->id, $head);
+        App::backend()->page()->openModule(My::name() . ' &gt; ' . $mymetaEntry->id, $head);
 
         echo App::backend()->page()->breadcrumb(
             [
-                Html::escapeHTML(App::blog()->name())             => '',
-                __('My Metadata')                                 => App::backend()->getPageURL(),
-                Html::escapeHTML(App::backend()->mymetaEntry->id) => '',
+                Html::escapeHTML(App::blog()->name()) => '',
+                __('My Metadata')                     => App::backend()->getPageURL(),
+                Html::escapeHTML($mymetaEntry->id)    => '',
             ]
         );
         echo App::backend()->notices()->getNotices();
@@ -100,7 +119,7 @@ class ManageView
             $nb_per_page,
             (new Div())
                 ->items([
-                    (new Text('h3', sprintf(__('Values of metadata "%s"'), Html::escapeHTML(App::backend()->mymetaEntry->id)))),
+                    (new Text('h3', sprintf(__('Values of metadata "%s"'), Html::escapeHTML($mymetaEntry->id)))),
                     (new Text(null, '%s')),     // List comes here
                 ])
             ->render()

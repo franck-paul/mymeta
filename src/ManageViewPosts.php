@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Fieldset;
 use Dotclear\Helper\Html\Form\Form;
@@ -58,17 +59,36 @@ class ManageViewPosts
             My::redirect();
         }
 
-        App::backend()->mymetaEntry = App::backend()->mymeta->getByID($_GET['id']);
-        if (App::backend()->mymetaEntry == null) {
+        /**
+         * @var MyMeta
+         */
+        $mymeta = App::backend()->mymeta;
+
+        App::backend()->mymetaEntry = null;
+
+        $id = isset($_GET['id']) && is_string($id = $_GET['id']) ? $id : '';
+        if ($id !== '') {
+            App::backend()->mymetaEntry = $mymeta->getByID($id);
+        }
+        if (App::backend()->mymetaEntry === null) {
             App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata value'));
             My::redirect();
         }
 
-        $value = rawurldecode((string) $_GET['value']);
+        /**
+         * @var MyMetaField $mymetaEntry
+         */
+        $mymetaEntry = App::backend()->mymetaEntry;
+
+        $value = isset($_GET['value']) && is_string($value = $_GET['value']) ? rawurldecode($value) : '';
 
         App::backend()->posts_actions_page = new BackendActions(
             App::backend()->url()->get('admin.plugin'),
-            ['p' => My::id(), 'm' => 'viewposts', 'id' => App::backend()->mymetaEntry->id]
+            [
+                'p'  => My::id(),
+                'm'  => 'viewposts',
+                'id' => $mymetaEntry->id,
+            ]
         );
 
         App::backend()->posts_actions_page_rendered = null;
@@ -80,10 +100,10 @@ class ManageViewPosts
 
         // Rename a tag
         if (!empty($_POST['rename'])) {
-            $new_value = $_POST['mymeta_' . App::backend()->mymetaEntry->id];
+            $new_value = isset($_POST['mymeta_' . $mymetaEntry->id]) && is_string($new_value = $_POST['mymeta_' . $mymetaEntry->id]) ? $new_value : '';
 
             try {
-                if (App::backend()->mymeta->dcmeta->updateMeta($value, $new_value, App::backend()->mymetaEntry->id)) {
+                if ($mymeta->meta->updateMeta($value, $new_value, $mymetaEntry->id)) {
                     App::backend()->notices()->addSuccessNotice(sprintf(
                         __('Metadata value successfully updated from "%1$s" to "%2$s"'),
                         Html::escapeHTML($value),
@@ -91,7 +111,7 @@ class ManageViewPosts
                     ));
                     My::redirect([
                         'm'      => 'view',
-                        'id'     => App::backend()->mymetaEntry->id,
+                        'id'     => $mymetaEntry->id,
                         'status' => 'valchg',
                     ]);
                 }
@@ -106,7 +126,7 @@ class ManageViewPosts
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             try {
-                App::backend()->mymeta->dcmeta->delMeta($value, App::backend()->mymetaEntry->id);
+                $mymeta->meta->delMeta($value, $mymetaEntry->id);
                 My::redirect([
                     'm'   => 'view',
                     'del' => 1,
@@ -128,25 +148,42 @@ class ManageViewPosts
             return;
         }
 
+        /**
+         * @var BackendActions
+         */
+        $pap = App::backend()->posts_actions_page;
         if (App::backend()->posts_actions_page_rendered) {
-            App::backend()->posts_actions_page->render();
+            $pap->render();
 
             return;
         }
 
-        $value = rawurldecode((string) $_GET['value']);
+        /**
+         * @var MyMeta
+         */
+        $mymeta = App::backend()->mymeta;
 
-        $this_url = App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode($value);
+        /**
+         * @var MyMetaField $mymetaEntry
+         */
+        $mymetaEntry = App::backend()->mymetaEntry;
 
-        $page        = empty($_GET['page']) ? 1 : $_GET['page'];
+        $value = isset($_GET['value']) && is_string($value = $_GET['value']) ? rawurldecode($value) : '';
+
+        $this_url = App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . $mymetaEntry->id . '&amp;value=' . rawurlencode($value);
+
+        $page        = isset($_GET['page']) && is_numeric($page = $_GET['page']) ? (int) $page : 1;
         $nb_per_page = 30;
 
-        $params               = [];
-        $params['limit']      = [(($page - 1) * $nb_per_page),$nb_per_page];
+        $params          = [];
+        $params['limit'] = [
+            ($page - 1) * $nb_per_page,     // Offset
+            $nb_per_page,                   // Limit
+        ];
         $params['no_content'] = true;
 
         $params['meta_id']   = $value;
-        $params['meta_type'] = App::backend()->mymetaEntry->id;
+        $params['meta_type'] = $mymetaEntry->id;
 
         $params['post_type'] = '';
 
@@ -155,8 +192,8 @@ class ManageViewPosts
         $posts     = null;
 
         try {
-            $posts     = App::backend()->mymeta->dcmeta->getPostsByMeta($params);
-            $counter   = App::backend()->mymeta->dcmeta->getPostsByMeta($params, true);
+            $posts     = $mymeta->meta->getPostsByMeta($params);
+            $counter   = $mymeta->meta->getPostsByMeta($params, true);
             $post_list = App::backend()->listing()->posts($posts, $counter->f(0));
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
@@ -197,6 +234,11 @@ class ManageViewPosts
             $combo_action[__('Delete')] = [__('Delete') => 'delete'];
         }
 
+        /**
+         * @var array<string, array<string, string>>
+         */
+        $combo_backend_action = $pap->getCombo();
+
         # --BEHAVIOR-- adminPostsActionsCombo
         App::behavior()->callBehavior('adminPostsActionsCombo', [&$combo_action]);
 
@@ -204,7 +246,7 @@ class ManageViewPosts
         App::backend()->page()->jsJson('mymeta', ['msg' => __('Are you sure you want to remove this metadata?')]) .
         My::jsLoad('mymeta.js') .
         App::backend()->page()->jsPageTabs('mymeta') .
-        App::backend()->mymetaEntry->postHeader(null, true);
+        $mymetaEntry->postHeader(null, true);
 
         App::backend()->page()->openModule(My::name(), $head);
 
@@ -212,14 +254,14 @@ class ManageViewPosts
             [
                 Html::escapeHTML(App::blog()->name())               => '',
                 __('My Metadata')                                   => App::backend()->getPageURL(),
-                Html::escapeHTML(App::backend()->mymetaEntry->id)   => App::backend()->getPageURL() . '&m=view&id=' . App::backend()->mymetaEntry->id,
+                Html::escapeHTML($mymetaEntry->id)                  => App::backend()->getPageURL() . '&m=view&id=' . $mymetaEntry->id,
                 sprintf(__('Value "%s"'), Html::escapeHTML($value)) => '',
             ]
         );
         echo App::backend()->notices()->getNotices();
 
         // Form
-        echo (new Text('h3', sprintf(__('Entries having metadata id "%1$s" set to "%2$s"'), Html::escapeHTML(App::backend()->mymetaEntry->id), Html::escapeHTML($value))))->render();
+        echo (new Text('h3', sprintf(__('Entries having metadata id "%1$s" set to "%2$s"'), Html::escapeHTML($mymetaEntry->id), Html::escapeHTML($value))))->render();
 
         // Show posts
         if ($post_list) {
@@ -240,13 +282,13 @@ class ManageViewPosts
                                     ->class(['col', 'right', 'form-buttons'])
                                     ->items([
                                         (new Select('action'))
-                                            ->items(App::backend()->posts_actions_page->getCombo())
+                                            ->items($combo_backend_action)
                                             ->label(new Label(__('Selected entries action:'), Label::IL_TF)),
                                         (new Submit('form-entries-submit', __('ok'))),
                                         ... My::hiddenFields([
                                             'post_type' => '',
                                             'm'         => 'serie_posts',
-                                            'id'        => App::backend()->mymetaEntry->id,
+                                            'id'        => $mymetaEntry->id,
                                         ]),
                                     ]),
                             ]),
@@ -256,7 +298,7 @@ class ManageViewPosts
         }
 
         // Remove tag
-        if (!$posts->isEmpty() && App::auth()->check(App::auth()->makePermissions([
+        if ($posts instanceof MetaRecord && !$posts->isEmpty() && App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             echo (new Form('tag_delete'))
@@ -273,7 +315,7 @@ class ManageViewPosts
             ->render();
         }
 
-        if (!$posts->isEmpty()) {
+        if ($posts instanceof MetaRecord && !$posts->isEmpty()) {
             echo (new Form('tag_rename'))
                 ->method('post')
                 ->action($this_url)
@@ -284,7 +326,7 @@ class ManageViewPosts
                             (new Note())
                                 ->class('info')
                                 ->text(__('This will change the meta value for all entries having this value')),
-                            App::backend()->mymetaEntry->postForm(App::backend()->mymeta->dcmeta, null, Html::escapeHTML($value), true),
+                            $mymetaEntry->postForm($mymeta->meta, null, Html::escapeHTML($value), true),
                             (new Para())
                                 ->class('form-buttons')
                                 ->items([

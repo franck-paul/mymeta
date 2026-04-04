@@ -17,6 +17,7 @@ namespace Dotclear\Plugin\mymeta;
 
 use Dotclear\App;
 use Dotclear\Core\Backend\Listing\Listing;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Strong;
@@ -42,22 +43,31 @@ class BackendList extends Listing
         }
 
         $pager  = App::backend()->listing()->pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page)->getLinks();
-        $values = function ($rs) {
+        $values = function (MetaRecord $rs) {
+            /**
+             * @var MyMetaField $mymetaEntry
+             */
+            $mymetaEntry = App::backend()->mymetaEntry;
+
             while ($rs->fetch()) {
-                yield (new Tr())
-                    ->class('line')
-                    ->cols([
-                        (new Td())
-                            ->class('nowrap')
-                            ->items([
-                                (new Link())
-                                    ->href(App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . App::backend()->mymetaEntry->id . '&amp;value=' . rawurlencode((string) $rs->meta_id))
-                                    ->text(App::backend()->mymetaEntry->displayValue($rs->meta_id)),
-                            ]),
-                        (new Td())
-                            ->class('nowrap')
-                            ->text($rs->count . ' ' . ($rs->count <= 1 ? __('entry') : __('entries'))),
-                    ]);
+                $meta_id = is_string($meta_id = $rs->meta_id) ? $meta_id : '';
+                if ($meta_id !== '') {
+                    $count = is_numeric($count = $rs->count) ? (int) $count : 0;
+                    yield (new Tr())
+                        ->class('line')
+                        ->cols([
+                            (new Td())
+                                ->class('nowrap')
+                                ->items([
+                                    (new Link())
+                                        ->href(App::backend()->getPageURL() . '&amp;m=viewposts&amp;id=' . $mymetaEntry->id . '&amp;value=' . rawurlencode($meta_id))
+                                        ->text($mymetaEntry->displayValue($meta_id)),
+                                ]),
+                            (new Td())
+                                ->class('nowrap')
+                                ->text($count . ' ' . ($count <= 1 ? __('entry') : __('entries'))),
+                        ]);
+                }
             }
         };
         $buffer = (new Table())

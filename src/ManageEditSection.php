@@ -53,14 +53,19 @@ class ManageEditSection
 
         if (!empty($_POST['saveconfig'])) {
             try {
-                $mymetaid     = Html::escapeHTML($_POST['mymeta_id']);
-                $mymetaprompt = Html::escapeHTML($_POST['mymeta_prompt']);
+                /**
+                 * @var MyMeta
+                 */
+                $mymeta = App::backend()->mymeta;
 
-                $mymetaSection = App::backend()->mymeta->getByID($mymetaid);
+                $id     = isset($_POST['mymeta_id'])     && is_string($id = $_POST['mymeta_id']) ? Html::escapeHTML($id) : '';
+                $prompt = isset($_POST['mymeta_prompt']) && is_string($prompt = $_POST['mymeta_prompt']) ? Html::escapeHTML($prompt) : '';
+
+                $mymetaSection = $mymeta->getByID($id);
                 if ($mymetaSection instanceof MyMetaSection) {
-                    $mymetaSection->prompt = $mymetaprompt;
-                    App::backend()->mymeta->update($mymetaSection);
-                    App::backend()->mymeta->store();
+                    $mymetaSection->prompt = $prompt;
+                    $mymeta->update($mymetaSection);
+                    $mymeta->store();
                 }
 
                 App::backend()->notices()->addSuccessNotice(__('Section has been successfully updated'));
@@ -83,9 +88,15 @@ class ManageEditSection
         }
 
         if (array_key_exists('id', $_REQUEST)) {
-            $mymetaid      = $_REQUEST['id'];
-            $mymetasection = App::backend()->mymeta->getByID($_REQUEST['id']);
-            if (!($mymetasection instanceof MyMetaSection)) {
+            /**
+             * @var MyMeta
+             */
+            $mymeta = App::backend()->mymeta;
+
+            $id = isset($_REQUEST['id']) && is_string($id = $_REQUEST['id']) ? Html::escapeHTML($id) : '';
+
+            $section = $mymeta->getByID($id);
+            if (!$section instanceof MyMetaSection) {
                 App::backend()->notices()->addErrorNotice(__('Something went wrong while editing section'));
                 My::redirect();
                 exit;
@@ -96,7 +107,7 @@ class ManageEditSection
             exit;
         }
 
-        $page_title = __('Edit section') . ' ' . $mymetasection->prompt;
+        $page_title = __('Edit section') . ' ' . $section->prompt;
         $head       = App::backend()->page()->jsPageTabs('mymeta');
 
         App::backend()->page()->openModule(My::name(), $head);
@@ -123,7 +134,7 @@ class ManageEditSection
                         (new Input('mymeta_prompt'))
                             ->size(20)
                             ->maxlength(255)
-                            ->default($mymetasection->prompt)
+                            ->default($section->prompt)
                             ->label((new Label((new Span('*'))->render() . __('Title:'), Label::IL_TF))
                                 ->class('required')),
                     ]),
@@ -133,7 +144,7 @@ class ManageEditSection
                         (new Submit('saveconfig', __('Save'))),
                         ... My::hiddenFields([
                             'm'         => 'editsection',
-                            'mymeta_id' => $mymetaid,
+                            'mymeta_id' => $id,
                         ]),
                         (new Button(['back'], __('Back')))
                             ->class(['go-back','reset','hidden-if-no-js']),

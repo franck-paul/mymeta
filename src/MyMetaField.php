@@ -62,18 +62,20 @@ abstract class MyMetaField extends MyMetaEntry
      * Displays form input field (when editting a post) including prompt
      * Notice : submitted field name must be prefixed with "mymeta_"
      *
-     * @param MetaInterface     $dcmeta     dcMeta instance to use
-     * @param MetaRecord|null   $post       the post resultset
+     * @param MetaInterface     $meta     Meta instance to use
+     * @param MetaRecord|null   $post     the post resultset
      */
-    public function postForm(MetaInterface $dcmeta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): Component
+    public function postForm(MetaInterface $meta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): Component
     {
         if ($this->enabled || $bypass_disabled) {
-            $this_id = 'mymeta_' . $this->id;
-            $value   = '';
-            if (isset($_POST[$this_id])) {
+            $this_id    = 'mymeta_' . $this->id;
+            $post_value = isset($_POST[$this_id]) && is_string($post_value = $_POST[$this_id]) ? $post_value : null;
+            $value      = '';
+            if ($post_value !== null) {
                 $value = Html::escapeHTML($_POST[$this_id]);
-            } elseif (!is_null($post)) {
-                $value = $dcmeta->getMetaStr($post->post_meta, $this->id);
+            } elseif ($post instanceof MetaRecord) {
+                $post_meta = is_string($post_meta = $post->post_meta) ? $post_meta : null;
+                $value     = $meta->getMetaStr($post_meta, $this->id);
             }
 
             return (new Para())
@@ -121,18 +123,18 @@ abstract class MyMetaField extends MyMetaEntry
      *
      * updates post meta for a given post, when a post is submitted
      *
-     * @param MetaInterface             $dcmeta         current dcMeta instance
-     * @param int                       $post_id        post_id to update
-     * @param array<string, string>     $post           HTTP POST parameters
+     * @param MetaInterface             $meta         current Meta instance
+     * @param int                       $post_id      post_id to update
      */
-    public function setPostMeta(MetaInterface $dcmeta, int $post_id, array $post, bool $delete_if_empty = true): void
+    public function setPostMeta(MetaInterface $meta, int $post_id, bool $delete_if_empty = true): void
     {
-        if (!empty($post['mymeta_' . $this->id]) || $delete_if_empty) {
-            $dcmeta->delPostMeta($post_id, $this->id);
+        $mymeta_value = isset($_POST['mymeta_' . $this->id]) && is_string($mymeta_value = $_POST['mymeta_' . $this->id]) ? $mymeta_value : '';
+        if ($mymeta_value !== '' || $delete_if_empty) {
+            $meta->delPostMeta($post_id, $this->id);
         }
 
-        if (!empty($post['mymeta_' . $this->id])) {
-            $dcmeta->setPostMeta($post_id, $this->id, Html::escapeHTML($post['mymeta_' . $this->id]));
+        if ($mymeta_value !== '') {
+            $meta->setPostMeta($post_id, $this->id, Html::escapeHTML($mymeta_value));
         }
     }
 
@@ -180,12 +182,15 @@ abstract class MyMetaField extends MyMetaEntry
      * This function is triggered on mymeta update
      * to set mymeta fields defined in adminForm
      *
-     * @param array<string, string> $post the post resultset
+     * @param array<mixed> $post the post resultset
      */
     public function adminUpdate(array $post): void
     {
-        $this->prompt  = Html::escapeHTML($post['mymeta_prompt']);
-        $this->enabled = (bool) $post['mymeta_enabled'];
+        $prompt  = isset($post['mymeta_prompt'])  && is_string($prompt = $post['mymeta_prompt']) ? $prompt : '';
+        $enabled = isset($post['mymeta_enabled']) && is_numeric($enabled = $post['mymeta_enabled']) && (bool) $enabled;
+
+        $this->prompt  = Html::escapeHTML($prompt);
+        $this->enabled = $enabled;
     }
 
     public function isEnabledFor(string $mode): bool
@@ -202,7 +207,7 @@ abstract class MyMetaField extends MyMetaEntry
         return !is_array($this->post_types);
     }
 
-    public function getRestrictions(): string|bool
+    public function getRestrictions(): string|false
     {
         if (is_array($this->post_types)) {
             return implode(',', $this->post_types);

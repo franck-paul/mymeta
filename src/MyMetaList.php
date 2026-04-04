@@ -128,13 +128,15 @@ class MyMetaList extends MyMetaField
     }
 
     /**
-     * @param      array<string, string>  $post   The post
+     * @param      array<mixed>  $post   The post
      */
     public function adminUpdate(array $post): void
     {
         parent::adminUpdate($post);
-        if (isset($post['mymeta_values'])) {
-            $this->values = $this->valuesToArray($post['mymeta_values']);
+
+        $values = isset($post['mymeta_values']) && is_string($values = $post['mymeta_values']) ? $values : '';
+        if ($values !== '') {
+            $this->values = $this->valuesToArray($values);
         }
     }
 }
