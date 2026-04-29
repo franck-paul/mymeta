@@ -95,10 +95,10 @@ class ManageView
             ],
         ];
 
-        $rs    = $mymeta->getMetadata($params, false);
+        $rs    = $mymeta->getMetadata($params);
         $count = $mymeta->getMetadata($params, true);
 
-        $list = new BackendList($rs, $count->f(0));
+        $list = new BackendList($rs, $count->cardinal());
 
         $head = App::backend()->page()->jsPageTabs('mymeta');
 

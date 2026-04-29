@@ -194,7 +194,7 @@ class ManageViewPosts
         try {
             $posts     = $mymeta->meta->getPostsByMeta($params);
             $counter   = $mymeta->meta->getPostsByMeta($params, true);
-            $post_list = App::backend()->listing()->posts($posts, $counter->f(0));
+            $post_list = App::backend()->listing()->posts($posts, $counter->cardinal());
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
