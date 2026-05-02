@@ -70,6 +70,7 @@ class ManageViewPosts
         if ($id !== '') {
             App::backend()->mymetaEntry = $mymeta->getByID($id);
         }
+
         if (App::backend()->mymetaEntry === null) {
             App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata value'));
             My::redirect();

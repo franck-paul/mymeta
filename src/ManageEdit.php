@@ -86,6 +86,7 @@ class ManageEdit
                                 $stack[] = $post_type;
                             }
                         }
+
                         $field->post_types = $stack;
                     }
 
@@ -109,6 +110,7 @@ class ManageEdit
                 } else {
                     App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata'));
                 }
+
                 My::redirect();
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
@@ -192,6 +194,7 @@ class ManageEdit
             // Disabled fields are not included in $_POST[] on submit, so keep their values
             $buttons[] = (new Hidden(['mymeta_id'], $id));
         }
+
         if ($id !== '') {
             $buttons[] = (new Button(['back'], __('Back')))
                 ->class(['go-back','reset','hidden-if-no-js']);

@@ -53,7 +53,7 @@ class Install
                 App::error()->add($exception->getMessage());
             }
 
-            if (!is_array($fields) || count($fields) === 0) {
+            if (!is_array($fields) || $fields === []) {
                 return true;
             }
 
@@ -81,6 +81,7 @@ class Install
                                 foreach ($value->values as $k => $v) {
                                     $values[(string) $k] = is_string($v) ? $v : '';
                                 }
+
                                 $newfield->values = $values;
                             }
 

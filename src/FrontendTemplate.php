@@ -115,6 +115,7 @@ class FrontendTemplate
             $sign = ($attr['defined'] == 'true' || $attr['defined'] == '1') ? '!' : '';
             $if[] = $sign . 'empty($mymeta_value)';
         }
+
         if (isset($attr['value'])) {
             $value = is_string($value = $attr['value']) ? $value : '';
             if ($value !== '') {
@@ -123,6 +124,7 @@ class FrontendTemplate
                     '$mymeta_value ==' . var_export($value, true);
             }
         }
+
         $test = implode(' ' . $operator . ' ', $if);
 
         if ($if === []) {
@@ -155,10 +157,11 @@ class FrontendTemplate
         $sortby = isset($attr['sortby']) && is_string($sortby = $attr['sortby']) ? mb_strtolower($sortby) : 'meta_id_lower';
         $order  = isset($attr['order'])  && is_string($order = $attr['order']) ? $order : 'asc';
 
-        if (!in_array($sortby, $combo_sortby)) {
+        if (!in_array($sortby, $combo_sortby, true)) {
             $sortby = 'meta_id_lower';
         }
-        if (!in_array($order, $combo_order)) {
+
+        if (!in_array($order, $combo_order, true)) {
             $order = 'asc';
         }
 

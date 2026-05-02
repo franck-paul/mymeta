@@ -122,6 +122,7 @@ class MyMeta
                 $fields = [];
             }
         }
+
         $this->mymeta = $fields;
 
         $this->mymetaIDs = [];
@@ -398,6 +399,7 @@ class MyMeta
                         if (is_string($query)) {
                             parse_str($query, $args);
                         }
+
                         $post_type = '';
                         if (isset($args['Process']) && $args['Process'] === 'Post') {
                             $post_type = 'post';
@@ -636,6 +638,7 @@ class MyMeta
             if (isset($values[1])) {
                 $limit[1] = $values[1];
             }
+
             $sql->limit($limit);
         }
 

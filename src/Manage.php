@@ -158,6 +158,7 @@ class Manage
             $meta_order = is_string($meta_order = $_POST['mymeta_order']) ? explode(',', $meta_order) : [];
             $order      = $meta_order;
         }
+
         $order = array_filter($order);
 
         if (!empty($_POST['saveorder']) && $order !== []) {
@@ -228,6 +229,7 @@ class Manage
                 $stats[$meta_type] = $meta_stat->count;
             }
         }
+
         $all_metadata = $mymeta->getAll();
 
         // Head

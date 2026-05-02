@@ -73,7 +73,7 @@ class FrontendWidgets
             }
         }
 
-        if (count($items) === 0) {
+        if ($items === []) {
             return '';
         }
 
@@ -125,7 +125,7 @@ class FrontendWidgets
         }
 
         $sort = is_string($sort = $w->get('sortby')) ? $sort : '';
-        if (!in_array($sort, ['meta_id_lower', 'count'])) {
+        if (!in_array($sort, ['meta_id_lower', 'count'], true)) {
             $sort = 'meta_id_lower';
         }
 

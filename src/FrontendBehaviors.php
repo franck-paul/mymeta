@@ -108,6 +108,7 @@ class FrontendBehaviors
             if (!isset($params) || !is_array($params)) {
                 $params = [];
             }
+
             $mymeta_params_from = isset($params['from']) && is_string($mymeta_params_from = $params['from']) ? $mymeta_params_from : '';
             $mymeta_params_sql  = isset($params['sql'])  && is_string($mymeta_params_sql = $params['sql']) ? $mymeta_params_sql : '';
 
@@ -138,6 +139,7 @@ class FrontendBehaviors
         if (!isset($params) || !is_array($params)) {
             $params = [];
         }
+
         $mymeta_params_from = isset($params['from']) && is_string($mymeta_params_from = $params['from']) ? $mymeta_params_from : '';
         $mymeta_params_sql  = isset($params['sql'])  && is_string($mymeta_params_sql = $params['sql']) ? $mymeta_params_sql : '';
 
@@ -160,6 +162,7 @@ class FrontendBehaviors
         if (!isset($params) || !is_array($params)) {
             $params = [];
         }
+
         $mymeta_params_sql = isset($params['sql']) && is_string($mymeta_params_sql = $params['sql']) ? $mymeta_params_sql : '';
 
         $mymeta_params_sql .= 'AND P.post_id ' . ($_in_ ? 'in' : 'not in') . ' (SELECT META.post_id from ' . App::db()->con()->prefix() . 'meta META WHERE META.meta_type = ' . $_metaid_ . ')';
