@@ -42,7 +42,7 @@ class BackendList extends Listing
             return;
         }
 
-        $pager  = App::backend()->listing()->pager($page, (int) $this->rs_count, $nb_per_page, $nb_per_page)->getLinks();
+        $pager  = App::backend()->listing()->pager($page, $this->rs_count, $nb_per_page, $nb_per_page)->getLinks();
         $values = function (MetaRecord $rs) {
             /**
              * @var MyMetaField $mymetaEntry

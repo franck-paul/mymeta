@@ -578,13 +578,10 @@ class MyMeta
         }
 
         if (isset($params['post_id']) && (is_numeric($params['post_id']) || is_array($params['post_id']))) {
-            /**
-             * @var array<array-key, string|int|null>
-             */
-            $params_ids = is_array($params['post_id']) ? $params['post_id'] : [$params['post_id']];
-            // Make $params_ids an array of integer non null values
-            $params_ids = array_filter(array_map(fn (int|string|null $v): int => (int) $v, $params_ids));
-            $sql->and('P.post_id ' . $sql->in($params_ids));
+            $params_ids = $sql->sanitizeIn($params['post_id'], 'int', false);
+            if ($params_ids !== []) {
+                $sql->and('P.post_id ' . $sql->in($params_ids));
+            }
         }
 
         if (!App::auth()->check(App::auth()->makePermissions([

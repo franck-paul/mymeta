@@ -176,7 +176,7 @@ class FrontendTemplateCode
                     $mymeta_post_meta,
                     App::frontend()->context()->mymeta->id
                 );
-                /* @phpstan-ignore-next-line */
+                /* @phpstan-ignore identical.alwaysFalse */
                 if (($_test_HTML) === true) : ?>
                 $_content_HTML
             <?php endif;
