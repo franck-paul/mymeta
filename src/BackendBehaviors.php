@@ -95,7 +95,7 @@ class BackendBehaviors
             $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
-                    $post_id = is_numeric($post_id = $posts->post_id) ? (int) $post_id : 0;
+                    $post_id = $posts->intField('post_id');
                     if ($post_id !== 0) {
                         $mymeta->setMeta($post_id, false);
                     }

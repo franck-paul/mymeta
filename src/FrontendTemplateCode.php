@@ -216,7 +216,7 @@ class FrontendTemplateCode
             unset($mymeta_id);
             App::frontend()->context()->meta->sort($_sortby_, $_order_);
             while (App::frontend()->context()->meta->fetch()) {
-                $mymeta_type = is_string($mymeta_type = App::frontend()->context()->meta->meta_type) ? $mymeta_type : '';
+                $mymeta_type = App::frontend()->context()->meta->strField('meta_type');
 
                 App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($mymeta_type); ?>
             $_content_HTML
