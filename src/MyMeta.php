@@ -389,7 +389,7 @@ class MyMeta
                 }
             } elseif ($meta->enabled) {
                 $display_item = true;
-                $post_type    = $post instanceof MetaRecord && is_string($post_type = $post->post_type) ? $post_type : '';
+                $post_type    = $post instanceof MetaRecord ? $post->strField('post_type') : '';
                 if ($post_type === '') {
                     // Try to guess post_type from URI (only post and page are currently looked for)
                     $uri = is_string($uri = $_SERVER['REQUEST_URI']) ? $uri : '';

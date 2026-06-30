@@ -29,7 +29,7 @@ class FrontendTemplateCode
         string $_tag_
     ): void {
         $mymeta_id      = App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaEntry ? App::frontend()->context()->mymeta->id : '';
-        $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_meta_id = App::frontend()->context()->meta->meta_id) ? $mymeta_meta_id : '';
+        $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord ? App::frontend()->context()->meta->strField('meta_id') : '';
         if ($mymeta_id !== '' && $mymeta_meta_id !== '') {
             echo App::frontend()->context()::global_filters(
                 App::blog()->url() . App::url()->getBase('mymeta') . '/' . $mymeta_id . '/' . rawurlencode($mymeta_meta_id),
@@ -49,7 +49,7 @@ class FrontendTemplateCode
         array $_params_,
         string $_tag_
     ): void {
-        $mymeta_type = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_type = App::frontend()->context()->meta->meta_type) ? $mymeta_type : '';
+        $mymeta_type = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord ? App::frontend()->context()->meta->strField('meta_type') : '';
         echo App::frontend()->context()::global_filters(
             $mymeta_type,
             $_params_,
@@ -102,7 +102,7 @@ class FrontendTemplateCode
                 App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
             }
             if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
-                $mymeta_post_meta = is_string($mymeta_post_meta = App::frontend()->context()->posts->post_meta) ? $mymeta_post_meta : '';
+                $mymeta_post_meta = App::frontend()->context()->posts->strField('post_meta');
                 echo App::frontend()->context()::global_filters(
                     App::frontend()->context()->mymeta->getValue(
                         App::frontend()->mymeta->meta->getMetaStr(
@@ -139,7 +139,7 @@ class FrontendTemplateCode
                 App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
             }
             if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
-                $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_meta_id = App::frontend()->context()->meta->meta_id) ? $mymeta_meta_id : '';
+                $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord ? App::frontend()->context()->meta->strField('meta_id') : '';
                 if ($mymeta_meta_id !== '') {
                     echo App::frontend()->context()::global_filters(
                         App::frontend()->context()->mymeta->getValue(
@@ -171,7 +171,7 @@ class FrontendTemplateCode
                 App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
             }
             if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
-                $mymeta_post_meta = is_string($mymeta_post_meta = App::frontend()->context()->posts->post_meta) ? $mymeta_post_meta : '';
+                $mymeta_post_meta = App::frontend()->context()->posts->strField('post_meta');
                 $mymeta_value     = App::frontend()->mymeta->meta->getMetaStr(
                     $mymeta_post_meta,
                     App::frontend()->context()->mymeta->id

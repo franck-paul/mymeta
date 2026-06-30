@@ -50,9 +50,9 @@ class BackendList extends Listing
             $mymetaEntry = App::backend()->mymetaEntry;
 
             while ($rs->fetch()) {
-                $meta_id = is_string($meta_id = $rs->meta_id) ? $meta_id : '';
+                $meta_id = $rs->strField('meta_id');
                 if ($meta_id !== '') {
-                    $count = is_numeric($count = $rs->count) ? (int) $count : 0;
+                    $count = $rs->intField('count');
                     yield (new Tr())
                         ->class('line')
                         ->cols([

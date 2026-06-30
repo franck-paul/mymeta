@@ -115,7 +115,7 @@ class FrontendBehaviors
             $mymeta_params_from .= ', ' . App::db()->con()->prefix() . 'meta META ';
 
             $mymeta_id      = App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaEntry ? App::frontend()->context()->mymeta->id : '';
-            $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord && is_string($mymeta_meta_id = App::frontend()->context()->meta->meta_id) ? $mymeta_meta_id : '';
+            $mymeta_meta_id = App::frontend()->context()->meta instanceof \Dotclear\Database\MetaRecord ? App::frontend()->context()->meta->strField('meta_id') : '';
 
             $mymeta_params_sql .= 'AND META.post_id = P.post_id ' .
                 "AND META.meta_type = '" . App::db()->con()->escapeStr($mymeta_id) . "' " .

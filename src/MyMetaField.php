@@ -74,7 +74,7 @@ abstract class MyMetaField extends MyMetaEntry
             if ($post_value !== null) {
                 $value = Html::escapeHTML($_POST[$this_id]);
             } elseif ($post instanceof MetaRecord) {
-                $post_meta = is_string($post_meta = $post->post_meta) ? $post_meta : null;
+                $post_meta = $post->strField('post_meta', true);
                 $value     = $meta->getMetaStr($post_meta, $this->id);
             }
 
