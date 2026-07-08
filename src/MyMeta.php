@@ -104,19 +104,18 @@ class MyMeta
         $this->meta     = App::meta();
         $this->settings = My::settings();
 
-        $fields = [];
-        if (!$bypass_settings && $this->settings->mymeta_fields) {
+        $fields        = [];
+        $mymeta_fields = $this->settings->getStr('mymeta_fields', false);
+
+        if (!$bypass_settings && $mymeta_fields !== '') {
             try {
-                $mymeta_fields = is_string($mymeta_fields = $this->settings->mymeta_fields) ? $mymeta_fields : '';
-                if ($mymeta_fields !== '') {
-                    $mymeta_fields = base64_decode($mymeta_fields);
-                    /**
-                     * @var false|array<int, MyMetaSection|MyMetaField>  $fields
-                     */
-                    $fields = unserialize($mymeta_fields);
-                    if ($fields === false) {
-                        $fields = [];
-                    }
+                $mymeta_fields = base64_decode($mymeta_fields);
+                /**
+                 * @var false|array<int, MyMetaSection|MyMetaField>  $fields
+                 */
+                $fields = unserialize($mymeta_fields);
+                if ($fields === false) {
+                    $fields = [];
                 }
             } catch (Exception) {
                 $fields = [];

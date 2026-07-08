@@ -39,8 +39,7 @@ class Install
             // Init
             $settings = My::settings();
 
-            $fields = is_string($fields = $settings->mymeta_fields) ? $fields : '';
-
+            $fields = $settings->getStr('mymeta_fields', false);
             if ($fields === '') {
                 return true;
             }
@@ -94,7 +93,7 @@ class Install
             $mymeta->reorder();
             $mymeta->store();
 
-            if ($settings->mymeta_fields_backup === null) {
+            if ($settings->get('mymeta_fields_backup') === null) {
                 $settings->put(
                     'mymeta_fields_backup',
                     $backup,
