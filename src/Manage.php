@@ -224,9 +224,9 @@ class Manage
         $meta_stat = $mymeta->getMyMetaStats();
         $stats     = [];
         while ($meta_stat->fetch()) {
-            $meta_type = is_string($meta_type = $meta_stat->meta_type) ? $meta_type : '';
+            $meta_type = $meta_stat->strField('meta_type');
             if ($meta_type !== '') {
-                $stats[$meta_type] = $meta_stat->count;
+                $stats[$meta_type] = $meta_stat->intField('count');
             }
         }
 

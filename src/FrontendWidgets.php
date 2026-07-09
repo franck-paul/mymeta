@@ -142,11 +142,11 @@ class FrontendWidgets
         while ($rs->fetch()) {
             $class = '';
             if ($is_cloud) {
-                $decile = is_numeric($decile = $rs->roundpercent) ? (int) $decile : 0;
+                $decile = $rs->intField('roundpercent');
                 $class  = 'tag' . $decile;
             }
 
-            $id = is_string($id = $rs->meta_id) ? $id : '';
+            $id = $rs->strField('meta_id');
             if ($id !== '') {
                 $items[] = (new Li())
                     ->items([
