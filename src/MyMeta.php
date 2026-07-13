@@ -221,7 +221,7 @@ class MyMeta
         if (!isset($this->mymetaIDs[$id])) {
             // new id => create
             $this->mymeta[]       = $meta;
-            $this->mymetaIDs[$id] = count($this->mymeta);    // @phpstan-ignore-line
+            $this->mymetaIDs[$id] = count($this->mymeta);
         } else {
             // ID already exists => update
             $this->mymeta[$this->mymetaIDs[$id]] = $meta;
@@ -266,7 +266,7 @@ class MyMeta
         }
 
         $this->mymeta    = $newmymeta;
-        $this->mymetaIDs = $newmymetaIDs;   // @phpstan-ignore-line
+        $this->mymetaIDs = $newmymetaIDs;
     }
 
     /**
