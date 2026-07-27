@@ -402,7 +402,11 @@ class MyMeta
                         $post_type = '';
                         if (isset($args['Process']) && $args['Process'] === 'Post') {
                             $post_type = 'post';
-                        } elseif (isset($args['Process']) && $args['Process'] === 'Plugin' && isset($args['p']) && $args['p'] === 'pages') {
+                        } elseif (isset($args['Process'])
+                            && $args['Process'] === 'Plugin'
+                            && isset($args['p'])
+                            && $args['p'] === 'pages'
+                        ) {
                             $post_type = 'page';
                         }
                     }
@@ -451,7 +455,10 @@ class MyMeta
         $errors = [];
         foreach ($this->mymeta as $meta) {
             $post_type = isset($_POST['post_type']) && is_string($post_type = $_POST['post_type']) ? $post_type : '';
-            if ($meta instanceof MyMetaField && $meta->enabled && ($post_type === '' || $meta->isEnabledFor($post_type))) {
+            if ($meta instanceof MyMetaField
+                && $meta->enabled
+                && ($post_type === '' || $meta->isEnabledFor($post_type))
+            ) {
                 try {
                     $meta->setPostMeta($this->meta, $post_id, $deleteIfEmpty);
                 } catch (Exception $e) {
@@ -613,7 +620,10 @@ class MyMeta
             ]);
         }
 
-        if (!$count_only && isset($params['order']) && is_string($params['order'])) {
+        if (!$count_only
+            && isset($params['order'])
+            && is_string($params['order'])
+        ) {
             $sql->order($sql->escape($params['order']));
         }
 

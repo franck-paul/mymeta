@@ -50,7 +50,10 @@ class FrontendUrl extends Url
             $values = explode('/', $args);
             $field  = $mymeta->getByID($values[0]);
 
-            if ($field === null || !$field instanceof MyMetaField || !$field->enabled) {
+            if ($field === null
+                || !$field instanceof MyMetaField
+                || !$field->enabled
+            ) {
                 self::p404();
             }
 
@@ -77,7 +80,10 @@ class FrontendUrl extends Url
 
                 $tpl = $field->tpl_single ?: 'mymeta.html';
 
-                if (!App::frontend()->context()->meta->isEmpty() && $field->url_single_enabled && App::frontend()->template()->getFilePath($tpl)) {
+                if (!App::frontend()->context()->meta->isEmpty()
+                    && $field->url_single_enabled
+                    && App::frontend()->template()->getFilePath($tpl)
+                ) {
                     self::serveDocument($tpl);
                 } else {
                     self::p404();

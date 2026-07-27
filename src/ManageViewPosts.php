@@ -299,9 +299,12 @@ class ManageViewPosts
         }
 
         // Remove tag
-        if ($posts instanceof MetaRecord && !$posts->isEmpty() && App::auth()->check(App::auth()->makePermissions([
-            App::auth()::PERMISSION_CONTENT_ADMIN,
-        ]), App::blog()->id())) {
+        if ($posts instanceof MetaRecord
+            && !$posts->isEmpty()
+            && App::auth()->check(App::auth()->makePermissions([
+                App::auth()::PERMISSION_CONTENT_ADMIN,
+            ]), App::blog()->id())
+        ) {
             echo (new Form('tag_delete'))
                 ->method('post')
                 ->action($this_url)

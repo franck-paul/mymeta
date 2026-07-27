@@ -33,7 +33,9 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType())) || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))) {
+        if (($w->homeonly === 1 && !App::url()->isHome(App::url()->getType()))
+            || ($w->homeonly === 2 && App::url()->isHome(App::url()->getType()))
+        ) {
             return '';
         }
 
@@ -62,8 +64,10 @@ class FrontendWidgets
                 } elseif ($section != '') {
                     $display_meta = false;
                 }
-            } elseif ($display_meta && $meta->enabled
-                                    && $meta->url_list_enabled) {
+            } elseif ($display_meta
+                && $meta->enabled
+                && $meta->url_list_enabled
+            ) {
                 $items[] = (new Li())
                     ->items([
                         (new Link())
@@ -94,7 +98,9 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType())) || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))) {
+        if (($w->homeonly === 1 && !App::url()->isHome(App::url()->getType()))
+            || ($w->homeonly === 2 && App::url()->isHome(App::url()->getType()))
+        ) {
             return '';
         }
 
@@ -114,7 +120,10 @@ class FrontendWidgets
 
         $entry = $mymeta->getByID($id);
 
-        if ($entry === null || !$entry instanceof MyMetaField || !$entry->enabled) {
+        if ($entry === null
+            || !$entry instanceof MyMetaField
+            || !$entry->enabled
+        ) {
             return '';
         }
 
@@ -163,7 +172,10 @@ class FrontendWidgets
             ->items($items);
 
         $all = (new None());
-        if ($entry->url_list_enabled && !is_null($w->get('allvalueslinktitle')) && $w->get('allvalueslinktitle') !== '') {
+        if ($entry->url_list_enabled
+            && !is_null($w->get('allvalueslinktitle'))
+            && $w->get('allvalueslinktitle') !== ''
+        ) {
             $title = is_string($title = $w->get('allvalueslinktitle')) ? $title : '';
 
             if ($title !== '') {

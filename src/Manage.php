@@ -150,7 +150,10 @@ class Manage
          * @var        array<string>
          */
         $order = [];
-        if (empty($_POST['mymeta_order']) && !empty($_POST['order']) && is_array($_POST['order'])) {
+        if (empty($_POST['mymeta_order'])
+            && !empty($_POST['order'])
+            && is_array($_POST['order'])
+        ) {
             $post_order = $_POST['order'];
             asort($post_order);
             $order = array_map(static fn (int|string $value): string => (string) $value, array_keys($post_order));
