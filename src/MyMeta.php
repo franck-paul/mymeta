@@ -57,12 +57,12 @@ class MyMeta
     /**
      * @var array<int, MyMetaSection|MyMetaField>  $mymeta     list of mymeta entries, indexed by meta position
      */
-    protected array $mymeta = [];
+    protected array $mymeta;
 
     /**
      * @var array<string, int> reference index for mymeta entries, indexed by meta ID
      */
-    protected array $mymetaIDs = [];
+    protected array $mymetaIDs;
 
     protected int $sep_max;
 
