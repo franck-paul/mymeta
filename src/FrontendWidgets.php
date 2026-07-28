@@ -33,8 +33,8 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly === 1 && !App::url()->isHome(App::url()->getType()))
-            || ($w->homeonly === 2 && App::url()->isHome(App::url()->getType()))
+        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
+            || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))
         ) {
             return '';
         }
@@ -98,8 +98,8 @@ class FrontendWidgets
             return '';
         }
 
-        if (($w->homeonly === 1 && !App::url()->isHome(App::url()->getType()))
-            || ($w->homeonly === 2 && App::url()->isHome(App::url()->getType()))
+        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
+            || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))
         ) {
             return '';
         }
