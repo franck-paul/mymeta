@@ -163,7 +163,7 @@ class FrontendWidgets
                             ->href($base_url . '/' . rawurlencode($id))
                             ->class($class)
                             ->text($id)
-                            ->extra('rel="tag"'),
+                            ->rel('tag'),
                     ]);
             }
         }
