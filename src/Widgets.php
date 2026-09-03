@@ -19,7 +19,7 @@ use Dotclear\Plugin\widgets\WidgetsStack;
 
 class Widgets
 {
-    public static function initWidgets(WidgetsStack $w): string
+    public static function initWidgets(WidgetsStack $widgetsStack): string
     {
         $mymeta                             = new MyMeta();
         $mymetalist                         = $mymeta->getIDsAsWidgetList();
@@ -27,7 +27,7 @@ class Widgets
         $mymetasections[__('All sections')] = '';
 
         // Widget for list of metadata
-        $w
+        $widgetsStack
             ->create('mymetalist', __('Metadata List'), FrontendWidgets::mymetaList(...), null, '', My::id())
             ->addTitle(__('Title'))
             ->setting(
@@ -54,7 +54,7 @@ class Widgets
 
         // Widget for currently displayed post
 
-        $w
+        $widgetsStack
             ->create('mymetavalues', __('Metadata Values list'), FrontendWidgets::mymetaValues(...), null, '', My::id())
             ->addTitle(__('Title'))
             ->setting(

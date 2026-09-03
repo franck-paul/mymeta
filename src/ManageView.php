@@ -95,10 +95,10 @@ class ManageView
             ],
         ];
 
-        $rs    = $mymeta->getMetadata($params);
-        $count = $mymeta->getMetadata($params, true);
+        $metaRecord = $mymeta->getMetadata($params);
+        $count      = $mymeta->getMetadata($params, true);
 
-        $list = new BackendList($rs, $count->cardinal());
+        $backendList = new BackendList($metaRecord, $count->cardinal());
 
         $head = App::backend()->page()->jsPageTabs('mymeta');
 
@@ -114,7 +114,7 @@ class ManageView
         echo App::backend()->notices()->getNotices();
 
         // Form
-        $list->display(
+        $backendList->display(
             $page,
             $nb_per_page,
             (new Div())

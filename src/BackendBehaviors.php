@@ -29,9 +29,9 @@ use Dotclear\Helper\Html\Html;
 
 class BackendBehaviors
 {
-    public static function adminDashboardFavorites(Favorites $favs): string
+    public static function adminDashboardFavorites(Favorites $favorites): string
     {
-        $favs->register('mymeta', [
+        $favorites->register('mymeta', [
             'title'          => __('My Meta'),
             'url'            => My::manageUrl(),
             'menu-icon'      => My::icon(),
@@ -42,30 +42,30 @@ class BackendBehaviors
         return '';
     }
 
-    public static function mymetaPostHeader(?MetaRecord $post): string
+    public static function mymetaPostHeader(?MetaRecord $metaRecord): string
     {
         $mymeta = new MyMeta();
-        echo $mymeta->postShowHeader($post);
+        echo $mymeta->postShowHeader($metaRecord);
 
         return '';
     }
 
-    public static function mymetaSidebar(?MetaRecord $post): string
+    public static function mymetaSidebar(?MetaRecord $metaRecord): string
     {
         return '';
     }
 
-    public static function mymetaInForm(?MetaRecord $post): string
+    public static function mymetaInForm(?MetaRecord $metaRecord): string
     {
         $mymeta = new MyMeta();
         if ($mymeta->hasMeta()) {
-            echo $mymeta->postForm($post)->render();
+            echo $mymeta->postForm($metaRecord)->render();
         }
 
         return '';
     }
 
-    public static function setMymeta(Cursor $cur, int $post_id): string
+    public static function setMymeta(Cursor $cursor, int $post_id): string
     {
         $mymeta = new MyMeta();
         $mymeta->setMeta($post_id);
@@ -73,9 +73,9 @@ class BackendBehaviors
         return '';
     }
 
-    public static function adminPostsActions(ActionsPosts $ap): string
+    public static function adminPostsActions(ActionsPosts $actionsPosts): string
     {
-        $ap->addAction(
+        $actionsPosts->addAction(
             [__('Metadata') => [__('Set metadata') => 'mymeta_set']],
             static::adminSetMyMeta(...)
         );
@@ -84,14 +84,14 @@ class BackendBehaviors
     }
 
     /**
-     * @param      ActionsPosts                 $ap     Actions
-     * @param      ArrayObject<string, mixed>   $post   The post
+     * @param      ActionsPosts                 $actionsPosts     Actions
+     * @param      ArrayObject<string, mixed>   $arrayObject   The post
      */
-    public static function adminSetMyMeta(ActionsPosts $ap, ArrayObject $post): void
+    public static function adminSetMyMeta(ActionsPosts $actionsPosts, ArrayObject $arrayObject): void
     {
-        if (!empty($post['mymeta_ok'])) {
+        if (!empty($arrayObject['mymeta_ok'])) {
             // Cope with submission
-            $posts  = $ap->getRS();
+            $posts  = $actionsPosts->getRS();
             $mymeta = new MyMeta();
             if ($mymeta->hasMeta()) {
                 while ($posts->fetch()) {
@@ -102,16 +102,16 @@ class BackendBehaviors
                 }
             }
 
-            $ap->redirect(true, ['upd' => 1]);
+            $actionsPosts->redirect(true, ['upd' => 1]);
         } else {
             $mymeta = new MyMeta();
             $head   = $mymeta->postShowHeader(null, true);
 
-            $ap->beginPage(
+            $actionsPosts->beginPage(
                 App::backend()->page()->breadcrumb(
                     [
                         Html::escapeHTML(App::blog()->name()) => '',
-                        __('Entries')                         => $ap->getRedirection(true),
+                        __('Entries')                         => $actionsPosts->getRedirection(true),
                         __('Set metadata')                    => '',
                     ]
                 ),
@@ -120,15 +120,15 @@ class BackendBehaviors
 
             echo (new Form('mymeta_form'))
                 ->method('post')
-                ->action($ap->getURI())
+                ->action($actionsPosts->getURI())
                 ->fields([
-                    $ap->checkboxes(),
+                    $actionsPosts->checkboxes(),
                     $mymeta->postForm(null),
                     (new Para())
                         ->class('form-buttons')
                         ->items([
                             App::nonce()->formNonce(),
-                            ... $ap->hiddenFields(),
+                            ... $actionsPosts->hiddenFields(),
                             (new Hidden(['action', 'mymeta_set'])),
                             (new Hidden(['mymeta_ok', '1'])),
                             (new Submit('set_mymeta', __('Save'))),
@@ -136,7 +136,7 @@ class BackendBehaviors
                 ])
             ->render();
 
-            $ap->endPage();
+            $actionsPosts->endPage();
         }
     }
 }

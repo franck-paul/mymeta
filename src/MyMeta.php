@@ -231,11 +231,11 @@ class MyMeta
     public function newSection(): MyMetaSection
     {
         ++$this->sep_max;
-        $sep_id  = $this->sep_prefix . $this->sep_max;
-        $sep     = new MyMetaSection();
-        $sep->id = $sep_id;
+        $sep_id            = $this->sep_prefix . $this->sep_max;
+        $myMetaSection     = new MyMetaSection();
+        $myMetaSection->id = $sep_id;
 
-        return $sep;
+        return $myMetaSection;
     }
 
     /**
@@ -249,9 +249,9 @@ class MyMeta
         if ($order !== null) {
             foreach ($order as $id) {
                 if (isset($this->mymetaIDs[$id])) {
-                    $m                 = $this->mymeta[$this->mymetaIDs[$id]];
-                    $m->pos            = $pos++;
-                    $newmymeta[]       = $m;
+                    $mymetum           = $this->mymeta[$this->mymetaIDs[$id]];
+                    $mymetum->pos      = $pos++;
+                    $newmymeta[]       = $mymetum;
                     $newmymetaIDs[$id] = count($newmymeta) - 1;
                     unset($this->mymeta[$this->mymetaIDs[$id]], $this->mymetaIDs[$id]);
                 }
@@ -259,10 +259,10 @@ class MyMeta
         }
 
         // Just in case, if some items remain, add them
-        foreach ($this->mymeta as $m) {
-            $m->pos               = $pos++;
-            $newmymeta[]          = $m;
-            $newmymetaIDs[$m->id] = count($newmymeta) - 1;
+        foreach ($this->mymeta as $mymetum) {
+            $mymetum->pos               = $pos++;
+            $newmymeta[]                = $mymetum;
+            $newmymetaIDs[$mymetum->id] = count($newmymeta) - 1;
         }
 
         $this->mymeta    = $newmymeta;
@@ -347,8 +347,8 @@ class MyMeta
 
     public function hasMeta(): bool
     {
-        foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaField && $meta->enabled) {
+        foreach ($this->mymeta as $mymetum) {
+            if ($mymetum instanceof MyMetaField && $mymetum->enabled) {
                 return true;
             }
         }
@@ -356,39 +356,39 @@ class MyMeta
         return false;
     }
 
-    public function postShowHeader(?MetaRecord $post, bool $standalone = false): string
+    public function postShowHeader(?MetaRecord $metaRecord, bool $standalone = false): string
     {
         $res = '';
-        foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaField && $meta->enabled) {
-                $res .= $meta->postHeader($post, $standalone);
+        foreach ($this->mymeta as $mymetum) {
+            if ($mymetum instanceof MyMetaField && $mymetum->enabled) {
+                $res .= $mymetum->postHeader($metaRecord, $standalone);
             }
         }
 
         return $res;
     }
 
-    public function postForm(?MetaRecord $post): None|Div
+    public function postForm(?MetaRecord $metaRecord): None|Div
     {
         $items           = [];
         $active_sections = ['' => true];
         $cur_section     = '';
-        foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaSection) {
-                $cur_section = $meta->id;
-            } elseif ($meta->enabled) {
+        foreach ($this->mymeta as $mymetum) {
+            if ($mymetum instanceof MyMetaSection) {
+                $cur_section = $mymetum->id;
+            } elseif ($mymetum->enabled) {
                 $active_sections[$cur_section] = true;
             }
         }
 
-        foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaSection) {
-                if (isset($active_sections[$meta->id])) {
-                    $items[] = (new Text('h4', __($meta->prompt)));
+        foreach ($this->mymeta as $mymetum) {
+            if ($mymetum instanceof MyMetaSection) {
+                if (isset($active_sections[$mymetum->id])) {
+                    $items[] = (new Text('h4', __($mymetum->prompt)));
                 }
-            } elseif ($meta->enabled) {
+            } elseif ($mymetum->enabled) {
                 $display_item = true;
-                $post_type    = $post instanceof MetaRecord ? $post->strField('post_type') : '';
+                $post_type    = $metaRecord instanceof MetaRecord ? $metaRecord->strField('post_type') : '';
                 if ($post_type === '') {
                     // Try to guess post_type from URI (only post and page are currently looked for)
                     $uri = is_string($uri = $_SERVER['REQUEST_URI']) ? $uri : '';
@@ -413,11 +413,11 @@ class MyMeta
                 }
 
                 if ($post_type !== '') {
-                    $display_item = $meta->isEnabledFor($post_type);
+                    $display_item = $mymetum->isEnabledFor($post_type);
                 }
 
                 if ($display_item) {
-                    $items[] = $meta->postForm($this->meta, $post);
+                    $items[] = $mymetum->postForm($this->meta, $metaRecord);
                 }
             }
         }
@@ -453,14 +453,14 @@ class MyMeta
          * @var array<array-key, string>
          */
         $errors = [];
-        foreach ($this->mymeta as $meta) {
+        foreach ($this->mymeta as $mymetum) {
             $post_type = isset($_POST['post_type']) && is_string($post_type = $_POST['post_type']) ? $post_type : '';
-            if ($meta instanceof MyMetaField
-                && $meta->enabled
-                && ($post_type === '' || $meta->isEnabledFor($post_type))
+            if ($mymetum instanceof MyMetaField
+                && $mymetum->enabled
+                && ($post_type === '' || $mymetum->isEnabledFor($post_type))
             ) {
                 try {
-                    $meta->setPostMeta($this->meta, $post_id, $deleteIfEmpty);
+                    $mymetum->setPostMeta($this->meta, $post_id, $deleteIfEmpty);
                 } catch (Exception $e) {
                     $errors[] = $e->getMessage();
                 }
@@ -492,21 +492,21 @@ class MyMeta
     {
         $table = App::db()->con()->prefix() . App::meta()::META_TABLE_NAME;
 
-        $sql = new SelectStatement();
-        $sql
+        $selectStatement = new SelectStatement();
+        $selectStatement
             ->columns([
                 'meta_type',
-                $sql->count('M.post_id', 'count'),
+                $selectStatement->count('M.post_id', 'count'),
             ])
-            ->from($sql->as($table, 'M'))
+            ->from($selectStatement->as($table, 'M'))
             ->join(
                 (new JoinStatement())
                     ->left()
-                    ->from($sql->as(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
+                    ->from($selectStatement->as(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
                     ->on('M.post_id = P.post_id')
                     ->statement()
             )
-            ->where('P.blog_id = ' . $sql->quote(App::blog()->id()))
+            ->where('P.blog_id = ' . $selectStatement->quote(App::blog()->id()))
             ->group([
                 'meta_type',
                 'P.blog_id',
@@ -523,20 +523,20 @@ class MyMeta
 
             if (App::blog()->withoutPassword()) {
                 // Only without password posts
-                $and[] = $sql->isNull('post_password');
+                $and[] = $selectStatement->isNull('post_password');
             }
 
             if (App::auth()->userID()) {
-                $sql->and($sql->orGroup([
-                    $sql->andGroup($and),
-                    'P.user_id = ' . $sql->quote(App::auth()->userID()),
+                $selectStatement->and($selectStatement->orGroup([
+                    $selectStatement->andGroup($and),
+                    'P.user_id = ' . $selectStatement->quote(App::auth()->userID()),
                 ]));
             } else {
-                $sql->and($and);
+                $selectStatement->and($and);
             }
         }
 
-        $rs = $sql->select() ?? MetaRecord::newFromArray([]);
+        $rs = $selectStatement->select() ?? MetaRecord::newFromArray([]);
 
         return $rs->toStatic();
     }
@@ -551,42 +551,42 @@ class MyMeta
      */
     public function getMetadata(array $params = [], bool $count_only = false): MetaRecord
     {
-        $sql = new SelectStatement();
+        $selectStatement = new SelectStatement();
 
         if ($count_only) {
-            $sql->column($sql->count('DISTINCT M.meta_id'));
+            $selectStatement->column($selectStatement->count('DISTINCT M.meta_id'));
         } else {
-            $sql->columns([
+            $selectStatement->columns([
                 'M.meta_id',
                 'M.meta_type',
-                $sql->count('M.post_id', 'count'),
+                $selectStatement->count('M.post_id', 'count'),
             ]);
         }
 
-        $sql
-            ->from($sql->as(App::db()->con()->prefix() . App::meta()::META_TABLE_NAME, 'M'))
+        $selectStatement
+            ->from($selectStatement->as(App::db()->con()->prefix() . App::meta()::META_TABLE_NAME, 'M'))
             ->join(
                 (new JoinStatement())
                     ->left()
-                    ->from($sql->as(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
+                    ->from($selectStatement->as(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME, 'P'))
                     ->on('M.post_id = P.post_id')
                     ->statement()
             )
-            ->where('P.blog_id = ' . $sql->quote(App::blog()->id()))
+            ->where('P.blog_id = ' . $selectStatement->quote(App::blog()->id()))
         ;
 
         if (isset($params['meta_type']) && is_string($params['meta_type'])) {
-            $sql->and('meta_type = ' . $sql->quote($params['meta_type']));
+            $selectStatement->and('meta_type = ' . $selectStatement->quote($params['meta_type']));
         }
 
         if (isset($params['meta_id']) && is_string($params['meta_id'])) {
-            $sql->and('meta_id = ' . $sql->quote($params['meta_id']));
+            $selectStatement->and('meta_id = ' . $selectStatement->quote($params['meta_id']));
         }
 
         if (isset($params['post_id']) && (is_numeric($params['post_id']) || is_array($params['post_id']))) {
-            $params_ids = $sql->sanitizeIn($params['post_id'], 'int', false);
+            $params_ids = $selectStatement->sanitizeIn($params['post_id'], 'int', false);
             if ($params_ids !== []) {
-                $sql->and('P.post_id ' . $sql->in($params_ids));
+                $selectStatement->and('P.post_id ' . $selectStatement->in($params_ids));
             }
         }
 
@@ -599,21 +599,21 @@ class MyMeta
 
             if (App::blog()->withoutPassword()) {
                 // Only without password posts
-                $and[] = $sql->isNull('post_password');
+                $and[] = $selectStatement->isNull('post_password');
             }
 
             if (App::auth()->userID()) {
-                $sql->and($sql->orGroup([
-                    $sql->andGroup($and),
-                    'P.user_id = ' . $sql->quote(App::auth()->userID()),
+                $selectStatement->and($selectStatement->orGroup([
+                    $selectStatement->andGroup($and),
+                    'P.user_id = ' . $selectStatement->quote(App::auth()->userID()),
                 ]));
             } else {
-                $sql->and($and);
+                $selectStatement->and($and);
             }
         }
 
         if (!$count_only) {
-            $sql->group([
+            $selectStatement->group([
                 'meta_id',
                 'meta_type',
                 'P.blog_id',
@@ -624,7 +624,7 @@ class MyMeta
             && isset($params['order'])
             && is_string($params['order'])
         ) {
-            $sql->order($sql->escape($params['order']));
+            $selectStatement->order($selectStatement->escape($params['order']));
         }
 
         if (isset($params['limit']) && !$count_only) {
@@ -645,10 +645,10 @@ class MyMeta
                 $limit[1] = $values[1];
             }
 
-            $sql->limit($limit);
+            $selectStatement->limit($limit);
         }
 
-        return $sql->select() ?? MetaRecord::newFromArray([]);
+        return $selectStatement->select() ?? MetaRecord::newFromArray([]);
     }
 
     public function getMeta(?string $type = null, ?string $limit = null, ?string $meta_id = null, ?int $post_id = null): MetaRecord
@@ -684,9 +684,9 @@ class MyMeta
     public function getIDsAsWidgetList(): array
     {
         $arr = [];
-        foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaField && $meta->enabled) {
-                $arr[$meta->id] = $meta->id;
+        foreach ($this->mymeta as $mymetum) {
+            if ($mymetum instanceof MyMetaField && $mymetum->enabled) {
+                $arr[$mymetum->id] = $mymetum->id;
             }
         }
 
@@ -701,9 +701,9 @@ class MyMeta
     public function getSectionsAsWidgetList(): array
     {
         $arr = [];
-        foreach ($this->mymeta as $meta) {
-            if ($meta instanceof MyMetaSection) {
-                $arr[$meta->prompt] = $meta->id;
+        foreach ($this->mymeta as $mymetum) {
+            if ($mymetum instanceof MyMetaSection) {
+                $arr[$mymetum->prompt] = $mymetum->id;
             }
         }
 

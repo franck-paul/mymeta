@@ -63,9 +63,9 @@ abstract class MyMetaField extends MyMetaEntry
      * Notice : submitted field name must be prefixed with "mymeta_"
      *
      * @param MetaInterface     $meta     Meta instance to use
-     * @param MetaRecord|null   $post     the post resultset
+     * @param MetaRecord|null   $metaRecord     the post resultset
      */
-    public function postForm(MetaInterface $meta, ?MetaRecord $post, string $value = '', bool $bypass_disabled = false): Component
+    public function postForm(MetaInterface $meta, ?MetaRecord $metaRecord, string $value = '', bool $bypass_disabled = false): Component
     {
         if ($this->enabled || $bypass_disabled) {
             $this_id    = 'mymeta_' . $this->id;
@@ -73,8 +73,8 @@ abstract class MyMetaField extends MyMetaEntry
             $value      = '';
             if ($post_value !== null) {
                 $value = Html::escapeHTML($_POST[$this_id]);
-            } elseif ($post instanceof MetaRecord) {
-                $post_meta = $post->strField('post_meta', true);
+            } elseif ($metaRecord instanceof MetaRecord) {
+                $post_meta = $metaRecord->strField('post_meta', true);
                 $value     = $meta->getMetaStr($post_meta, $this->id);
             }
 

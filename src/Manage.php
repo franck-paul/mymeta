@@ -224,12 +224,12 @@ class Manage
         $combo_action[__('disable')] = 'disable';
         $combo_action[__('delete')]  = 'delete';
 
-        $meta_stat = $mymeta->getMyMetaStats();
-        $stats     = [];
-        while ($meta_stat->fetch()) {
-            $meta_type = $meta_stat->strField('meta_type');
+        $metaRecord = $mymeta->getMyMetaStats();
+        $stats      = [];
+        while ($metaRecord->fetch()) {
+            $meta_type = $metaRecord->strField('meta_type');
             if ($meta_type !== '') {
-                $stats[$meta_type] = $meta_stat->intField('count');
+                $stats[$meta_type] = $metaRecord->intField('count');
             }
         }
 
@@ -253,18 +253,18 @@ class Manage
 
         // Form
         $metadata = function (array $metadatas, array $stats) {
-            foreach ($metadatas as $meta) {
-                if ($meta instanceof MyMetaSection) {
+            foreach ($metadatas as $metadata) {
+                if ($metadata instanceof MyMetaSection) {
                     // Section
-                    $pos = $meta->pos ?? 0;
+                    $pos = $metadata->pos ?? 0;
 
-                    yield (new Tr('l_' . $meta->id))
+                    yield (new Tr('l_' . $metadata->id))
                         ->class('line')
                         ->cols([
                             (new Td())
                                 ->class(['handle', 'minimal'])
                                 ->items([
-                                    (new Input(['order[' . $meta->id . ']']))
+                                    (new Input(['order[' . $metadata->id . ']']))
                                         ->class('position')
                                         ->size(2)
                                         ->maxlength(255)
@@ -274,7 +274,7 @@ class Manage
                                 ->class('minimal')
                                 ->items([
                                     (new Checkbox(['entries[]']))
-                                        ->value($meta->id),
+                                        ->value($metadata->id),
                                 ]),
                             (new Td())
                                 ->class(['nowrap', 'minimal', 'status'])
@@ -282,7 +282,7 @@ class Manage
                                     (new Link())
                                         ->href(App::backend()->url()->get('admin.plugin.' . My::id(), [
                                             'm'  => 'editsection',
-                                            'id' => $meta->id,
+                                            'id' => $metadata->id,
                                         ], '&'))
                                         ->items([
                                             (new Img('images/menu/edit.svg'))
@@ -294,44 +294,44 @@ class Manage
                                 ->class(['nowrap', 'maximal'])
                                 ->colspan(6)
                                 ->items([
-                                    (new Strong(sprintf(__('Section: %s'), Html::escapeHTML($meta->prompt)))),
+                                    (new Strong(sprintf(__('Section: %s'), Html::escapeHTML($metadata->prompt)))),
                                 ]),
                         ]);
-                } elseif ($meta instanceof MyMetaField) {
+                } elseif ($metadata instanceof MyMetaField) {
                     // Metadata
                     $image = fn (string $src, string $label, string $class): Img => (new Img('images/' . $src))
                         ->class(['mark', 'mark-' . $class])
                         ->alt($label)
                         ->title($label);
 
-                    $image_status = $meta->enabled ?
+                    $image_status = $metadata->enabled ?
                         $image('published.svg', __('published'), 'published') :
                         $image('unpublished.svg', __('unpublished'), 'unpublished');
 
-                    $st = is_numeric($st = $stats[$meta->id] ?? 0) ? (int) $st : 0;
+                    $st = is_numeric($st = $stats[$metadata->id] ?? 0) ? (int) $st : 0;
 
-                    $restrictions = $meta->getRestrictions();
+                    $restrictions = $metadata->getRestrictions();
                     if (!$restrictions) {
                         $restrictions = __('All');
                     }
 
-                    yield (new Tr('l_' . $meta->id))
-                        ->class(['line', $meta->enabled ? '' : 'offline'])
+                    yield (new Tr('l_' . $metadata->id))
+                        ->class(['line', $metadata->enabled ? '' : 'offline'])
                         ->cols([
                             (new Td())
                                 ->class(['handle', 'minimal'])
                                 ->items([
-                                    (new Input(['order[' . $meta->id . ']']))
+                                    (new Input(['order[' . $metadata->id . ']']))
                                         ->class('position')
                                         ->size(2)
                                         ->maxlength(255)
-                                        ->value($meta->pos),
+                                        ->value($metadata->pos),
                                 ]),
                             (new Td())
                                 ->class('minimal')
                                 ->items([
                                     (new Checkbox(['entries[]']))
-                                        ->value($meta->id),
+                                        ->value($metadata->id),
                                 ]),
                             (new Td())
                                 ->class(['nowrap', 'minimal', 'status'])
@@ -339,7 +339,7 @@ class Manage
                                     (new Link())
                                         ->href(App::backend()->url()->get('admin.plugin.' . My::id(), [
                                             'm'  => 'edit',
-                                            'id' => $meta->id,
+                                            'id' => $metadata->id,
                                         ], '&'))
                                         ->items([
                                             (new Img('images/menu/edit.svg'))
@@ -353,16 +353,16 @@ class Manage
                                     (new Link())
                                         ->href(App::backend()->url()->get('admin.plugin.' . My::id(), [
                                             'm'  => 'view',
-                                            'id' => $meta->id,
+                                            'id' => $metadata->id,
                                         ], '&'))
-                                        ->text(Html::escapeHTML($meta->id)),
+                                        ->text(Html::escapeHTML($metadata->id)),
                                 ]),
                             (new Td())
                                 ->class('nowrap')
-                                ->text($meta->getMetaTypeDesc()),
+                                ->text($metadata->getMetaTypeDesc()),
                             (new Td())
                                 ->class(['nowrap', 'maximal'])
-                                ->text($meta->prompt),
+                                ->text($metadata->prompt),
                             (new Td())
                                 ->text($restrictions),
                             (new Td())

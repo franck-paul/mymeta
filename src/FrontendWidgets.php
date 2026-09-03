@@ -27,14 +27,14 @@ use Dotclear\Plugin\widgets\WidgetsElement;
 
 class FrontendWidgets
 {
-    public static function mymetaList(WidgetsElement $w): string
+    public static function mymetaList(WidgetsElement $widgetsElement): string
     {
-        if ($w->offline) {
+        if ($widgetsElement->offline) {
             return '';
         }
 
-        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
-            || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))
+        if (($widgetsElement->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
+            || ($widgetsElement->homeonly == 2 && App::url()->isHome(App::url()->getType()))
         ) {
             return '';
         }
@@ -46,33 +46,33 @@ class FrontendWidgets
         $mymeta = App::frontend()->mymeta;
 
         $allmeta  = $mymeta->getAll();
-        $prompt   = ($w->get('prompt') === 'prompt');
+        $prompt   = ($widgetsElement->get('prompt') === 'prompt');
         $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/';
         $section  = '';
-        if ($w->get('section') !== '') {
-            $section      = $w->get('section');
+        if ($widgetsElement->get('section') !== '') {
+            $section      = $widgetsElement->get('section');
             $display_meta = false;
         } else {
             $display_meta = true;
         }
 
         $items = [];
-        foreach ($allmeta as $meta) {
-            if ($meta instanceof MyMetaSection) {
-                if ($meta->id == $section) {
+        foreach ($allmeta as $allmetum) {
+            if ($allmetum instanceof MyMetaSection) {
+                if ($allmetum->id == $section) {
                     $display_meta = true;
                 } elseif ($section != '') {
                     $display_meta = false;
                 }
             } elseif ($display_meta
-                && $meta->enabled
-                && $meta->url_list_enabled
+                && $allmetum->enabled
+                && $allmetum->url_list_enabled
             ) {
                 $items[] = (new Li())
                     ->items([
                         (new Link())
-                            ->href($base_url . rawurlencode((string) $meta->id))
-                            ->text(Html::escapeHTML($prompt ? $meta->prompt : $meta->id)),
+                            ->href($base_url . rawurlencode((string) $allmetum->id))
+                            ->text(Html::escapeHTML($prompt ? $allmetum->prompt : $allmetum->id)),
                     ]);
             }
         }
@@ -84,22 +84,22 @@ class FrontendWidgets
         $list = (new Ul())
             ->items($items);
 
-        return $w->renderDiv(
-            (bool) $w->content_only,
-            'mymetalist ' . $w->class,
+        return $widgetsElement->renderDiv(
+            (bool) $widgetsElement->content_only,
+            'mymetalist ' . $widgetsElement->class,
             '',
-            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . $list->render()
+            ($widgetsElement->title ? $widgetsElement->renderTitle(Html::escapeHTML($widgetsElement->title)) : '') . $list->render()
         );
     }
 
-    public static function mymetaValues(WidgetsElement $w): string
+    public static function mymetaValues(WidgetsElement $widgetsElement): string
     {
-        if ($w->offline) {
+        if ($widgetsElement->offline) {
             return '';
         }
 
-        if (($w->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
-            || ($w->homeonly == 2 && App::url()->isHome(App::url()->getType()))
+        if (($widgetsElement->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
+            || ($widgetsElement->homeonly == 2 && App::url()->isHome(App::url()->getType()))
         ) {
             return '';
         }
@@ -110,10 +110,10 @@ class FrontendWidgets
 
         $mymeta = App::frontend()->mymeta;
 
-        $limit    = is_numeric($limit = $w->get('limit')) ? abs((int) $limit) : 0;
-        $is_cloud = ($w->get('displaymode') === 'cloud');
+        $limit    = is_numeric($limit = $widgetsElement->get('limit')) ? abs((int) $limit) : 0;
+        $is_cloud = ($widgetsElement->get('displaymode') === 'cloud');
 
-        $id = is_string($id = $w->get('mymetaid')) ? $id : '';
+        $id = is_string($id = $widgetsElement->get('mymetaid')) ? $id : '';
         if ($id === '') {
             return '';
         }
@@ -127,35 +127,35 @@ class FrontendWidgets
             return '';
         }
 
-        $rs = $mymeta->getMeta($entry->id, (string) $limit);
+        $metaRecord = $mymeta->getMeta($entry->id, (string) $limit);
 
-        if ($rs->isEmpty()) {
+        if ($metaRecord->isEmpty()) {
             return '';
         }
 
-        $sort = is_string($sort = $w->get('sortby')) ? $sort : '';
+        $sort = is_string($sort = $widgetsElement->get('sortby')) ? $sort : '';
         if (!in_array($sort, ['meta_id_lower', 'count'], true)) {
             $sort = 'meta_id_lower';
         }
 
-        $order = is_string($order = $w->get('orderby')) ? $order : '';
+        $order = is_string($order = $widgetsElement->get('orderby')) ? $order : '';
         if ($order !== 'asc') {
             $order = 'desc';
         }
 
-        $rs->sort($sort, $order);
+        $metaRecord->sort($sort, $order);
 
         $base_url = App::blog()->url() . App::url()->getBase('mymeta') . '/' . $entry->id;
 
         $items = [];
-        while ($rs->fetch()) {
+        while ($metaRecord->fetch()) {
             $class = '';
             if ($is_cloud) {
-                $decile = $rs->intField('roundpercent');
+                $decile = $metaRecord->intField('roundpercent');
                 $class  = 'tag' . $decile;
             }
 
-            $id = $rs->strField('meta_id');
+            $id = $metaRecord->strField('meta_id');
             if ($id !== '') {
                 $items[] = (new Li())
                     ->items([
@@ -173,10 +173,10 @@ class FrontendWidgets
 
         $all = (new None());
         if ($entry->url_list_enabled
-            && !is_null($w->get('allvalueslinktitle'))
-            && $w->get('allvalueslinktitle') !== ''
+            && !is_null($widgetsElement->get('allvalueslinktitle'))
+            && $widgetsElement->get('allvalueslinktitle') !== ''
         ) {
-            $title = is_string($title = $w->get('allvalueslinktitle')) ? $title : '';
+            $title = is_string($title = $widgetsElement->get('allvalueslinktitle')) ? $title : '';
 
             if ($title !== '') {
                 $all = (new Para())
@@ -190,11 +190,11 @@ class FrontendWidgets
             }
         }
 
-        return $w->renderDiv(
-            (bool) $w->content_only,
-            'mymetavalues ' . ($is_cloud ? ' tags' : '') . $w->class,
+        return $widgetsElement->renderDiv(
+            (bool) $widgetsElement->content_only,
+            'mymetavalues ' . ($is_cloud ? ' tags' : '') . $widgetsElement->class,
             '',
-            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . $list->render() . $all->render()
+            ($widgetsElement->title ? $widgetsElement->renderTitle(Html::escapeHTML($widgetsElement->title)) : '') . $list->render() . $all->render()
         );
     }
 }

@@ -43,16 +43,16 @@ class BackendList extends Listing
         }
 
         $pager  = App::backend()->listing()->pager($page, $this->rs_count, $nb_per_page, $nb_per_page)->getLinks();
-        $values = function (MetaRecord $rs) {
+        $values = function (MetaRecord $metaRecord) {
             /**
              * @var MyMetaField $mymetaEntry
              */
             $mymetaEntry = App::backend()->mymetaEntry;
 
-            while ($rs->fetch()) {
-                $meta_id = $rs->strField('meta_id');
+            while ($metaRecord->fetch()) {
+                $meta_id = $metaRecord->strField('meta_id');
                 if ($meta_id !== '') {
-                    $count = $rs->intField('count');
+                    $count = $metaRecord->intField('count');
                     yield (new Tr())
                         ->class('line')
                         ->cols([

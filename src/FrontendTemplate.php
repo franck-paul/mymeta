@@ -189,21 +189,21 @@ class FrontendTemplate
     {
         return match (strtolower($op)) {
             'or', '||' => '||',
-            default => '&&',
+            default    => '&&',
         };
     }
 
     /**
      * Gets meta ID from attributes, if present
      *
-     * @param      ArrayObject<string, mixed>         $attr   The attributes
+     * @param      ArrayObject<string, mixed>         $arrayObject   The attributes
      */
-    protected static function metaID(ArrayObject $attr): string
+    protected static function metaID(ArrayObject $arrayObject): string
     {
-        if (isset($attr['type'])) {
-            $attr['id'] = $attr['type'];
+        if (isset($arrayObject['type'])) {
+            $arrayObject['id'] = $arrayObject['type'];
         }
 
-        return isset($attr['id']) && is_string($id = $attr['id']) && preg_match('/[a-zA-Z0-9-_]+/', $id) ? $id : '';
+        return isset($arrayObject['id']) && is_string($id = $arrayObject['id']) && preg_match('/[a-zA-Z0-9-_]+/', $id) ? $id : '';
     }
 }
