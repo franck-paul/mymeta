@@ -157,7 +157,6 @@ class ManageEdit
             $mymetaentry = $mymeta->newMyMeta($mymeta_type);
             if ($mymetaentry !== null) {
                 $page_title = __('New metadata');
-                $lock_id    = false;
             }
         }
 

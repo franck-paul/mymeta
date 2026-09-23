@@ -118,7 +118,6 @@ class MyMeta
                     $fields = [];
                 }
             } catch (Exception) {
-                $fields = [];
             }
         }
 
@@ -399,7 +398,6 @@ class MyMeta
                             parse_str($query, $args);
                         }
 
-                        $post_type = '';
                         if (isset($args['Process']) && $args['Process'] === 'Post') {
                             $post_type = 'post';
                         } elseif (isset($args['Process'])
