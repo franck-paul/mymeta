@@ -297,7 +297,7 @@ class Manage
                                     (new Strong(sprintf(__('Section: %s'), Html::escapeHTML($metadata->prompt)))),
                                 ]),
                         ]);
-                } elseif ($metadata instanceof MyMetaField) {
+                } else {
                     // Metadata
                     $image = fn (string $src, string $label, string $class): Img => (new Img('images/' . $src))
                         ->class(['mark', 'mark-' . $class])
@@ -308,7 +308,7 @@ class Manage
                         $image('published.svg', __('published'), 'published') :
                         $image('unpublished.svg', __('unpublished'), 'unpublished');
 
-                    $st = is_numeric($st = $stats[$metadata->id] ?? 0) ? (int) $st : 0;
+                    $st = (int) ($stats[$metadata->id] ?? 0);
 
                     $restrictions = $metadata->getRestrictions();
                     if (!$restrictions) {

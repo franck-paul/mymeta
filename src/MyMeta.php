@@ -468,10 +468,8 @@ class MyMeta
         if ($errors !== []) {
             $items = function (array $errors) {
                 foreach ($errors as $error) {
-                    if (is_string($error)) {
-                        yield (new Li())
-                            ->text($error);
-                    }
+                    yield (new Li())
+                        ->text($error);
                 }
             };
             $message = (new Ul())
