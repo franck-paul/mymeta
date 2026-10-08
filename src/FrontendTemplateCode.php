@@ -172,12 +172,12 @@ class FrontendTemplateCode
             }
             if (App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaField && App::frontend()->context()->mymeta->enabled) {
                 $mymeta_post_meta = App::frontend()->context()->posts->strField('post_meta');
-                /* @phpstan-ignore variable.unused */
+                /* @phpstan-ignore variable.unused */ // @phpcode-ignore
                 $mymeta_value = App::frontend()->mymeta->meta->getMetaStr(
                     $mymeta_post_meta,
                     App::frontend()->context()->mymeta->id
                 );
-                /* @phpstan-ignore identical.alwaysFalse */
+                /* @phpstan-ignore identical.alwaysFalse */ // @phpcode-ignore
                 if (($_test_HTML) === true) : ?>
                 $_content_HTML
             <?php endif;
