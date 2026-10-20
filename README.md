@@ -3,7 +3,7 @@
 [![Release](https://img.shields.io/github/v/release/franck-paul/mymeta)](https://github.com/franck-paul/mymeta/releases)
 [![Date](https://img.shields.io/github/release-date/franck-paul/mymeta)](https://github.com/franck-paul/mymeta/releases)
 [![Issues](https://img.shields.io/github/issues/franck-paul/mymeta)](https://github.com/franck-paul/mymeta/issues)
-[![License](https://img.shields.io/github/license/franck-paul/mymeta)](https://github.com/franck-paul/mymeta/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/franck-paul/mymeta)](https://github.com/franck-paul/mymeta/blob/main/LICENSE)
 
 Ce plugin permet d'ajouter dans l'interface de création/édition de billets un certain nombre de métadonnées spécialisées, dont le type est choisi par l'utilisateur. De la même manière que les tags, il est possible d'ajouter des métadonnées spécifiques à un blog particulier, et de les éditer facilement.
 
