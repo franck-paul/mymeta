@@ -162,7 +162,7 @@ class Manage
             $order      = $meta_order;
         }
 
-        $order = array_filter($order);
+        $order = array_filter($order, fn (string $v): bool => !empty($v));
 
         if (!empty($_POST['saveorder']) && $order !== []) {
             try {

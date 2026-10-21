@@ -78,8 +78,11 @@ class ManageEdit
                     $restrict = isset($_POST['mymeta_restrict'])         && is_string($restrict = $_POST['mymeta_restrict']) ? $restrict : '';
                     $types    = isset($_POST['mymeta_restricted_types']) && is_string($types = $_POST['mymeta_restricted_types']) ? $types : '';
                     if ($restrict === 'yes' && $types !== '') {
-                        $post_types = array_filter(explode(',', $types));
-                        $stack      = [];
+                        $post_types = array_filter(
+                            explode(',', $types),
+                            fn ($v): bool => !empty($v)
+                        );
+                        $stack = [];
                         foreach ($post_types as $post_type) {
                             $post_type = trim(Html::escapeHTML($post_type));
                             if ($post_type !== '') {
