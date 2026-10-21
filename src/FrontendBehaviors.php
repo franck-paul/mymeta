@@ -104,11 +104,11 @@ class FrontendBehaviors
     private static function metaAll(
     ): void {
         global $params; // @phpcode-remove
-        if (App::frontend()->context()->exists('mymeta')) {
-            if (!isset($params) || !is_array($params)) {
-                $params = [];
-            }
+        if (!isset($params) || !is_array($params)) {
+            $params = [];
+        }
 
+        if (App::frontend()->context()->exists('mymeta')) {
             $mymeta_params_from = isset($params['from']) && is_string($mymeta_params_from = $params['from']) ? $mymeta_params_from : '';
             $mymeta_params_sql  = isset($params['sql'])  && is_string($mymeta_params_sql = $params['sql']) ? $mymeta_params_sql : '';
 
