@@ -29,13 +29,11 @@ class FrontendWidgets
 {
     public static function mymetaList(WidgetsElement $widgetsElement): string
     {
-        if ($widgetsElement->offline) {
+        if ($widgetsElement->isOffline()) {
             return '';
         }
 
-        if (($widgetsElement->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
-            || ($widgetsElement->homeonly == 2 && App::url()->isHome(App::url()->getType()))
-        ) {
+        if (!$widgetsElement->checkHomeOnly(App::url()->getType())) {
             return '';
         }
 
@@ -85,22 +83,20 @@ class FrontendWidgets
             ->items($items);
 
         return $widgetsElement->renderDiv(
-            (bool) $widgetsElement->content_only,
-            'mymetalist ' . $widgetsElement->class,
+            $widgetsElement->getContentOnly(),
+            'mymetalist ' . $widgetsElement->getClass(),
             '',
-            ($widgetsElement->title ? $widgetsElement->renderTitle(Html::escapeHTML($widgetsElement->title)) : '') . $list->render()
+            ($widgetsElement->getTitle() !== '' ? $widgetsElement->renderTitle(Html::escapeHTML($widgetsElement->getTitle())) : '') . $list->render()
         );
     }
 
     public static function mymetaValues(WidgetsElement $widgetsElement): string
     {
-        if ($widgetsElement->offline) {
+        if ($widgetsElement->isOffline()) {
             return '';
         }
 
-        if (($widgetsElement->homeonly == 1 && !App::url()->isHome(App::url()->getType()))
-            || ($widgetsElement->homeonly == 2 && App::url()->isHome(App::url()->getType()))
-        ) {
+        if (!$widgetsElement->checkHomeOnly(App::url()->getType())) {
             return '';
         }
 
@@ -191,10 +187,10 @@ class FrontendWidgets
         }
 
         return $widgetsElement->renderDiv(
-            (bool) $widgetsElement->content_only,
-            'mymetavalues ' . ($is_cloud ? ' tags' : '') . $widgetsElement->class,
+            $widgetsElement->getContentOnly(),
+            'mymetavalues ' . ($is_cloud ? ' tags' : '') . $widgetsElement->getClass(),
             '',
-            ($widgetsElement->title ? $widgetsElement->renderTitle(Html::escapeHTML($widgetsElement->title)) : '') . $list->render() . $all->render()
+            ($widgetsElement->getTitle() !== '' ? $widgetsElement->renderTitle(Html::escapeHTML($widgetsElement->getTitle())) : '') . $list->render() . $all->render()
         );
     }
 }
