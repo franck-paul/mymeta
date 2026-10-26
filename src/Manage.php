@@ -308,7 +308,7 @@ class Manage
                         $image('published.svg', __('published'), 'published') :
                         $image('unpublished.svg', __('unpublished'), 'unpublished');
 
-                    $st = (int) ($stats[$metadata->id] ?? 0);
+                    $st = $stats[$metadata->id] ?? 0;
 
                     $restrictions = $metadata->getRestrictions();
                     if (!$restrictions) {

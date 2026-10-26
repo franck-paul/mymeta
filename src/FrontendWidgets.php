@@ -69,7 +69,7 @@ class FrontendWidgets
                 $items[] = (new Li())
                     ->items([
                         (new Link())
-                            ->href($base_url . rawurlencode((string) $allmetum->id))
+                            ->href($base_url . rawurlencode($allmetum->id))
                             ->text(Html::escapeHTML($prompt ? $allmetum->prompt : $allmetum->id)),
                     ]);
             }

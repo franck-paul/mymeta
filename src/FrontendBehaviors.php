@@ -67,33 +67,33 @@ class FrontendBehaviors
         $metaid = App::db()->con()->escapeStr($attr['mymetaid']);
         if (isset($attr['mymetavalue'])) {
             $values = $attr['mymetavalue'];
-            if (str_starts_with((string) $values, '!')) {
-                $values = substr((string) $values, 1);
+            if (str_starts_with($values, '!')) {
+                $values = substr($values, 1);
             }
 
             $cond = [];
-            foreach (explode(',', (string) $values) as $expr) {
+            foreach (explode(',', $values) as $expr) {
                 $cond[] = "'" . App::db()->con()->escapeStr($expr) . "'";
             }
 
             return Code::getPHPCode(
                 self::metaValue(...),
                 [
-                    !str_starts_with((string) $values, '!'),
+                    !str_starts_with($values, '!'),
                     $cond,
                     $metaid,
                 ]
             );
         }
 
-        if (str_starts_with((string) $metaid, '!')) {
-            $metaid = substr((string) $metaid, 1);
+        if (str_starts_with($metaid, '!')) {
+            $metaid = substr($metaid, 1);
         }
 
         return Code::getPHPCode(
             self::metaID(...),
             [
-                !str_starts_with((string) $metaid, '!'),
+                !str_starts_with($metaid, '!'),
                 $metaid,
             ]
         );

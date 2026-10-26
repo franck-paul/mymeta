@@ -126,7 +126,7 @@ class MyMeta
         $this->mymetaIDs = [];
         $this->sep_max   = 0;
         foreach ($this->mymeta as $k => $v) {
-            $this->mymetaIDs[$v->id] = (int) $k;
+            $this->mymetaIDs[$v->id] = $k;
             if ($v instanceof MyMetaSection) {
                 // Compute max section id, to anticipate
                 // future section ids
