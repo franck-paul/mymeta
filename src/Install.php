@@ -47,7 +47,7 @@ class Install
             $backup = $fields;
 
             try {
-                $fields = unserialize(base64_decode($fields));
+                $fields = unserialize((string) base64_decode($fields, true));
             } catch (Exception $exception) {
                 App::error()->add($exception->getMessage());
             }

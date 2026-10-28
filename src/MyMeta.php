@@ -109,7 +109,7 @@ class MyMeta
 
         if (!$bypass_settings && $mymeta_fields !== '') {
             try {
-                $mymeta_fields = base64_decode($mymeta_fields);
+                $mymeta_fields = (string) base64_decode($mymeta_fields, true);
                 /**
                  * @var false|array<int, MyMetaSection|MyMetaField>  $fields
                  */

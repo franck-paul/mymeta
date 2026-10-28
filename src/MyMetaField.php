@@ -196,7 +196,7 @@ abstract class MyMetaField extends MyMetaEntry
     public function isEnabledFor(string $mode): bool
     {
         if (is_array($this->post_types)) {
-            return in_array($mode, $this->post_types);
+            return in_array($mode, $this->post_types, true);
         }
 
         return true;

@@ -73,7 +73,7 @@ class FrontendTemplate
             FrontendTemplateCode::EntryMyMetaValue(...),
             [
                 self::metaID($attr),
-                array_filter($attr->getArrayCopy(), fn ($key): bool => !in_array($key, ['id', 'type']), ARRAY_FILTER_USE_KEY),
+                array_filter($attr->getArrayCopy(), fn ($key): bool => !in_array($key, ['id', 'type'], true), ARRAY_FILTER_USE_KEY),
             ],
             attr: $attr,
         );
@@ -90,7 +90,7 @@ class FrontendTemplate
             FrontendTemplateCode::MyMetaValue(...),
             [
                 self::metaID($attr),
-                array_filter($attr->getArrayCopy(), fn ($key): bool => !in_array($key, ['id', 'type']), ARRAY_FILTER_USE_KEY),
+                array_filter($attr->getArrayCopy(), fn ($key): bool => !in_array($key, ['id', 'type'], true), ARRAY_FILTER_USE_KEY),
             ],
             attr: $attr,
         );
