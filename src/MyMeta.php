@@ -655,19 +655,19 @@ class MyMeta
     {
         $params = [];
 
-        if ($type != null) {
+        if (is_string($type) && $type !== '') {
             $params['meta_type'] = $type;
         }
 
-        if ($limit != null) {
+        if (is_string($limit) && $limit !== '') {
             $params['limit'] = $limit;
         }
 
-        if ($meta_id != null) {
+        if (is_string($meta_id) && $meta_id !== '') {
             $params['meta_id'] = $meta_id;
         }
 
-        if ($meta_id != null) {
+        if (is_int($post_id) && $post_id !== 0) {
             $params['post_id'] = $post_id;
         }
 

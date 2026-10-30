@@ -111,8 +111,8 @@ class FrontendTemplate
          * Should be renamed here if renamed in FrontendTemplateCode::EntryMyMetaIf() code.
          */
         $if = [];
-        if (isset($attr['defined'])) {
-            $sign = ($attr['defined'] == 'true' || $attr['defined'] == '1') ? '!' : '';
+        if (isset($attr['defined']) && is_string($attr['defined'])) {
+            $sign = ($attr['defined'] === 'true' || $attr['defined'] === '1') ? '!' : '';
             $if[] = $sign . 'empty($mymeta_value)';
         }
 

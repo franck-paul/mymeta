@@ -83,12 +83,13 @@ class MyMetaList extends MyMetaField
      */
     public function getValue(string $value, array $attr): string
     {
-        $key = array_search($value, $this->values, true);
-        if (isset($attr['key']) && $attr['key'] == 1) {
+        $key = isset($attr['key']) && is_numeric($key = $attr['key']) ? (int) $key : 0;
+        if ($key === 1) {
             return $value;
         }
 
-        if ($key != null) {
+        $key = array_search($value, $this->values, true);
+        if ($key !== false) {
             return $key;
         }
 

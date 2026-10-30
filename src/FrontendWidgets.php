@@ -57,9 +57,9 @@ class FrontendWidgets
         $items = [];
         foreach ($allmeta as $allmetum) {
             if ($allmetum instanceof MyMetaSection) {
-                if ($allmetum->id == $section) {
+                if ($allmetum->id === $section) {
                     $display_meta = true;
-                } elseif ($section != '') {
+                } elseif ($section !== '') {
                     $display_meta = false;
                 }
             } elseif ($display_meta
