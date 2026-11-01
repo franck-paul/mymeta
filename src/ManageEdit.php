@@ -169,7 +169,7 @@ class ManageEdit
         }
 
         $types      = $mymeta->getTypesAsCombo();
-        $type_label = $types !== null && array_search($mymeta_type, $types, true);
+        $type_label = $types !== null && in_array($mymeta_type, $types, true);
         if (!$type_label) {
             App::backend()->notices()->addErrorNotice(__('Something went wrong while editing metadata'));
             My::redirect();

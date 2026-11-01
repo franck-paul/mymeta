@@ -524,7 +524,7 @@ class MyMeta
                 $and[] = $selectStatement->isNull('post_password');
             }
 
-            if (App::auth()->userID()) {
+            if (App::auth()->userID() !== '') {
                 $selectStatement->and($selectStatement->orGroup([
                     $selectStatement->andGroup($and),
                     'P.user_id = ' . $selectStatement->quote(App::auth()->userID()),
@@ -602,7 +602,7 @@ class MyMeta
                 $and[] = $selectStatement->isNull('post_password');
             }
 
-            if (App::auth()->userID()) {
+            if (App::auth()->userID() !== '') {
                 $selectStatement->and($selectStatement->orGroup([
                     $selectStatement->andGroup($and),
                     'P.user_id = ' . $selectStatement->quote(App::auth()->userID()),

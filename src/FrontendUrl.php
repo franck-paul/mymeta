@@ -26,7 +26,7 @@ class FrontendUrl extends Url
     public static function tag(?string $args): void
     {
         $n = self::getPageNumber($args);
-        if ($args === '' && !$n) {
+        if ($args === '' && empty($n)) {
             self::p404();
         } else {
             $args = is_string($args) ? $args : '';
@@ -34,7 +34,7 @@ class FrontendUrl extends Url
                 self::p404();
             }
 
-            if ($n) {
+            if (is_int($n)) {
                 App::frontend()->setPageNumber($n);
             }
 
@@ -63,7 +63,7 @@ class FrontendUrl extends Url
                 // Meta list
                 $tpl = $field->tpl_list ?: 'mymetas.html';
 
-                if ($field->url_list_enabled && App::frontend()->template()->getFilePath($tpl)) {
+                if ($field->url_list_enabled && App::frontend()->template()->getFilePath($tpl) !== false) {
                     self::serveDocument($tpl);
                 } else {
                     self::p404();
@@ -82,7 +82,7 @@ class FrontendUrl extends Url
 
                 if (!App::frontend()->context()->meta->isEmpty()
                     && $field->url_single_enabled
-                    && App::frontend()->template()->getFilePath($tpl)
+                    && App::frontend()->template()->getFilePath($tpl) !== false
                 ) {
                     self::serveDocument($tpl);
                 } else {

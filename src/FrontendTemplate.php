@@ -204,6 +204,6 @@ class FrontendTemplate
             $arrayObject['id'] = $arrayObject['type'];
         }
 
-        return isset($arrayObject['id']) && is_string($id = $arrayObject['id']) && preg_match('/[a-zA-Z0-9-_]+/', $id) ? $id : '';
+        return isset($arrayObject['id']) && is_string($id = $arrayObject['id']) && (bool) preg_match('/[a-zA-Z0-9-_]+/', $id) ? $id : '';
     }
 }

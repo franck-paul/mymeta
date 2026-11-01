@@ -109,12 +109,12 @@ class Manage
                 $entries = is_array($entries = $_POST['entries']) ? $entries : [];
 
                 $msg = '';
-                if (preg_match('/^(enable|disable)$/', $action)) {
+                if ((bool) preg_match('/^(enable|disable)$/', $action)) {
                     $mymeta->setEnabled($entries, $action === 'enable');
                     $msg = $action === 'enable' ?
                         __('Metadata entries have been successfully enabled') :
                         __('Metadata entries have been successfully disabled');
-                } elseif (preg_match('/^(delete)$/', $action)) {
+                } elseif ((bool) preg_match('/^(delete)$/', $action)) {
                     $mymeta->delete($entries);
                     $msg = __('Metadata entries have been successfully deleted');
                 }
@@ -311,7 +311,7 @@ class Manage
                     $st = $stats[$metadata->id] ?? 0;
 
                     $restrictions = $metadata->getRestrictions();
-                    if (!$restrictions) {
+                    if ($restrictions === false) {
                         $restrictions = __('All');
                     }
 

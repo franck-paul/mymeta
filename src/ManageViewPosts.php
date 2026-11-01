@@ -93,7 +93,7 @@ class ManageViewPosts
         );
 
         App::backend()->posts_actions_page_rendered = null;
-        if (App::backend()->posts_actions_page->process()) {
+        if ((bool) App::backend()->posts_actions_page->process()) {
             App::backend()->posts_actions_page_rendered = true;
 
             return true;
@@ -153,7 +153,7 @@ class ManageViewPosts
          * @var BackendActions
          */
         $pap = App::backend()->posts_actions_page;
-        if (App::backend()->posts_actions_page_rendered) {
+        if ((bool) App::backend()->posts_actions_page_rendered) {
             $pap->render();
 
             return;
@@ -265,7 +265,7 @@ class ManageViewPosts
         echo (new Text('h3', sprintf(__('Entries having metadata id "%1$s" set to "%2$s"'), Html::escapeHTML($mymetaEntry->id), Html::escapeHTML($value))))->render();
 
         // Show posts
-        if ($post_list) {
+        if ($post_list !== null) {
             $post_list->display(
                 $page,
                 $nb_per_page,

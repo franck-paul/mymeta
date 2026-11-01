@@ -63,14 +63,14 @@ class MyMetaDate extends MyMetaField
      */
     public function setPostMeta(MetaInterface $meta, int $post_id, bool $delete_if_empty = true): void
     {
-        $timestamp    = 0;
+        $timestamp    = false;
         $mymeta_value = isset($_POST['mymeta_' . $this->id]) && is_string($mymeta_value = $_POST['mymeta_' . $this->id]) ? $mymeta_value : '';
         if ($mymeta_value !== '') {
             $timestamp = strtotime($mymeta_value);
         }
 
         $meta->delPostMeta($post_id, $this->id);
-        if ($timestamp) {
+        if ($timestamp !== false) {
             $value = date('Y-m-d H:i:00', $timestamp);
             $meta->setPostMeta($post_id, $this->id, $value);
         }

@@ -204,7 +204,7 @@ class FrontendTemplateCode
                 App::frontend()->context()->mymeta = App::frontend()->mymeta->getByID($_id_);
             }
             $mymeta_id = App::frontend()->context()->mymeta instanceof \Dotclear\Plugin\mymeta\MyMetaEntry ? App::frontend()->context()->mymeta->id : '';
-            if ($_limit_) {
+            if ($_limit_) { // @phpstan-ignore if.condNotBoolean
                 App::frontend()->context()->meta = App::meta()->computeMetaStats(App::frontend()->mymeta->meta->getMetadata([
                     'meta_type' => $mymeta_id,
                     'limit'     => $_limit_,
