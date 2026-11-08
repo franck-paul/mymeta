@@ -17,9 +17,9 @@ if (isset($this) && is_object($this) && method_exists($this, 'registerModule') &
         'My Meta',
         'User-defined metadata management in posts',
         'Bruno Hondelatte and contributors',
-        '11.0',
+        '12.0',
         [
-            'date'     => '2026-08-03T10:05:59+0200',
+            'date'     => '2026-11-08T10:18:14+0100',
             'requires' => [
                 ['core', '2.40'],
                 ['TemplateHelper'],
